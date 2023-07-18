@@ -6,23 +6,23 @@ permalink: /data-loading
 
 <h2 class='inline-header'>Data Loading</h2>
 
-<p>Loading external data into Greenplum Database tables can be accomplished in different ways. We will use three methods to load the FAA data:  </p>
+<p>Loading external data into Cloudberry Database tables can be accomplished in different ways. We will use three methods to load the FAA data:  </p>
 
 <ul>
 <li>The simplest data loading method is the SQL INSERT statement. You can execute INSERT statements directly with psql or another interactive client, run a script containing INSERT statements, or run a client application with a database connection. This is the least efficient method for loading large volumes of data and should be used only for small amounts of data.</li>
 <li>You can use the COPY command to load the data into a table when the data is in external text files. The COPY command syntax allows you to define the format of the text file so the data can be parsed into rows and columns. This is faster than INSERT statements but, like INSERT statements, it is not a parallel process.<br>
-The SQL COPY command requires that external files be accessible to the host where the master process is running. On a multi-node Greenplum Database system, the data files may be on a file system that is not accessible to the master process. In this case, you can use the psql \copy meta-command, which streams the data to the server over the psql connection. The scripts in this tutorial use the \copy meta-command.<br>
+The SQL COPY command requires that external files be accessible to the host where the master process is running. On a multi-node Cloudberry Database system, the data files may be on a file system that is not accessible to the master process. In this case, you can use the psql \copy meta-command, which streams the data to the server over the psql connection. The scripts in this tutorial use the \copy meta-command.<br>
 </li>
-<li> You can use a pair of Greenplum utilities, gpfdist and gpload, to load external data into tables at high data transfer rates. In a large scale, multi-terabyte data warehouse, large amounts of data must be loaded within a relatively small maintenance window. Greenplum supports fast, parallel data loading with its external tables feature. Administrators can also load external tables in single row error isolation mode to filter bad rows into a separate error table while continuing to load properly formatted rows. Administrators can specify an error threshold for a load operation to control how many improperly formatted rows cause Greenplum to abort the load operation.</li>
+<li> You can use a pair of Cloudberry utilities, gpfdist and gpload, to load external data into tables at high data transfer rates. In a large scale, multi-terabyte data warehouse, large amounts of data must be loaded within a relatively small maintenance window. Cloudberry supports fast, parallel data loading with its external tables feature. Administrators can also load external tables in single row error isolation mode to filter bad rows into a separate error table while continuing to load properly formatted rows. Administrators can specify an error threshold for a load operation to control how many improperly formatted rows cause Cloudberry to abort the load operation.</li>
 </ul>
 
-<p>By using external tables in conjunction with Greenplum Database's parallel file server (gpfdist), administrators can achieve maximum parallelism and load bandwidth from their Greenplum Database system.</p>
+<p>By using external tables in conjunction with Cloudberry Database's parallel file server (gpfdist), administrators can achieve maximum parallelism and load bandwidth from their Cloudberry Database system.</p>
 
-<p>Figure 1. External Tables Using Greenplum Parallel File Server (gpfdist) </p>
+<p>Figure 1. External Tables Using Cloudberry Parallel File Server (gpfdist) </p>
 
-<p><img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/ext_tables.jpg" width="500" alt="External Tables Using Greenplum Parallel File Server"></p>
+<p><img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/ext_tables.jpg" width="500" alt="External Tables Using Cloudberry Parallel File Server"></p>
 
-<p>Another Greenplum utility, gpload, runs a load task that you specify in a YAML-formatted control file. You describe the source data locations, format, transformations required, participating hosts, database destinations, and other particulars in the control file and gpload executes the load. This allows you to describe a complex task and execute it in a controlled, repeatable fashion.</p>
+<p>Another Cloudberry utility, gpload, runs a load task that you specify in a YAML-formatted control file. You describe the source data locations, format, transformations required, participating hosts, database destinations, and other particulars in the control file and gpload executes the load. This allows you to describe a complex task and execute it in a controlled, repeatable fashion.</p>
 
 <p>In the following exercises, you load data into the tutorial database using each of these methods.  </p>
 
@@ -121,9 +121,9 @@ tutorial-# =# \i copy_into_wac.sql
 <h4>
 <a id="load-data-with-gpfdist" class="anchor" href="#load-data-with-gpdist" aria-hidden="true"><span class="octicon octicon-link"></span></a>Load data with gpdist</h4>
 
-<p>For the FAA fact table, we will use an ETL (Extract, Transform, Load) process to load data from the source gzip files into a loading table, and then insert the data into a query and reporting table. For the best load speed, use the gpfdist Greenplum utility to distribute the rows to the segments. In a production system, gpfdist runs on the servers where the data is located. With a single-node Greenplum Database instance, there is only one host, and you run gpdist on it. Starting gpfdist is like starting a file server; there is no data movement until a request is made on the process.</p>
+<p>For the FAA fact table, we will use an ETL (Extract, Transform, Load) process to load data from the source gzip files into a loading table, and then insert the data into a query and reporting table. For the best load speed, use the gpfdist Cloudberry utility to distribute the rows to the segments. In a production system, gpfdist runs on the servers where the data is located. With a single-node Cloudberry Database instance, there is only one host, and you run gpdist on it. Starting gpfdist is like starting a file server; there is no data movement until a request is made on the process.</p>
 
-<p><em>Note: This exercise loads data using the Greenplum Database external table feature to move data from external data files into the database. Moving data between the database and external tables is a security consideration, so only superusers are permitted to use the feature. Therefore, you will run this exercise as the gpadmin database user.</em>  </p>
+<p><em>Note: This exercise loads data using the Cloudberry Database external table feature to move data from external data files into the database. Moving data between the database and external tables is a security consideration, so only superusers are permitted to use the feature. Therefore, you will run this exercise as the gpadmin database user.</em>  </p>
 
 <ol>
 <li>
@@ -183,7 +183,7 @@ INSERT 0 1024552
 </code></pre>
 </blockquote>
 
-<p>Greenplum moves data from the gzip files into the load table in the database. In a production environment, you could have many gpfdist processes running, one on each host or several on one host, each on a separate port number. </p>
+<p>Cloudberry moves data from the gzip files into the load table in the database. In a production environment, you could have many gpfdist processes running, one on each host or several on one host, each on a separate port number. </p>
 </li>
 <li>
 <p>Examine the errors briefly. (The \x on psql meta-command changes the display of the results to one line per column, which is easier to read for some result sets.)</p>
@@ -212,7 +212,7 @@ count   | 26526
 <h4>
 <a id="load-data-with-gpload" class="anchor" href="#load-data-with-gpload" aria-hidden="true"><span class="octicon octicon-link"></span></a>Load data with gpload</h4>
 
-<p>Greenplum provides a wrapper program for gpfdist called gpload that does much
+<p>Cloudberry provides a wrapper program for gpfdist called gpload that does much
 of the work of setting up the external table and the data movement.  In this exercise, you reload the faa_otp_load table using the gpload utility.  </p>
 
 <ol>
@@ -240,7 +240,7 @@ started in the previous exercise. </p>
 
 <pre><code>---
 VERSION: 1.0.0.1
-# describe the Greenplum database parameters
+# describe the Cloudberry database parameters
 DATABASE: tutorial
 USER: gpadmin
 HOST: localhost
@@ -314,9 +314,9 @@ Review the create_fact_tables.sql script and note that some columns are excluded
 <h3>
 <a id="data-loading-summary" class="anchor" href="#data-loading-summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Data loading summary</h3>
 
-<p>The ability to load billions of rows quickly into the Greenplum database is one of its key features. Using “Extract, Load and Transform” (ELT) allows load processes to make use of the massive parallelism of the Greenplum system by staging the data (perhaps just the use of external tables) and then applying data transformations within Greenplum Database. Set-based operations can be done in parallel, maximizing performance.</p>
+<p>The ability to load billions of rows quickly into the Cloudberry database is one of its key features. Using “Extract, Load and Transform” (ELT) allows load processes to make use of the massive parallelism of the Cloudberry system by staging the data (perhaps just the use of external tables) and then applying data transformations within Cloudberry Database. Set-based operations can be done in parallel, maximizing performance.</p>
 
-<p>With other loading mechanisms such as COPY, data is loaded through the master in a single process. This does not take advantage of the parallel processing power of the Greenplum segments. External tables provide a means of leveraging the parallel processing power of the segments for data loading. Also, unlike other loading mechanisms, you can access multiple data sources with one SELECT of an external table.</p>
+<p>With other loading mechanisms such as COPY, data is loaded through the master in a single process. This does not take advantage of the parallel processing power of the Cloudberry segments. External tables provide a means of leveraging the parallel processing power of the segments for data loading. Also, unlike other loading mechanisms, you can access multiple data sources with one SELECT of an external table.</p>
 
 <p>External tables make static data available inside the database. External tables can be defined with file:// or gpfdist:// protocols. gpfdist is a file server program that loads files in parallel. Since the data is static, external tables can be rescanned during a query execution.</p>
 

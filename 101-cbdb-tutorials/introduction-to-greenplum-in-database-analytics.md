@@ -1,28 +1,28 @@
 ---
 layout: default
-title:  "Introduction to Greenplum In-Database Analytics"
+title:  "Introduction to Cloudberry In-Database Analytics"
 permalink: /introduction-to-greenplum-in-database-analytics
 ---
 
 
 
-<h2 class='inline-header'>Introduction to Greenplum In-Database Analytics</h2>
+<h2 class='inline-header'>Introduction to Cloudberry In-Database Analytics</h2>
 
-<p>Running analytics directly in Greenplum Database, rather than exporting data to a separate analytics engine, allows greater agility when exploring large data sets and much better performance due to parallelizing the analytic processes across all the segments. </p>
+<p>Running analytics directly in Cloudberry Database, rather than exporting data to a separate analytics engine, allows greater agility when exploring large data sets and much better performance due to parallelizing the analytic processes across all the segments. </p>
 
-<p>A variety of power analytic tools is available for use with Greenplum Database:</p>
+<p>A variety of power analytic tools is available for use with Cloudberry Database:</p>
 
 <ul>
 <li>MADlib, an open-source, MPP implementation of many analytic algorithms, available at <a href="http://madlib.incubator.apache.org/">http://madlib.incubator.apache.org/</a><br>
 </li>
 <li>R statistical language<br>
 </li>
-<li>SAS, in many forms, but especially with the SAS Accelerator for Greenplum<br>
+<li>SAS, in many forms, but especially with the SAS Accelerator for Cloudberry<br>
 </li>
 <li>PMML, Predictive Modeling Markup Language </li>
 </ul>
 
-<p>The exercises in this chapter introduce using MADlib with Greenplum Database, using the FAA on-time data example dataset. You will examine scenarios comparing airlines and airports to learn whether there are significant relationships to be found.  In this lesson, you will use <a href="https://zeppelin.incubator.apache.org/">Apache Zeppelin (incubating)</a> to submit SQL statements to the Greenplum Database.  Apache Zeppelin is a web-based notebook that enables interactive data analytics.  A <a href="https://issues.apache.org/jira/browse/ZEPPELIN-250">PostgreSQL interpreter</a> has been added to Zeppelin, so that it can now work directly with products such as Pivotal Greenplum Database and Pivotal HDB. </p>
+<p>The exercises in this chapter introduce using MADlib with Cloudberry Database, using the FAA on-time data example dataset. You will examine scenarios comparing airlines and airports to learn whether there are significant relationships to be found.  In this lesson, you will use <a href="https://zeppelin.incubator.apache.org/">Apache Zeppelin (incubating)</a> to submit SQL statements to the Cloudberry Database.  Apache Zeppelin is a web-based notebook that enables interactive data analytics.  A <a href="https://issues.apache.org/jira/browse/ZEPPELIN-250">PostgreSQL interpreter</a> has been added to Zeppelin, so that it can now work directly with products such as Pivotal Cloudberry Database and Pivotal HDB. </p>
 
 <h4>
 <a id="prepare-apache-zeppelin" class="anchor" href="#prepare-apache-zeppelin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prepare Apache Zeppelin</h4>
@@ -59,7 +59,7 @@ permalink: /introduction-to-greenplum-in-database-analytics
 <h4>
 <a id="run-postgresql-built-in-aggregates" class="anchor" href="#run-postgresql-built-in-aggregates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run PostgreSQL built-in aggregates</h4>
 
-<p>PostgreSQL has built-in aggregate functions to get standard statistics on database columns—minimum, maximum, average, and standard deviation, for example. The functions take advantage of the Greenplum Database MPP architecture, aggregating data on the segments and then assembling results on the master.</p>
+<p>PostgreSQL has built-in aggregate functions to get standard statistics on database columns—minimum, maximum, average, and standard deviation, for example. The functions take advantage of the Cloudberry Database MPP architecture, aggregating data on the segments and then assembling results on the master.</p>
 
 <p>First, gather simple descriptive statistics on some of the data you will analyze with MADlib. The commands in this exercise are in the stats.sql script in the sample data directory.</p>
 

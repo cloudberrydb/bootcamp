@@ -7,7 +7,7 @@ permalink: /create-users-and-roles
 
 <h2 class='inline-header'>Create Users and Roles</h2>
 
-<p>Greenplum Database manages database access using roles. Initially, there is one superuser role—the role associated with the OS user who initialized the database instance, usually gpadmin. This user owns all of the Greenplum Database files and OS processes, so it is important to reserve the gpadmin role for system tasks only.  </p>
+<p>Cloudberry Database manages database access using roles. Initially, there is one superuser role—the role associated with the OS user who initialized the database instance, usually gpadmin. This user owns all of the Cloudberry Database files and OS processes, so it is important to reserve the gpadmin role for system tasks only.  </p>
 
 <p>A role can be a user or a group. A user role can log in to a database; that is, it has the LOGIN attribute. A user or group role can become a member of a group.</p>
 

@@ -8,9 +8,9 @@ permalink: /queries-and-performance-tuning
 
 <h2  class='inline-header'>Queries and Performance Tuning</h2>
 
-<p>This lesson provides an overview of how Greenplum Database processes queries. Understanding this process can be useful when writing and tuning queries.</p>
+<p>This lesson provides an overview of how Cloudberry Database processes queries. Understanding this process can be useful when writing and tuning queries.</p>
 
-<p>Users issue queries to Greenplum Database as they would to any database management system. They connect to the database instance on the Greenplum master host using a client application such as psql and submit SQL statements. </p>
+<p>Users issue queries to Cloudberry Database as they would to any database management system. They connect to the database instance on the Cloudberry master host using a client application such as psql and submit SQL statements. </p>
 
 <h4>
 <a id="understanding-query-planning-and-dispatch" class="anchor" href="#understanding-query-planning-and-dispatch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Query Planning and Dispatch</h4>
@@ -23,24 +23,24 @@ permalink: /queries-and-performance-tuning
 <img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/dispatch.jpg" width="400" alt="Dispatching the Parallel Query Plan"></p>
 
 <h4>
-<a id="understanding-greenplum-query-plans" class="anchor" href="#understanding-greenplum-query-plans" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Greenplum Query Plans</h4>
+<a id="understanding-greenplum-query-plans" class="anchor" href="#understanding-greenplum-query-plans" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Cloudberry Query Plans</h4>
 
-<p>A query plan is the set of operations Greenplum Database will perform to produce the answer to a query. Each node or step in the plan represents a database operation such as a table scan, join, aggregation, or sort. Plans are read and executed from bottom to top.</p>
+<p>A query plan is the set of operations Cloudberry Database will perform to produce the answer to a query. Each node or step in the plan represents a database operation such as a table scan, join, aggregation, or sort. Plans are read and executed from bottom to top.</p>
 
-<p>In addition to common database operations such as tables scans, joins, and so on, Greenplum Database has an additional operation type called motion. A motion operation involves moving tuples between the segments during query processing.</p>
+<p>In addition to common database operations such as tables scans, joins, and so on, Cloudberry Database has an additional operation type called motion. A motion operation involves moving tuples between the segments during query processing.</p>
 
-<p>To achieve maximum parallelism during query execution, Greenplum divides the work of the query plan into slices. A slice is a portion of the plan that segments can work on independently. A query plan is sliced wherever a motion operation occurs in the plan, with one slice on each side of the motion.</p>
+<p>To achieve maximum parallelism during query execution, Cloudberry divides the work of the query plan into slices. A slice is a portion of the plan that segments can work on independently. A query plan is sliced wherever a motion operation occurs in the plan, with one slice on each side of the motion.</p>
 
 <h4>
 <a id="understanding-parallel-query-execution" class="anchor" href="#understanding-parallel-query-execution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Parallel Query Execution</h4>
 
-<p>Greenplum creates a number of database processes to handle the work of a query. On the master, the query worker process is called the query dispatcher (QD). The QD is responsible for creating and dispatching the query plan. It also accumulates and presents the final results. On the segments, a query worker process is called a query executor (QE). A QE is responsible for completing its portion of work and communicating its intermediate results to the other worker processes.</p>
+<p>Cloudberry creates a number of database processes to handle the work of a query. On the master, the query worker process is called the query dispatcher (QD). The QD is responsible for creating and dispatching the query plan. It also accumulates and presents the final results. On the segments, a query worker process is called a query executor (QE). A QE is responsible for completing its portion of work and communicating its intermediate results to the other worker processes.</p>
 
 <p>There is at least one worker process assigned to each slice of the query plan. A worker process works on its assigned portion of the query plan independently. During query execution, each segment will have a number of processes working on the query in parallel.</p>
 
-<p>Related processes that are working on the same slice of the query plan but on different segments are called gangs. As a portion of work is completed, tuples flow up the query plan from one gang of processes to the next. This inter-process communication between the segments is referred to as the interconnect component of Greenplum Database.  </p>
+<p>Related processes that are working on the same slice of the query plan but on different segments are called gangs. As a portion of work is completed, tuples flow up the query plan from one gang of processes to the next. This inter-process communication between the segments is referred to as the interconnect component of Cloudberry Database.  </p>
 
-<p>This section introduces some of the basic principles of query and performance tuning in a Greenplum database.</p>
+<p>This section introduces some of the basic principles of query and performance tuning in a Cloudberry database.</p>
 
 <p>Some items to consider in performance tuning:  </p>
 
@@ -60,9 +60,9 @@ permalink: /queries-and-performance-tuning
 <h4>
 <a id="analyze-the-tables" class="anchor" href="#analyze-the-tables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Analyze the tables</h4>
 
-<p>Greenplum uses Multiversion Concurrency Control (MVCC) to guarantee isolation, one of the ACID properties of relational databases. MVCC enables multiple users of the database to obtain consistent results for a query, even if the data is changing as the query is being executed. There can be multiple versions of rows in the database, but a query sees a snapshot of the database at a single point in time, containing only the versions of rows that were valid at that point in time. When a row is updated or deleted and no active transactions continue to reference it, it can be removed. The VACUUM command removes older versions that are no longer needed, leaving free space that can be reused.
-    In a Greenplum database, normal OLTP operations do not create the need for vacuuming out old rows, but loading data while tables are in use may. It is a best practice to VACUUM a table after a load. If the table is partitioned, and only a single partition is being altered, then a VACUUM on that partition may suffice.<br>
-    The VACUUM FULL command behaves much differently than VACUUM, and its use is not recommended in Greenplum databases. It can be expensive in CPU and I/O, cause bloat in indexes, and lock data for long periods of time.
+<p>Cloudberry uses Multiversion Concurrency Control (MVCC) to guarantee isolation, one of the ACID properties of relational databases. MVCC enables multiple users of the database to obtain consistent results for a query, even if the data is changing as the query is being executed. There can be multiple versions of rows in the database, but a query sees a snapshot of the database at a single point in time, containing only the versions of rows that were valid at that point in time. When a row is updated or deleted and no active transactions continue to reference it, it can be removed. The VACUUM command removes older versions that are no longer needed, leaving free space that can be reused.
+    In a Cloudberry database, normal OLTP operations do not create the need for vacuuming out old rows, but loading data while tables are in use may. It is a best practice to VACUUM a table after a load. If the table is partitioned, and only a single partition is being altered, then a VACUUM on that partition may suffice.<br>
+    The VACUUM FULL command behaves much differently than VACUUM, and its use is not recommended in Cloudberry databases. It can be expensive in CPU and I/O, cause bloat in indexes, and lock data for long periods of time.
     The ANALYZE command generates statistics about the distribution of data in a table. In particular it stores histograms about the values in each of the columns. The query optimizer depends on these statistics to select the best plan for executing a query. For example, the optimizer can use distribution data to decide on join orders. One of the optimizer’s goals in a join is to minimize the volume of data that must be analyzed and potentially moved between segments by using the statistics to choose the smallest result set to work with first.</p>
 
 <ol>
@@ -224,9 +224,9 @@ Segment value: off
 
 <pre><code>20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Starting gpstop with args: -u
 20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Gathering information and validating the environment...
-20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Obtaining Greenplum Master catalog information
+20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Obtaining Cloudberry Master catalog information
 20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Obtaining Segment details from master...
-20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Greenplum Version: 'postgres (Greenplum Database) 4.3.12.0'
+20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 4.3.12.0'
 20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Signalling all postmaster processes to reload
 .
 </code></pre></blockquote></li>
@@ -234,7 +234,7 @@ Segment value: off
 <h4>
 <a id="indexes-and-performance" class="anchor" href="#indexes-and-performance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Indexes and performance</h4>
 
-<p>Greenplum Database does not depend upon indexes to the same degree as conventional data warehouse systems. Because the segments execute table scans in parallel, each segment scanning a small segment of the table, the traditional performance advantage from indexes is diminished. Indexes consume large amounts of space and require considerable CPU time to compute during data loads. There are, however, times when indexes are useful, especially for highly selective queries. When a query looks up a single row, an index can dramatically improve performance.</p>
+<p>Cloudberry Database does not depend upon indexes to the same degree as conventional data warehouse systems. Because the segments execute table scans in parallel, each segment scanning a small segment of the table, the traditional performance advantage from indexes is diminished. Indexes consume large amounts of space and require considerable CPU time to compute during data loads. There are, however, times when indexes are useful, especially for highly selective queries. When a query looks up a single row, an index can dramatically improve performance.</p>
 
 <p>In this exercise, you first run a single row lookup on the sample table without an index, then rerun the query after creating an index. </p>
 
@@ -340,7 +340,7 @@ tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345 OR big = 12355;
 <h4>
 <a id="row-vs-column-orientation" class="anchor" href="#row-vs-column-orientation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Row vs. column orientation</h4>
 
-<p>Greenplum Database offers the ability to store a table in either row or column orientation. Both storage options have advantages, depending upon data compression characteristics, the kinds of queries executed, the row length, and the complexity and number of join columns.</p>
+<p>Cloudberry Database offers the ability to store a table in either row or column orientation. Both storage options have advantages, depending upon data compression characteristics, the kinds of queries executed, the row length, and the complexity and number of join columns.</p>
 
 <p>As a general rule, very wide tables are better stored in row orientation, especially if there are joins on many columns. Column orientation works well to save space with compression and to reduce I/O when there is much duplicated data in columns.</p>
 
@@ -550,11 +550,11 @@ gp_segment_id ORDER BY gp_segment_id;
 
 <p>A common application for partitioning is to maintain a rolling window of data based on date, for example, a fact table containing the most recent 12 months of data. Using the ALTER TABLE statement, an existing partition can be dropped by removing its child file. This is much more efficient than scanning the entire table and removing rows with a DELETE statement.</p>
 
-<p>Partitions may also be subpartitioned. For example, a table could be partitioned by month, and the month partitions could be subpartitioned by week. Greenplum Database creates child files for the months and weeks. The actual data, however, is stored in the child files created for the week subpartitions—only child files at the leaf level hold data.</p>
+<p>Partitions may also be subpartitioned. For example, a table could be partitioned by month, and the month partitions could be subpartitioned by week. Cloudberry Database creates child files for the months and weeks. The actual data, however, is stored in the child files created for the week subpartitions—only child files at the leaf level hold data.</p>
 
 <p>When a new partition is added, you can run ANALYZE on just the data in that partition. ANALYZE can run on the root partition (the name of the table in the CREATE TABLE statement) or on a child file created for a leaf partition. If ANALYZE has already run on the other partitions and the data is static, it is not necessary to run it again on those partitions.  </p>
 
-<p>Greenplum Database supports:</p>
+<p>Cloudberry Database supports:</p>
 
 <ul>
 <li>Range partitioning: division of data based on a numerical range, such as date or price.<br>
@@ -565,7 +565,7 @@ gp_segment_id ORDER BY gp_segment_id;
 </li>
 </ul>
 
-<p><img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/part.jpg" width="400" alt="Greenplum Database partitioning">  </p>
+<p><img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/part.jpg" width="400" alt="Cloudberry Database partitioning">  </p>
 
 <p>The following exercise compares SELECT statements with WHERE clauses that do and
 do not use a partitioned column.</p>
