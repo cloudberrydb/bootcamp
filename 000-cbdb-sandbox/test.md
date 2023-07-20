@@ -17,6 +17,8 @@ Cloudberry: Setting up a Single Node Cluster.
 Purpose
 ============
 
+This document describes how to set up and configure a single-node Cloudberry installation so that you can quickly perform simple operations and SQL command using Cloudberry database.
+
 Prerequisites
 ============
 
