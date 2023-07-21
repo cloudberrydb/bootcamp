@@ -103,7 +103,7 @@ psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL: 
 </blockquote>
 
   
-<p>There are one more step to perform to make user(lily, lucy) able to login to database. We need to adjust pg_hba.conf config file and use gpstop to populate the change.</p>
+<p>There are one more step to perform to make user(lily, lucy) able to login to database. We need to adjust pg_hba.conf config file on the master node and use gpstop to populate the change.</p>
 
 <blockquote>
 <pre><code>[gpadmin@mdw ~]$ echo "local gpadmin lily trust" >> /data0/database/master/gpseg-1/pg_hba.conf
