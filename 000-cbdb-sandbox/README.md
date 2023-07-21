@@ -37,10 +37,7 @@ Installing-Software
 Standalone-Operation
 ============
 
-
-Dockerfile for Cloudberry env. 
-
-This is a Docker image file to deploy an single node Cloudberry Database for test purpose.
+In this scenario, it would deply a single node Cloudberry Database with one master and two segments inside one docker container.
 
 This image using one of the main branch of Cloudberry source code and compiling the binary, which runs on both x86 and arm (Including Mac M1) chips. 
 If you want to use a different version of CBDB, replace the CBDB source code package in "./configs/cbdb-<XXX>.zip" with the latest.
