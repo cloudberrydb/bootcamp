@@ -93,7 +93,7 @@ gpadmin=#
 </code></pre>
 </blockquote>
 
-<p>After creating users, we could not login to Cloudberry database yet. </p>
+<p>After user creation, they could not login to Cloudberry database yet. </p>
 <blockquote>
 <pre><code>[gpadmin@mdw ~]$ psql -U lily -d gpadmin
 psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL:  no pg_hba.conf entry for host "[local]", user "lily", database "gpadmin", no encryption
