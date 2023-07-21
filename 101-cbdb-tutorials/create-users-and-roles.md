@@ -25,7 +25,7 @@ psql (14.4, server 14.4)
 Type "help" for help.
 
 gpadmin=#
-gpadmin=# CREATE USER lily;
+gpadmin=# CREATE USER lily WITH PASSWORD 'changeme';
 NOTICE:  resource queue required -- using default resource queue "pg_default"
 CREATE ROLE
 gpadmin=#
@@ -106,7 +106,7 @@ psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL: 
 <p>There are one more step to perform to make user(lily, lucy) able to login to database. We need to adjust pg_hba.conf config file on the master node and use gpstop to populate the change.</p>
 
 <blockquote>
-<pre><code>[gpadmin@mdw ~]$ echo "local gpadmin lily trust" >> /data0/database/master/gpseg-1/pg_hba.conf
+<pre><code>[gpadmin@mdw ~]$ echo "local gpadmin lily md5" >> /data0/database/master/gpseg-1/pg_hba.conf
 [gpadmin@mdw ~]$
 [gpadmin@mdw ~]$ echo "local gpadmin lucy trust" >> /data0/database/master/gpseg-1/pg_hba.conf
 [gpadmin@mdw ~]$
@@ -120,10 +120,11 @@ psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL: 
 [gpadmin@mdw ~]$
 [gpadmin@mdw ~]$
 [gpadmin@mdw ~]$ psql -U lily -d gpadmin
+Password for user lily:
 psql (14.4, server 14.4)
 Type "help" for help.
 
-gpadmin=> \q
+gpadmin=>
 [gpadmin@mdw ~]$
 [gpadmin@mdw ~]$ psql -U lucy -d gpadmin
 psql (14.4, server 14.4)
@@ -134,5 +135,5 @@ gpadmin=# \q
 </code></pre>
 </blockquote>
 
-<p>User lily and user lucy have had different privileges.</p>
+<p>User lily and user lucy have had different privileges. You need to provide password "changeme" for lily when login.</p>
 
