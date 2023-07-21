@@ -17,98 +17,122 @@ permalink: /create-users-and-roles
 <a id="exercises" class="anchor" href="#exercises" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exercises</h3>
 
 <h4>
-<a id="create-a-user-with-the-createuser-utility-command" class="anchor" href="#create-a-user-with-the-createuser-utility-command" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a user with the createuser utility command</h4>
-
-<ol>
-<li>Login to the GPDB Sandbox as the gpadmin user.<br>
-</li>
-<li>
-<p>Enter the <em>createuser</em> command and reply to the prompts:  </p>
-
-<blockquote>
-<p><code>$ createuser -P user1</code></p>
-
-<pre><code>Enter password for new role:
-Enter it again:
-Shall the new role be a superuser? (y/n) n
-Shall the new role be allowed to create databases? (y/n) y
-Shall the new role be allowed to create more new roles? (y/n) n
-NOTICE:  resource queue required -- using default resource queue
-"pg_default"
-</code></pre>
-</blockquote>
-</li>
-</ol>
-
-<h4>
 <a id="create-a-user-with-the-create-user-command" class="anchor" href="#create-a-user-with-the-create-user-command" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a user with the CREATE USER command</h4>
 
-<ol>
-<li>
-<p>Connect to the template1 database as gpadmin:  </p>
-
 <blockquote>
-<p><code>$ psql template1</code></p>
-</blockquote>
-</li>
-<li>
-<p>Create a user with the name user2:  </p>
+<pre><code>[gpadmin@mdw ~]$ psql
+psql (14.4, server 14.4)
+Type "help" for help.
 
-<blockquote>
-<p><code>template1=#  CREATE USER user2 WITH PASSWORD 'pivotal' NOSUPERUSER;</code>  </p>
-</blockquote>
-</li>
-<li>
-<p>Display a list of roles:  </p>
+gpadmin=#
+gpadmin=# CREATE USER lily;
+NOTICE:  resource queue required -- using default resource queue "pg_default"
+CREATE ROLE
+gpadmin=#
+gpadmin=#
+gpadmin=# \du
+                             List of roles
+ Role name |                   Attributes                   | Member of
+-----------+------------------------------------------------+-----------
+ gpadmin   | Superuser, Create role, Create DB, Replication | {}
+ lily      |                                                | {}
 
-<blockquote>
-<pre><code>template1=# \du
-                       List of roles
- Role name |            Attributes             | Member of
------------+-----------------------------------+-----------
- gpadmin   | Superuser, Create role, Create DB |
- gpmon     | Superuser, Create DB              |
- user1     | Create DB                         |
- user2     |                                   |
+gpadmin=#
+gpadmin=#
 </code></pre>
 </blockquote>
-</li>
-</ol>
+
+
+<h4>
+<a id="create-a-user-with-the-createuser-utility-command" class="anchor" href="#create-a-user-with-the-createuser-utility-command" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a user with the createuser utility command</h4>
+
+<blockquote>
+
+<pre><code>[gpadmin@mdw ~]$ createuser --interactive lucy
+Shall the new role be a superuser? (y/n) y
+[gpadmin@mdw ~]$
+[gpadmin@mdw ~]$ psql
+psql (14.4, server 14.4)
+Type "help" for help.
+
+gpadmin=# \du
+                             List of roles
+ Role name |                   Attributes                   | Member of
+-----------+------------------------------------------------+-----------
+ gpadmin   | Superuser, Create role, Create DB, Replication | {}
+ lily      |                                                | {}
+ lucy      | Superuser, Create role, Create DB              | {}
+
+gpadmin=#
+</code></pre>
+</blockquote>
+
+
 
 <h4>
 <a id="create-a-users-group-and-add-the-users-to-it" class="anchor" href="#create-a-users-group-and-add-the-users-to-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create a users group and add the users to it</h4>
 
-<ol>
-<li>
-<p>While connected to the template1 database as gpadmin enter the following SQL commands:</p>
-
 <blockquote>
-<pre><code>    template1=# CREATE ROLE users;
-    template1=# GRANT users TO user1, user2;
+<pre><code>gpadmin=# CREATE ROLE users;
+NOTICE:  resource queue required -- using default resource queue "pg_default"
+CREATE ROLE
+gpadmin=#
+gpadmin=# GRANT users TO lily, lucy;
+GRANT ROLE
+gpadmin=#
+gpadmin=# \du
+                             List of roles
+ Role name |                   Attributes                   | Member of
+-----------+------------------------------------------------+-----------
+ gpadmin   | Superuser, Create role, Create DB, Replication | {}
+ lily      |                                                | {users}
+ lucy      | Superuser, Create role, Create DB              | {users}
+ users     | Cannot login                                   | {}
+
+gpadmin=#
 </code></pre>
 </blockquote>
-</li>
-<li>
-<p>Display the list of roles again:</p>
 
+<p>After creating users, we could not login to Cloudberry database yet. </p>
 <blockquote>
-<pre><code>template1=# \du
-                       List of roles
- Role name |            Attributes             | Member of
------------+-----------------------------------+-----------
- gpadmin   | Superuser, Create role, Create DB |
- gpmon     | Superuser, Create DB              |
- user1     | Create DB                         | {users}
- user2     |                                   | {users}
- users     | Cannot login                      |
+<pre><code>[gpadmin@mdw ~]$ psql -U lily -d gpadmin
+psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL:  no pg_hba.conf entry for host "[local]", user "lily", database "gpadmin", no encryption
+[gpadmin@mdw ~]$ psql -U lucy -d gpadmin
+psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL:  no pg_hba.conf entry for host "[local]", user "lucy", database "gpadmin", no encryption
 </code></pre>
 </blockquote>
-</li>
-<li>
-<p>Exit out of the psql shell:  </p>
+
+  
+<p>There are one more step to perform to make user(lily, lucy) able to login to database. We need to adjust pg_hba.conf config file and use gpstop to populate the change.</p>
 
 <blockquote>
-<p><code>template1=# \q</code></p>
+<pre><code>[gpadmin@mdw ~]$ echo "local gpadmin lily trust" >> /data0/database/master/gpseg-1/pg_hba.conf
+[gpadmin@mdw ~]$
+[gpadmin@mdw ~]$ echo "local gpadmin lucy trust" >> /data0/database/master/gpseg-1/pg_hba.conf
+[gpadmin@mdw ~]$
+[gpadmin@mdw ~]$ gpstop -u
+20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -u
+20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
+20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
+20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
+20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
+20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Signalling all postmaster processes to reload
+[gpadmin@mdw ~]$
+[gpadmin@mdw ~]$
+[gpadmin@mdw ~]$ psql -U lily -d gpadmin
+psql (14.4, server 14.4)
+Type "help" for help.
+
+gpadmin=> \q
+[gpadmin@mdw ~]$
+[gpadmin@mdw ~]$ psql -U lucy -d gpadmin
+psql (14.4, server 14.4)
+Type "help" for help.
+
+gpadmin=# \q
+[gpadmin@mdw ~]$
+</code></pre>
 </blockquote>
-</li>
-</ol>
+
+<p>User lily and user lucy have had different privileges.</p>
+
