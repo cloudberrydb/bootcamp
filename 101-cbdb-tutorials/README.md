@@ -4,7 +4,7 @@
 
 This repository contains the web based tutorials for Cloudberry Database.
 
-[Introduction to the Cloudberry Database Architecture](../101-cbdb-tutorials/introduction-to-the-greenplum-database-architecture.md)
+[Introduction to the Cloudberry Database Architecture](../101-cbdb-tutorials/introduction-to-the-cloudberry-database-architecture.md)
 
 [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md)
 
@@ -16,8 +16,5 @@ This repository contains the web based tutorials for Cloudberry Database.
 
 [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/queries-and-performance-tuning.md)
 
-[Lesson 6: Introduction to Cloudberry In-Database Analytics](../101-cbdb-tutorials/introduction-to-greenplum-in-database-analytics.md)
+[Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/backup-and-recovery-operations.md)
 
-[Lesson 7: Backup and Recovery Operations](../101-cbdb-tutorials/backup-and-recovery-operations.md)
-
-[Appendix 1: Importing into VMware Fusion](../101-cbdb-tutorials/importing-into-vmware-fusion.md)
