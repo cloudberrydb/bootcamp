@@ -153,7 +153,7 @@ Time: 5.635 ms
 
 <p>Query plans are read from bottom to top. In this example, there are four steps.  First there is a sequential scan on each segment server to access the rows. Then there is an aggregation on each segment server to produce a count of the number of rows from that segment. Then there is a gathering of the count value to a single location. Finally, the counts from each segment are aggregated to produce the final result.</p>
 
-<p>The cost number on each step has a start and stop value. For the sequential scan, this begins at time zero and goes until 13863.80. This is a fictional number created by the optimizer—it is not a number of seconds or I/O operations.</p>
+<p>The cost number on each step has a start and stop value. For the sequential scan, this begins at time zero and goes until 431.00. This is a fictional number created by the optimizer—it is not a number of seconds or I/O operations.</p>
 
 <p>The cost numbers are cumulative, so the cost for the second operation includes the cost for the first operation. Notice that nearly all the time to process this query is in the sequential scan.</p>
 </li>
@@ -164,30 +164,22 @@ Time: 5.635 ms
 <p><code>tutorial=# EXPLAIN ANALYZE SELECT COUNT(*) FROM sample WHERE id &gt; 100;</code></p>
 
 <pre><code>                             QUERY PLAN
------------------------------------------------------------------------------
- Aggregate  (cost=0.00..462.77 rows=1 width=8)
-   Rows out:  1 rows with 446 ms to end, start offset by 7.846 ms.
-   -&gt;  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..462.77
-rows=1 width=8)
-         Rows out:  2 rows at destination with 443 ms to first row,
-446 ms to end, start offset by 7.860 ms.
-         -&gt;  Aggregate  (cost=0.00..462.76 rows=1 width=8)
-               Rows out:  Avg 1.0 rows x 2 workers.  Max 1 rows (seg0)
-with 442 ms to end, start offset by 9.000 ms.
-               -&gt;  Table Scan on sample  (cost=0.00..462.76 rows=500687
-width=1)
-                     Filter: id &gt; 100
-                     Rows out: Avg 499950.0 rows x 2 workers. Max 499951 rows
-(seg0) with 88 ms to first row, 169 ms to end, start offset by 9.007 ms.
- Slice statistics:
-   (slice0)    Executor memory: 159K bytes.
-   (slice1)    Executor memory: 177K bytes avg x 2 workers, 177K bytes max (seg0).
- Statement statistics:
-   Memory used: 128000K bytes
- Settings:  optimizer=on
- Optimizer status: PQO version 1.597
- Total runtime: 453.855 ms
-(17 rows)
+----------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=0.00..463.54 rows=1 width=8) (actual time=329.600..329.602 rows=1 loops=1)
+   ->  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..463.54 rows=1 width=8) (actual time=325.897..329.586 rows=2 loops=1)
+         ->  Partial Aggregate  (cost=0.00..463.54 rows=1 width=8) (actual time=324.713..324.716 rows=1 loops=1)
+               ->  Seq Scan on sample  (cost=0.00..463.54 rows=499954 width=1) (actual time=30.992..296.384 rows=500184 loops=1)
+                     Filter: (id > 100)
+                     Rows Removed by Filter: 53
+ Planning Time: 5.192 ms
+   (slice0)    Executor memory: 37K bytes.
+   (slice1)    Executor memory: 122K bytes avg x 2 workers, 122K bytes max (seg0).
+ Memory used:  128000kB
+ Optimizer: Pivotal Optimizer (GPORCA)
+ Execution Time: 338.004 ms
+(12 rows)
+
+Time: 343.866 ms
 </code></pre>
 </blockquote>
 </li>
