@@ -15,9 +15,9 @@ permalink: /queries-and-performance-tuning
 <h4>
 <a id="understanding-query-planning-and-dispatch" class="anchor" href="#understanding-query-planning-and-dispatch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Query Planning and Dispatch</h4>
 
-<p>The master receives, parses, and optimizes the query. The resulting query plan is either parallel or targeted. The master dispatches parallel query plans to all segments, as shown in Figure 1. Each segment is responsible for executing local database operations on its own set of data.query plans.</p>
+<p>The master receives, parses, and optimizes the query. The resulting query plan is either parallel or targeted. The master dispatches parallel query plans to all segments, as shown in Figure 1. Each segment is responsible for executing local database operations on its own set of data query plans.</p>
 
-<p>Most database operations—such as table scans, joins, aggregations, and sorts—execute across all segments in parallel. Each operation is performed on a segment database independent of the data stored in the other segment databases.</p>
+<p>Most database operations such as table scan, join, aggregation and sort would be executed across all segments in parallel. Each operation is performed on one segment database independent of the data stored on other segment databases.</p>
 
 <p>Figure 1. Dispatching the Parallel Query Plan<br>
 <img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/dispatch.jpg" width="400" alt="Dispatching the Parallel Query Plan"></p>
@@ -25,20 +25,20 @@ permalink: /queries-and-performance-tuning
 <h4>
 <a id="understanding-greenplum-query-plans" class="anchor" href="#understanding-greenplum-query-plans" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Cloudberry Query Plans</h4>
 
-<p>A query plan is the set of operations Cloudberry Database will perform to produce the answer to a query. Each node or step in the plan represents a database operation such as a table scan, join, aggregation, or sort. Plans are read and executed from bottom to top.</p>
+<p>A query plan is a set of operations Cloudberry Database will perform to produce the answer to a query. Each node or step in the plan represents a database operation such as a table scan, join, aggregation or sort. Plans are read and executed from bottom to top.</p>
 
-<p>In addition to common database operations such as tables scans, joins, and so on, Cloudberry Database has an additional operation type called motion. A motion operation involves moving tuples between the segments during query processing.</p>
+<p>In addition to common database operations such as tables scan, join and so on, Cloudberry Database has an additional operation type called motion. A motion operation involves moving tuples between segments during query processing.</p>
 
-<p>To achieve maximum parallelism during query execution, Cloudberry divides the work of the query plan into slices. A slice is a portion of the plan that segments can work on independently. A query plan is sliced wherever a motion operation occurs in the plan, with one slice on each side of the motion.</p>
+<p>To achieve maximum parallelism during query execution, Cloudberry divides the work of a query plan into slices. A slice is a portion of the plan that segments could work on independently. A query plan is sliced wherever a motion operation occurs in the plan with one slice on each side of the motion.</p>
 
 <h4>
 <a id="understanding-parallel-query-execution" class="anchor" href="#understanding-parallel-query-execution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding Parallel Query Execution</h4>
 
-<p>Cloudberry creates a number of database processes to handle the work of a query. On the master, the query worker process is called the query dispatcher (QD). The QD is responsible for creating and dispatching the query plan. It also accumulates and presents the final results. On the segments, a query worker process is called a query executor (QE). A QE is responsible for completing its portion of work and communicating its intermediate results to the other worker processes.</p>
+<p>Cloudberry creates a number of database processes to handle the work of a query. On the master, the query worker process is called query dispatcher (QD). QD is responsible for creating and dispatching query plan. It also accumulates and presents the final results. On segments, a query worker process is called query executor (QE). QE is responsible for completing its portion of work and communicating its intermediate results to other worker processes.</p>
 
 <p>There is at least one worker process assigned to each slice of the query plan. A worker process works on its assigned portion of the query plan independently. During query execution, each segment will have a number of processes working on the query in parallel.</p>
 
-<p>Related processes that are working on the same slice of the query plan but on different segments are called gangs. As a portion of work is completed, tuples flow up the query plan from one gang of processes to the next. This inter-process communication between the segments is referred to as the interconnect component of Cloudberry Database.  </p>
+<p>Related processes that are working on the same slice of the query plan but on different segments are called gangs. As a portion of work is completed, tuples flow up the query plan from one gang of processes to the next. This inter-process communication between segments is referred to as the interconnect component of Cloudberry Database.  </p>
 
 <p>This section introduces some of the basic principles of query and performance tuning in a Cloudberry database.</p>
 
@@ -60,7 +60,7 @@ permalink: /queries-and-performance-tuning
 <h4>
 <a id="analyze-the-tables" class="anchor" href="#analyze-the-tables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Analyze the tables</h4>
 
-<p>Cloudberry uses Multiversion Concurrency Control (MVCC) to guarantee isolation, one of the ACID properties of relational databases. MVCC enables multiple users of the database to obtain consistent results for a query, even if the data is changing as the query is being executed. There can be multiple versions of rows in the database, but a query sees a snapshot of the database at a single point in time, containing only the versions of rows that were valid at that point in time. When a row is updated or deleted and no active transactions continue to reference it, it can be removed. The VACUUM command removes older versions that are no longer needed, leaving free space that can be reused.
+<p>Cloudberry Database uses Multiversion Concurrency Control (MVCC) to guarantee isolation, one of the ACID properties of relational databases. MVCC enables multiple users of the database to obtain consistent results for a query, even if the data is changing as the query is being executed. There can be multiple versions of rows in the database, but a query sees a snapshot of the database at a single point in time, containing only the versions of rows that were valid at that point in time. When a row is updated or deleted and no active transactions continue to reference it, it can be removed. The VACUUM command removes older versions that are no longer needed, leaving free space that can be reused.
     In a Cloudberry database, normal OLTP operations do not create the need for vacuuming out old rows, but loading data while tables are in use may. It is a best practice to VACUUM a table after a load. If the table is partitioned, and only a single partition is being altered, then a VACUUM on that partition may suffice.<br>
     The VACUUM FULL command behaves much differently than VACUUM, and its use is not recommended in Cloudberry databases. It can be expensive in CPU and I/O, cause bloat in indexes, and lock data for long periods of time.
     The ANALYZE command generates statistics about the distribution of data in a table. In particular it stores histograms about the values in each of the columns. The query optimizer depends on these statistics to select the best plan for executing a query. For example, the optimizer can use distribution data to decide on join orders. One of the optimizer’s goals in a join is to minimize the volume of data that must be analyzed and potentially moved between segments by using the statistics to choose the smallest result set to work with first.</p>
@@ -72,7 +72,7 @@ permalink: /queries-and-performance-tuning
 <blockquote>
 <p><code>$ psql -U gpadmin tutorial</code> </p>
 
-<pre><code>```
+<pre><code>
 tutorial=# ANALYZE faa.d_airports;
 ANALYZE
 tutorial=# ANALYZE faa.d_airlines;
@@ -87,7 +87,7 @@ tutorial=# ANALYZE faa.otp_r;
 ANALYZE
 tutorial=# ANALYZE faa.otp_c;
 ANALYZE
-```
+
 </code></pre>
 </blockquote>
 </li>
@@ -114,24 +114,22 @@ ANALYZE
 <p>View the create_sample_table.sql script, and then run it.</p>
 
 <blockquote>
-<p><code>tutorial=# \i create_sample_table.sql</code></p>
-
-<pre><code>DROP TABLE
-Time: 15.901 ms
+<p><code>tutorial=# \i create_sample_table.sql
+psql:create_sample_table.sql:1: NOTICE:  table "sample" does not exist, skipping
+DROP TABLE
+Time: 8.996 ms
 SET
-Time: 3.174 ms
-psql:create_sample_table.sql:3: NOTICE:  CREATE TABLE will create implicit
-sequence "sample_id_seq" for serial column "sample.id"
+Time: 0.509 ms
 CREATE TABLE
-Time: 24.421 ms
+Time: 20.419 ms
 INSERT 0 1000000
-Time: 14624.516 ms
+Time: 28598.022 ms (00:28.598)
 UPDATE 1000000
-Time: 1241.156 ms
+Time: 5176.394 ms (00:05.176)
 UPDATE 50000
-Time: 190.210 ms
+Time: 408.038 ms
 UPDATE 1000000
-Time: 1111.454 ms
+Time: 3148.945 ms (00:03.149)
 </code></pre>
 </blockquote>
 </li>
@@ -139,19 +137,17 @@ Time: 1111.454 ms
 <p>Request the explain plan for the COUNT() aggregate.</p>
 
 <blockquote>
-<p><code>tutorial=#  EXPLAIN SELECT COUNT(*) FROM sample WHERE id &gt; 100;</code></p>
+<p><code>tutorial=# EXPLAIN SELECT COUNT(*) FROM sample WHERE id > 100;
+                                     QUERY PLAN
+------------------------------------------------------------------------------------
+ Aggregate  (cost=0.00..431.00 rows=1 width=8)
+   ->  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..431.00 rows=1 width=1)
+         ->  Seq Scan on sample  (cost=0.00..431.00 rows=1 width=1)
+               Filter: (id > 100)
+ Optimizer: Pivotal Optimizer (GPORCA)
+(5 rows)
 
-<pre><code>                               QUERY PLAN
----------------------------------------------------------------------------
-Aggregate  (cost=0.00..462.77 rows=1 width=8)
- -&gt;  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..462.77
-  rows=1 width=8)
-   -&gt;  Aggregate  (cost=0.00..462.76 rows=1 width=8)
-     -&gt;  Table Scan on sample  (cost=0.00..462.76 rows=500687 width=1)
-              Filter: id &gt; 100
-Settings:  optimizer=on
-Optimizer status: PQO version 1.597
-(7 rows)
+Time: 5.635 ms
 </code></pre>
 </blockquote>
 
