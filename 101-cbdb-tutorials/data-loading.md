@@ -276,25 +276,23 @@ GPLOAD:
 <h4>
 <a id="create-and-load-fact-tables" class="anchor" href="#create-and-load-fact-tables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create and Load fact tables</h4>
 
-<p>The final step of the ELT process is to move data from the load table to the fact table.  For the FAA example, you create two fact tables. The faa.otp_r table is a row-oriented table, which will be loaded with data from the faa.faa_otp_load table. The faa.otp_c table has the same structure as the faa.otp_r table, but is column-oriented and partitioned. You will load it with data from the faa.otp_r table.  The two tables will contain identical data and allow you to experiment with a column-oriented and partitioned table in addition to a traditional row-oriented table. </p>
+<p>The final step of the ELT process is to move data from the load table to the fact table.  For the FAA example, you create two fact tables. The faa.otp_r table is a row-oriented table, which will be loaded with data from the faa.faa_otp_load table. The faa.otp_c table has the same structure as the faa.otp_r table, but is column-oriented and partitioned. You will load it with data from the faa.otp_r table.  The two tables will contain identical data and allow you to experiment with a column-oriented and partitioned table in addition to a traditional row-oriented table. Then you create the faa.otp_r and faa.otp_c tables by executing the create_fact_tables.sql script.  Load the data from the faa_otp_load table into the faa.otp_r table using the SQL INSERT FROM statement. Load the faa.otp_c table from the faa.otp_r table. Both of these loads can be accomplished by running the load_into_fact_table.sql script. </p>
 
 <ol>
-<li>
-<p>Create the faa.otp_r and faa.otp_c tables by executing the create_fact_tables.sql script.</p>
-
 <blockquote>
-<p><code>$ psql -U gpadmin tutorial</code><br>
-<code>tutorial=#  \i create_fact_tables.sql</code>
-Review the create_fact_tables.sql script and note that some columns are excluded from the fact table and the data types of some columns are cast to a different datatype. The MADlib routines usually require float8 values, so the numeric columns are cast to float8 as part of the transform step.</p>
-</blockquote>
-</li>
-<li>
-<p>Load the data from the faa_otp_load table into the faa.otp_r table using the SQL INSERT FROM statement. Load the faa.otp_c table from the faa.otp_r table. Both of these loads can be accomplished by running the load_into_fact_table.sql script.</p>
+<p><code>[gpadmin@mdw faa]$ psql -U gpadmin tutorial
+psql (14.4, server 14.4)
+Type "help" for help.
 
-<blockquote>
-<p><code>tutorial=#  \i load_into_fact_table.sql</code></p>
+tutorial=# \i create_fact_tables.sql
+CREATE TABLE
+CREATE TABLE
+tutorial=#
+tutorial=# \i load_into_fact_table.sql
+INSERT 0 1024552
+INSERT 0 1024552
+tutorial=#</code></p>
 </blockquote>
-</li>
 </ol>
 
 <h3>
@@ -302,7 +300,7 @@ Review the create_fact_tables.sql script and note that some columns are excluded
 
 <p>The ability to load billions of rows quickly into the Cloudberry database is one of its key features. Using “Extract, Load and Transform” (ELT) allows load processes to make use of the massive parallelism of the Cloudberry system by staging the data (perhaps just the use of external tables) and then applying data transformations within Cloudberry Database. Set-based operations can be done in parallel, maximizing performance.</p>
 
-<p>With other loading mechanisms such as COPY, data is loaded through the master in a single process. This does not take advantage of the parallel processing power of the Cloudberry segments. External tables provide a means of leveraging the parallel processing power of the segments for data loading. Also, unlike other loading mechanisms, you can access multiple data sources with one SELECT of an external table.</p>
+<p>With other loading mechanisms such as COPY, data is loaded through the master in a single process. This does not take advantage of the parallel processing power of Cloudberry segments. External tables provide a way of leveraging the parallel processing power of segments for data loading. Also, unlike other loading mechanisms, you can access multiple data sources with one SELECT of an external table.</p>
 
 <p>External tables make static data available inside the database. External tables can be defined with file:// or gpfdist:// protocols. gpfdist is a file server program that loads files in parallel. Since the data is static, external tables can be rescanned during a query execution.</p>
 
