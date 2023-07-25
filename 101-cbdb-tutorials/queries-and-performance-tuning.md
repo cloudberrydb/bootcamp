@@ -137,8 +137,9 @@ Time: 3148.945 ms (00:03.149)
 <p>Request the explain plan for the COUNT() aggregate.</p>
 
 <blockquote>
-<p><code>tutorial=# EXPLAIN SELECT COUNT(*) FROM sample WHERE id > 100;
-                                     QUERY PLAN
+<p><code>tutorial=# EXPLAIN SELECT COUNT(*) FROM sample WHERE id > 100;</code></p>
+
+<pre><code>           QUERY PLAN
 ------------------------------------------------------------------------------------
  Aggregate  (cost=0.00..431.00 rows=1 width=8)
    ->  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..431.00 rows=1 width=1)
