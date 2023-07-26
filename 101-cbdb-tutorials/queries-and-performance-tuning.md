@@ -228,15 +228,15 @@ Segment     value: on
 
 <ol>
 
-<pre><code>gpadmin=# SELECT * FROM sample WHERE big = 12345;
+<pre><code>tutorial=# SELECT * FROM sample WHERE big = 12345;
   id   |  big  | wee | stuff
 -------+-------+-----+-------
  12345 | 12345 |   0 |
 (1 row)
 
 Time: 251.304 ms
-gpadmin=#
-gpadmin=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
+tutorial=#
+tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
                                    QUERY PLAN
 --------------------------------------------------------------------------------
  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..8552.02 rows=1 width=15)
@@ -246,21 +246,21 @@ gpadmin=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
 (4 rows)
 
 Time: 0.709 ms
-gpadmin=#
-gpadmin=#
-gpadmin=# CREATE INDEX sample_big_index ON sample(big);
+tutorial=#
+tutorial=#
+tutorial=# CREATE INDEX sample_big_index ON sample(big);
 CREATE INDEX
 Time: 1574.117 ms (00:01.574)
-gpadmin=#
-gpadmin=#
-gpadmin=# SELECT * FROM sample WHERE big = 12345;
+tutorial=#
+tutorial=#
+tutorial=# SELECT * FROM sample WHERE big = 12345;
   id   |  big  | wee | stuff
 -------+-------+-----+-------
  12345 | 12345 |   0 |
 (1 row)
 
 Time: 2.774 ms
-gpadmin=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
+tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
                                       QUERY PLAN
 --------------------------------------------------------------------------------------
  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.17..8.21 rows=1 width=15)
