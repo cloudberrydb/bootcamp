@@ -222,95 +222,58 @@ Segment     value: on
 <h4>
 <a id="indexes-and-performance" class="anchor" href="#indexes-and-performance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Indexes and performance</h4>
 
-<p>Cloudberry Database does not depend upon indexes to the same degree as conventional data warehouse systems. Because the segments execute table scans in parallel, each segment scanning a small segment of the table, the traditional performance advantage from indexes is diminished. Indexes consume large amounts of space and require considerable CPU time to compute during data loads. There are, however, times when indexes are useful, especially for highly selective queries. When a query looks up a single row, an index can dramatically improve performance.</p>
+<p>Cloudberry Database does not depend upon indexes to the same degree as tranditional data warehouse systems. Because the segments execute table scans in parallel, each segment scanning a small part of the table, the traditional performance advantage from indexes is gone. Indexes consume large amounts of space and require considerable CPU time slot to compute during data loads. There are, however, times when indexes are useful, especially for highly selective queries. When a query looks up a single row, an index can dramatically improve performance.</p>
 
-<p>In this exercise, you first run a single row lookup on the sample table without an index, then rerun the query after creating an index. </p>
+<p>In this exercise, you work with legacy optimizer to know how index could improve performance. You first run a single row lookup on the sample table without an index, then rerun the query after creating an index. </p>
 
 <ol>
-<li>
-<p>Select a single row and note the time to execute the query.  </p>
 
-<blockquote>
-<p><code>tutorial=# SELECT * from sample WHERE big = 12345;</code></p>
-
-<pre><code>  id   |  big  | wee | stuff
+<pre><code>gpadmin=# SELECT * FROM sample WHERE big = 12345;
+  id   |  big  | wee | stuff
 -------+-------+-----+-------
  12345 | 12345 |   0 |
 (1 row)
-Time: 197.640 ms
-</code></pre>
-</blockquote>
-</li>
-<li>
-<p>View the explain plan for the previous query:  </p>
 
-<blockquote>
-<p><code>tutorial=# EXPLAIN SELECT * from sample WHERE big = 12345;</code>  </p>
+Time: 251.304 ms
+gpadmin=#
+gpadmin=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
+                                   QUERY PLAN
+--------------------------------------------------------------------------------
+ Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..8552.02 rows=1 width=15)
+   ->  Seq Scan on sample  (cost=0.00..8552.00 rows=1 width=15)
+         Filter: (big = 12345)
+ Optimizer: Postgres query optimizer
+(4 rows)
 
-<pre><code>                                  QUERY PLAN
------------------------------------------------------------------------
-Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..459.04
-rows=2 width=12)
-   -&gt;  Table Scan on sample  (cost=0.00..459.04 rows=1 width=12)
-         Filter: big = 12345
- Settings:  optimizer=on
- Optimizer status: PQO version 1.597
-(5 rows)
-Time: 19.719 ms
-</code></pre>
-</blockquote>
-</li>
-<li>
-<p>Create an index on the sample table.</p>
-
-<blockquote>
-<p><code>tutorial=# CREATE INDEX sample_big_index ON sample(big);</code></p>
-
-<pre><code>CREATE INDEX
-Time: 1106.467 ms
-</code></pre>
-</blockquote>
-</li>
-<li>
-<p>View the explain plan for the single-row select query with the new index in place:</p>
-
-<blockquote>
-<p><code>tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;</code></p>
-
-<pre><code>                              QUERY PLAN
---------------------------------------------------------------------------
- Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..3.00 rows=2
-width=12)
-   -&gt;  Index Scan using sample_big_index on sample  (cost=0.00..3.00
-rows=1 width=12)
-         Index Cond: big = 12345
- Settings:  optimizer=on
- Optimizer status: PQO version 1.597
-(5 rows)
-</code></pre>
-</blockquote>
-
-<p>Time: 23.674 ms</p>
-
-<pre><code></code></pre>
-</li>
-<li>
-<p>Run the single-row SELECT query with the index in place and note the time.</p>
-
-<blockquote>
-<p><code>tutorial=# SELECT * FROM sample WHERE big = 12345;</code></p>
-
-<pre><code>  id   |  big  | wee | stuff
+Time: 0.709 ms
+gpadmin=#
+gpadmin=#
+gpadmin=# CREATE INDEX sample_big_index ON sample(big);
+CREATE INDEX
+Time: 1574.117 ms (00:01.574)
+gpadmin=#
+gpadmin=#
+gpadmin=# SELECT * FROM sample WHERE big = 12345;
+  id   |  big  | wee | stuff
 -------+-------+-----+-------
  12345 | 12345 |   0 |
 (1 row)
-Time: 29.421 ms
-</code></pre>
 
-<p>Notice the difference in timing between the single-row SELECT with and without the index. The difference would have been much greater for a larger table. Not that even when there is a index, the optimizer can choose not to use it if it calculates a more efficient plan.</p>
-</blockquote>
-</li>
-<li>
+Time: 2.774 ms
+gpadmin=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
+                                      QUERY PLAN
+--------------------------------------------------------------------------------------
+ Gather Motion 2:1  (slice1; segments: 2)  (cost=0.17..8.21 rows=1 width=15)
+   ->  Index Scan using sample_big_index on sample  (cost=0.17..8.19 rows=1 width=15)
+         Index Cond: (big = 12345)
+ Optimizer: Postgres query optimizer
+(4 rows)
+
+Time: 0.627 ms</code></pre>
+
+
+<p>Notice the difference in timing between the single-row SELECT with and without the index. The difference would have been much greater for a larger table. Not that even when there is a index, the optimizer can choose not to use it if it has got a more efficient plan.</p>
+
 <p>View the following explain plans to compare plans for some other common types
 of queries.</p>
 
