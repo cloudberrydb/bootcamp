@@ -197,27 +197,26 @@ EXPLAIN output under "Optimizer status."</p>
 <blockquote><p><code>$ gpconfig -s optimizer</code></p>
 
 <pre><code>Values on all segments are consistent
-GUC          : optimizer
-Master  value: off
-Segment value: off
+GUC              : optimizer
+Coordinator value: on
+Segment     value: on
 </code></pre></blockquote></li>
-<li><p>Enable the Pivotal Query Optimizer</p>
+<li><p>Disable the Pivotal Query Optimizer</p>
 
-<blockquote><p><code>$ gpconfig -c optimizer -v on --masteronly</code></p>
+<blockquote><p><code>$ gpconfig -c optimizer -v off --masteronly</code></p>
 
-<pre><code> 20151201:09:08:31:172854 gpconfig:gpdb-sandbox:gpadmin-[INFO]:-completed successfully
+<pre><code> 20230726:14:42:31:031343 gpconfig:mdw:gpadmin-[INFO]:-completed successfully with parameters '-c optimizer -v on --masteronly'
 </code></pre></blockquote></li>
 <li><p>Reload the configuration on master and segment instances.</p>
 
 <blockquote><p><code>$ gpstop -u</code></p>
 
-<pre><code>20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Starting gpstop with args: -u
-20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Gathering information and validating the environment...
-20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Obtaining Cloudberry Master catalog information
-20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Obtaining Segment details from master...
-20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 4.3.12.0'
-20151201:09:08:49:172949 gpstop:gpdb-sandbox:gpadmin-[INFO]:-Signalling all postmaster processes to reload
-.
+<pre><code>20230726:14:42:49:031465 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -u
+20230726:14:42:49:031465 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
+20230726:14:42:49:031465 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
+20230726:14:42:49:031465 gpstop:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
+20230726:14:42:49:031465 gpstop:mdw:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
+20230726:14:42:49:031465 gpstop:mdw:gpadmin-[INFO]:-Signalling all postmaster processes to reload
 </code></pre></blockquote></li>
 </ol>
 <h4>
