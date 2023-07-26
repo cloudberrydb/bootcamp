@@ -307,9 +307,12 @@ orientation=column)
 DISTRIBUTED BY (UniqueCarrier, FlightNum) PARTITION BY RANGE(FlightDate)
 ( PARTITION mth START('2009-06-01'::date) END ('2010-10-31'::date)
 EVERY ('1 mon'::interval));
+CREATE TABLE
+tutorial=#
 </code></pre>
 
 <pre><code>tutorial=# INSERT INTO faa.otp_c SELECT * FROM faa.otp_r;
+INSERT 0 1024552
 </code></pre>
 </blockquote>
 </li>
@@ -320,113 +323,112 @@ EVERY ('1 mon'::interval));
 <p><code>tutorial=# \d faa.otp_r</code></p>
 
 <pre><code>                  Table "faa.otp_r"
-        Column        |       Type       | Modifiers
-----------------------+------------------+-----------
- flt_year             | smallint         |
- flt_quarter          | smallint         |
- flt_month            | smallint         |
- flt_dayofmonth       | smallint         |
- flt_dayofweek        | smallint         |
- flightdate           | date             |
- uniquecarrier        | text             |
- airlineid            | integer          |
- carrier              | text             |
- flightnum            | text             |
- origin               | text             |
- origincityname       | text             |
- originstate          | text             |
- originstatename      | text             |
- dest                 | text             |
- destcityname         | text             |
- deststate            | text             |
- deststatename        | text             |
- crsdeptime           | text             |
- deptime              | integer          |
- depdelay             | double precision |
- depdelayminutes      | double precision |
- departuredelaygroups | smallint         |
- taxiout              | smallint         |
- wheelsoff            | text             |
- wheelson             | text             |
- taxiin               | smallint         |
- crsarrtime           | text             |
- arrtime              | text             |
- arrdelay             | double precision |
- arrdelayminutes      | double precision |
- arrivaldelaygroups   | smallint         |
- cancelled            | smallint         |
- cancellationcode     | text             |
- diverted             | smallint         |
- crselapsedtime       | integer          |
- actualelapsedtime    | double precision |
- airtime              | double precision |
- flights              | smallint         |
- distance             | double precision |
- distancegroup        | smallint         |
- carrierdelay         | smallint         |
- weatherdelay         | smallint         |
- nasdelay             | smallint         |
- securitydelay        | smallint         |
- lateaircraftdelay    | smallint         |
+        Column        |       Type       | Collation | Nullable | Default
+----------------------+------------------+-----------+----------+---------
+ flt_year             | smallint         |           |          |
+ flt_quarter          | smallint         |           |          |
+ flt_month            | smallint         |           |          |
+ flt_dayofmonth       | smallint         |           |          |
+ flt_dayofweek        | smallint         |           |          |
+ flightdate           | date             |           |          |
+ uniquecarrier        | text             |           |          |
+ airlineid            | integer          |           |          |
+ carrier              | text             |           |          |
+ flightnum            | text             |           |          |
+ origin               | text             |           |          |
+ origincityname       | text             |           |          |
+ originstate          | text             |           |          |
+ originstatename      | text             |           |          |
+ dest                 | text             |           |          |
+ destcityname         | text             |           |          |
+ deststate            | text             |           |          |
+ deststatename        | text             |           |          |
+ crsdeptime           | text             |           |          |
+ deptime              | integer          |           |          |
+ depdelay             | double precision |           |          |
+ depdelayminutes      | double precision |           |          |
+ departuredelaygroups | smallint         |           |          |
+ taxiout              | smallint         |           |          |
+ wheelsoff            | text             |           |          |
+ wheelson             | text             |           |          |
+ taxiin               | smallint         |           |          |
+ crsarrtime           | text             |           |          |
+ arrtime              | text             |           |          |
+ arrdelay             | double precision |           |          |
+ arrdelayminutes      | double precision |           |          |
+ arrivaldelaygroups   | smallint         |           |          |
+ cancelled            | smallint         |           |          |
+ cancellationcode     | text             |           |          |
+ diverted             | smallint         |           |          |
+ crselapsedtime       | integer          |           |          |
+ actualelapsedtime    | double precision |           |          |
+ airtime              | double precision |           |          |
+ flights              | smallint         |           |          |
+ distance             | double precision |           |          |
+ distancegroup        | smallint         |           |          |
+ carrierdelay         | smallint         |           |          |
+ weatherdelay         | smallint         |           |          |
+ nasdelay             | smallint         |           |          |
+ securitydelay        | smallint         |           |          |
+ lateaircraftdelay    | smallint         |           |          |
 Distributed by: (uniquecarrier, flightnum)
 </code></pre>
 
 <p>Notice that the column-oriented version is append-only and partitioned. It has seventeen child files for the partitions, one for each month from June 2009 through October 2010.
 <code>tutorial=# \d faa.otp_c</code></p>
 
-<pre><code>       Append-Only Columnar Table "faa.otp_c"
-        Column        |       Type       | Modifiers
-----------------------+------------------+-----------
- flt_year             | smallint         |
- flt_quarter          | smallint         |
- flt_month            | smallint         |
- flt_dayofmonth       | smallint         |
- flt_dayofweek        | smallint         |
- flightdate           | date             |
- uniquecarrier        | text             |
- airlineid            | integer          |
- carrier              | text             |
- flightnum            | text             |
- origin               | text             |
- origincityname       | text             |
- originstate          | text             |
- originstatename      | text             |
- dest                 | text             |
- destcityname         | text             |
- deststate            | text             |
- deststatename        | text             |
- crsdeptime           | text             |
- deptime              | integer          |
- depdelay             | double precision |
- depdelayminutes      | double precision |
- departuredelaygroups | smallint         |
- taxiout              | smallint         |
- wheelsoff            | text             |
- wheelson             | text             |
- taxiin               | smallint         |
- crsarrtime           | text             |
- arrtime              | text             |
- arrdelay             | double precision |
- arrdelayminutes      | double precision |
- arrivaldelaygroups   | smallint         |
- cancelled            | smallint         |
- cancellationcode     | text             |
- diverted             | smallint         |
- crselapsedtime       | integer          |
- actualelapsedtime    | double precision |
- airtime              | double precision |
- flights              | smallint         |
- distance             | double precision |
- distancegroup        | smallint         |
- carrierdelay         | smallint         |
- weatherdelay         | smallint         |
- nasdelay             | smallint         |
- securitydelay        | smallint         |
- lateaircraftdelay    | smallint         |
-Checksum: t
-Number of child tables: 17 (Use \d+ to list them.)
-Distributed by: (uniquecarrier, flightnum)
-</code></pre>
+<pre><code> Partitioned table "faa.otp_c"
+        Column        |       Type       | Collation | Nullable | Default
+----------------------+------------------+-----------+----------+---------
+ flt_year             | smallint         |           |          |
+ flt_quarter          | smallint         |           |          |
+ flt_month            | smallint         |           |          |
+ flt_dayofmonth       | smallint         |           |          |
+ flt_dayofweek        | smallint         |           |          |
+ flightdate           | date             |           |          |
+ uniquecarrier        | text             |           |          |
+ airlineid            | integer          |           |          |
+ carrier              | text             |           |          |
+ flightnum            | text             |           |          |
+ origin               | text             |           |          |
+ origincityname       | text             |           |          |
+ originstate          | text             |           |          |
+ originstatename      | text             |           |          |
+ dest                 | text             |           |          |
+ destcityname         | text             |           |          |
+ deststate            | text             |           |          |
+ deststatename        | text             |           |          |
+ crsdeptime           | text             |           |          |
+ deptime              | integer          |           |          |
+ depdelay             | double precision |           |          |
+ depdelayminutes      | double precision |           |          |
+ departuredelaygroups | smallint         |           |          |
+ taxiout              | smallint         |           |          |
+ wheelsoff            | text             |           |          |
+ wheelson             | text             |           |          |
+ taxiin               | smallint         |           |          |
+ crsarrtime           | text             |           |          |
+ arrtime              | text             |           |          |
+ arrdelay             | double precision |           |          |
+ arrdelayminutes      | double precision |           |          |
+ arrivaldelaygroups   | smallint         |           |          |
+ cancelled            | smallint         |           |          |
+ cancellationcode     | text             |           |          |
+ diverted             | smallint         |           |          |
+ crselapsedtime       | integer          |           |          |
+ actualelapsedtime    | double precision |           |          |
+ airtime              | double precision |           |          |
+ flights              | smallint         |           |          |
+ distance             | double precision |           |          |
+ distancegroup        | smallint         |           |          |
+ carrierdelay         | smallint         |           |          |
+ weatherdelay         | smallint         |           |          |
+ nasdelay             | smallint         |           |          |
+ securitydelay        | smallint         |           |          |
+ lateaircraftdelay    | smallint         |           |          |
+Partition key: RANGE (flightdate)
+Number of partitions: 17 (Use \d+ to list them.)
+Distributed by: (uniquecarrier, flightnum)</code></pre>
 </blockquote>
 </li>
 <li>
@@ -461,7 +463,7 @@ Distributed by: (uniquecarrier, flightnum)
 
 <pre><code> pg_size_pretty
 ----------------
- 288 kB
+ 0 bytes
 (1 row)
 </code></pre>
 </blockquote>
