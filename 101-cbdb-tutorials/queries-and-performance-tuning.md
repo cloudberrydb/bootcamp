@@ -484,10 +484,10 @@ Distributed by: (uniquecarrier, flightnum)</code></pre>
 gp_segment_id ORDER BY gp_segment_id;
 </code></pre>
 
-<pre><code>gp_segment_id |  count
----------------+---------
-         0 | 1028144
-         1 | 1020960
+<pre><code> gp_segment_id | count
+---------------+--------
+             0 | 513746
+             1 | 510806
 (2 rows)
 </code></pre>
 </blockquote>
@@ -528,32 +528,71 @@ do not use a partitioned column.</p>
 <p>The column-oriented version of the fact table you created is partitioned by date.  First, execute a query that filters on a non-partitioned column and note the execution time.  </p>
 
 <blockquote>
-<p><code>tutorial=# \timing on</code></p>
+<pre>tutorial=# \timing on
+Timing is on.
+tutorial=# EXPLAIN SELECT MAX(depdelay) FROM faa.otp_c WHERE UniqueCarrier = 'UA';
+NOTICE:  One or more columns in the following table(s) do not have statistics: otp_c
+HINT:  For non-partitioned tables, run analyze <table_name>(<column_list>). For partitioned tables, run analyze rootpartition <table_name>(<column_list>). See log for columns missing statistics.
+                                            QUERY PLAN
+--------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=0.00..531.33 rows=1 width=8)
+   ->  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..531.33 rows=1 width=8)
+         ->  Partial Aggregate  (cost=0.00..531.33 rows=1 width=8)
+               ->  Append  (cost=0.00..531.15 rows=204908 width=16)
+                     ->  Seq Scan on otp_c_1_prt_mth_1  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_2  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_3  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_4  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_5  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_6  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_7  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_8  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_9  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_10  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_11  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_12  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_13  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_14  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_15  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_16  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+                     ->  Seq Scan on otp_c_1_prt_mth_17  (cost=0.00..531.15 rows=204908 width=16)
+                           Filter: (uniquecarrier = 'UA'::text)
+ Optimizer: Pivotal Optimizer (GPORCA)
+(39 rows)
+Time: 16.113 ms
+tutorial=#
+tutorial=#
+tutorial=# EXPLAIN SELECT MAX(depdelay) FROM faa.otp_c WHERE flightdate ='2009-11-01';
+NOTICE:  One or more columns in the following table(s) do not have statistics: otp_c
+HINT:  For non-partitioned tables, run analyze <table_name>(<column_list>). For partitioned tables, run analyze rootpartition <table_name>(<column_list>). See log for columns missing statistics.
+                                           QUERY PLAN
+------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=0.00..470.52 rows=1 width=8)
+   ->  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.00..470.52 rows=1 width=8)
+         ->  Partial Aggregate  (cost=0.00..470.52 rows=1 width=8)
+               ->  Append  (cost=0.00..470.45 rows=81963 width=12)
+                     ->  Seq Scan on otp_c_1_prt_mth_6  (cost=0.00..470.45 rows=81963 width=12)
+                           Filter: (flightdate = '2009-11-01'::date)
+ Optimizer: Pivotal Optimizer (GPORCA)
+(7 rows)
 
-<pre><code>Timing is on.
-</code></pre>
-
-<p><code>tutorial=# SELECT MAX(depdelay) FROM faa.otp_c WHERE UniqueCarrier = 'UA';</code></p>
-
-<pre><code> max
-------
- 1360
-(1 row)
-Time: 641.574 ms
-</code></pre>
-</blockquote>
-</li>
-<li>
-<p>Execute a query that filters on flightdate, the partitioned column. </p>
-
-<blockquote>
-<p><code>tutorial=# SELECT MAX(depdelay) FROM faa.otp_c WHERE flightdate ='2009-11-01';</code> </p>
-
-<pre><code> max
------
-1201
-(1 row)
-Time: 30.658 ms
+Time: 7.434 ms<code>
 </code></pre>
 </blockquote>
 
