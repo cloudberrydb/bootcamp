@@ -90,8 +90,7 @@ tutorial=# select count(*) from faa.otp_r;
 ---------
  1024552
 (1 row)
-
-tutorial=#</code></p>
+</code></p>
 </blockquote>
 
 <p>This should return 1024552 rows in the table.  Let's truncate the table and then check the row count:</p>
@@ -120,6 +119,7 @@ tutorial=#
 </li>
 </ol>
 
+<blockquote>
 <pre><code>20230727:10:38:29 gprestore:gpadmin:mdw:020373-[INFO]:-Restore Key = 20230727102819
 20230727:10:38:30 gprestore:gpadmin:mdw:020373-[INFO]:-gpbackup version = 1.2.7-beta1+dev.7
 20230727:10:38:30 gprestore:gpadmin:mdw:020373-[INFO]:-gprestore version = 1.2.7-beta1+dev.7
@@ -130,7 +130,7 @@ Tables restored:  1 / 1 [=======================================================
 20230727:10:38:35 gprestore:gpadmin:mdw:020373-[INFO]:-Data restore complete
 20230727:10:38:35 gprestore:gpadmin:mdw:020373-[INFO]:-Found neither /usr/local/cloudberry-db/bin/gp_email_contacts.yaml nor /home/gpadmin/gp_email_contacts.yaml
 20230727:10:38:35 gprestore:gpadmin:mdw:020373-[INFO]:-Email containing gprestore report /tmp/gpseg-1/backups/20230727/20230727102819/gprestore_20230727102819_20230727103829_report will not be sent
-20230727:10:38:35 gprestore:gpadmin:mdw:020373-[INFO]:-Restore completed successfully</code></pre>
+20230727:10:38:35 gprestore:gpadmin:mdw:020373-[INFO]:-Restore completed successfully</code></pre></blockquote>blockquote>
 
 <ol>
 <li>Finally, verify the row count
