@@ -1,7 +1,7 @@
-# Decision Support Benchmark for HashData database.
+# Decision Support Benchmark for Cloudberry database.
 
 This tool is based on the benchmark tool [TPC-H](https://www.tpc.org/tpch/default5.asp).
-This repo contains automation of running the TPC-H benchmark on an existing Hashdata cluster.
+This repo contains automation of running the TPC-H benchmark on an existing Cloudberry cluster.
 
 ## Context
 
