@@ -34,7 +34,7 @@ The original source code is from http://tpc.org/tpc_documents_current_versions/c
 
 ### Packages
 
-TPC-H and TPC-DS packages are already under mde:/tmp/ folder.
+TPC-H and TPC-DS packages are already under "mdw:/tmp/" folder.
 
 ```bash
 [gpadmin@mdw tmp]$ ls -rlt
