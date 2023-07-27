@@ -1,7 +1,7 @@
-# Decision Support Benchmark for HashData database.
+# Decision Support Benchmark for Cloudberry database.
 
 This tool is based on the benchmark tool [pivotal TPC-DS](https://github.com/pivotal/TPC-DS).
-This repo contains automation of running the DS benchmark on an existing Hashdata cluster.
+This repo contains automation of running the DS benchmark on an existing Cloudberry cluster.
 
 ## Context
 
