@@ -51,5 +51,11 @@ docker exec -it <container-id>  /bin/bash
 su - gpadmin
 tar xzf TPC-H-CBDB.tar.gz
 cd ~/TPC-H-CBDB
-./tpch.sh
+./run.sh
+```
+
+You may check tpch execution result log information under the same directory with similar name like below.
+
+```
+tpch_20230727_145051.log
 ```
