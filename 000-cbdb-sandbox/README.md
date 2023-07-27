@@ -53,6 +53,7 @@ Deploy steps:
 ```
 unzip cbdb-docker.zip
 cd cbdb-docker
+chmod +x ./run.sh
 ./run.sh
 ```
 
