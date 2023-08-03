@@ -1,103 +1,102 @@
-Cloudberry: Setting up a Single Node Cluster.
-=================
+---
+title: Install a Single-Node Cloudberry Database
+---
 
-<!--ts-->
-   * [Purpose](#purpose)
-   * [Prerequisites](#prerequisites)
-      * [Supported Platforms](#Supported-Platforms)
-      * [Required Software](#Required-Software)
-      * [Installing Software](#Installing-Software)
-   * [Standalone Operation](#Standalone-Operation)
-   * [Pseudo-Distributed Operation](#Pseudo-Distributed-Operation)
-      * [Configuration](#Configuration)
-      * [Setup ssh](#Setup-ssh)
-   * [Fully-Distributed Operation](#Fully-Distributed-Operation)
-<!--te-->
+# Install a Single-Node Cloudberry Database
 
-Purpose
-============
+This guide introduces how to quickly install and connect to a single-node Cloudberry Database. Following this guide, you can start trying out Cloudberry Database by performing some simple operations or running SQL commands on it.
 
-This document describes how to set up and configure a single-node Cloudberry installation so that you can quickly perform simple operations and SQL command using Cloudberry database.
+> Note: This guide is intended for testing or development purposes, not for production deployments.
 
-Prerequisites
-============
+This guide introduces single-node installation on the following architectures:
 
-Supported-Platforms
------
-* GNU/Linux is supported as a development and production platform.
+- A standalone machine
+- A pseudo-distributed cluster
+- A fully-distributed cluster
 
-Required-Software
------
-* GNU/Linux is supported as a development and production platform.
+## Prerequisites
 
-Installing-Software
------
-* GNU/Linux is supported as a development and production platform.
+Before moving on to the installation steps, make sure that your environment meets the following requirements:
 
-Standalone-Operation
-============
+Operating systems: CentOS 7.6, macOS
 
-In this scenario, it would deply a single node Cloudberry Database with one master and two segments inside one docker container.
+Required software: Docker Desktop
 
-This image using one of the main branch of Cloudberry source code and compiling the binary, which runs on both x86 and arm (Including Mac M1) chips. 
-If you want to use a different version of CBDB, replace the CBDB source code package in "./configs/cbdb-<XXX>.zip" with the latest.
-This version includes CBDB 1.2.0
+Other dependencies: Git, SSH, internet connection
 
+## Install on a standalone machine
 
-Deploy steps:
+This section introduces how to install a single-node Cloudberry Database on a standalone machine, with one master node and two segments in a Docker container. In the Docker image, the binary source code of Cloudberry Database v1.3 is compiled. This process can run on either x86 or arm (including Mac M1) chips.
 
-1. Install Docker Desktop
-2. Download this repo
-3. execute run.sh
+Following the steps below, Cloudberry Database v1.3 is installed by default. If you want to install a different version, replace the source code package in `./configs/cbdb-<XXX>.zip` with your desired one.
 
-```
-unzip cbdb-docker.zip
-cd cbdb-docker
-chmod +x ./run.sh
-./run.sh
-```
+Installation steps:
 
-4. If you want to use Centos8 OS, execute run_centos8.sh
+1. Start Docker Desktop and make sure it is running properly on the target standalone machine.
 
-To use:
+2. Download this repository (which is [cloudberry/bootcamp](https://github.com/cloudberrydb/bootcamp)) to the target machine.
 
-1. Connect to container from hosting machine:
-```
-ssh gpadmin@localhost (Password：Hashdata@123)
-```
-OR
-```
-docker exec -it <container-id> /bin/bash
-```
-If success, it will be like this:
-```
-[gpadmin@mdw ~]$
-```
-2. Log in database within the docker:
+    ```shell
+    git clone https://github.com/cloudberrydb/bootcamp.git
+    ```
 
-```
-[root@mdw /]# su - gpadmin
-Last login: Wed Nov 16 17:04:08 CST 2022 on pts/1
-[gpadmin@mdw ~]$ psql
-psql (14.4, server 14.4)
-Type "help" for help.
+3. Enter the repository and run the `run.sh` script to start the Docker container. This will start the automatic installation process.
 
-gpadmin=# select version();
-                                                                                        version
+    ```shell
+    cd <repo directory on the machine>/000-cbdb-sandbox
+    chmod +x ./run.sh
+    ./run.sh
+    ```
 
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
------
- PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Dec  1 2022 11:3
-8:02
-(1 row)
-```
+    > Note: The `run.sh` script will have Cloudberry Database installed on CentOS 7.x. To use CentOS 8, run the `run_centos8.sh` script instead.
 
-Now you got a Cloudberry database for testing, enjoy!
+After the script finishes without error, the Cloudberry Database is installed successfully. You can now connect to the database and get ready to perform some simple operations on it.
 
 
+1. Connect to the Docker container from hosting machine:
 
-Pseudo-Distributed-Operation
-============
+    ```shell
+    ssh gpadmin@localhost # Password: Hashdata@123
+    ```
 
-Fully-Distributed-Operation
-============
+    Alternatively, you can also use the following command. The `<container_id>` can be found by running `docker ps`:
+
+    ```shell
+    docker exec -it <container_id> /bin/bash
+    ```
+
+    If it is successful, you will see the following prompt:
+
+    ```shell
+    [gpadmin@mdw ~]$
+    ```
+
+2. Log into Cloudberry Database in Docker. See the following commands and example outputs:
+
+    ```shell
+    [root@mdw /] su - gpadmin  # Switches to the gpadmin user.
+
+    # Last login: Wed Nov 16 17:04:08 CST 2022 on pts/1
+
+    [gpadmin@mdw ~]$ psql  # Connects to the database with the default database name "gpadmin".
+
+    # psql (14.4, server 14.4)
+    # Type "help" for help.
+    ```
+
+    ```sql
+    gpadmin=# SELECT VERSION();  -- Checks the database version.
+                                                                                            version
+
+    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    -----
+    PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Dec  1 2022 11:3
+    8:02
+    (1 row)
+    ```
+
+Now you have got a Cloudberry Database for testing, enjoy!
+
+## Pseudo-Distributed-Operation
+
+## Fully-Distributed-Operation
