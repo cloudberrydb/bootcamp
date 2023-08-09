@@ -19,6 +19,7 @@ RUN     echo root:Hashdata@123 | chpasswd \
         && yum install -y devtoolset-10
 
 RUN     cat /tmp/sysctl.conf.add >> /etc/sysctl.conf \
+        && sed -i "s/#UseDNS YES/UseDNS no/g" /etc/ssh/sshd_config \
         && cat /tmp/limits.conf.add >> /etc/security/limits.conf \
         && cat /usr/share/zoneinfo/Asia/Shanghai > /etc/localtime \
         && echo "mdw" > /tmp/gpdb-hosts \
