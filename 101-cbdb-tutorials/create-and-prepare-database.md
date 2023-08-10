@@ -7,7 +7,7 @@ permalink: /create-and-prepare-database
 <h2 class='inline-header'>Create and Prepare Database</h2>
 
 <p>Create a new database using the CREATE DATABASE SQL command in psql client or using createdb utility. Unless you specify a different one, the newly created database is a copy of template1 database.
-To use the CREATE DATABASE command, you need to connect to a database. For Cloudberry Database system, you may connect to template1 database. The createdb utility is a wrapper around the CREATE DATABASE command. In this exercise you will create a new database with createdb utility, create schema and search path for schemas. You will connect to the tutorial databse as user1 with password set up before.</p>
+To use the CREATE DATABASE command, you need to connect to a database. For Cloudberry Database system, you may connect to template1 database. The createdb utility is a wrapper around the CREATE DATABASE command. In this exercise you will create a new database with createdb utility, create schema and search path for schemas. You will connect to the tutorial databse as user lily with password set up before.</p>
 
 <h3>
 <a id="exercises-1" class="anchor" href="#exercises-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exercises</h3>
@@ -121,12 +121,6 @@ tutorial=> SHOW search_path;
 (1 row)
 tutorial=> ALTER ROLE lily SET search_path TO faa, public, pg_catalog, gp_toolkit;
 ALTER ROLE
-tutorial=> \du
-                             List of roles
- Role name |                   Attributes                   | Member of
------------+------------------------------------------------+-----------
- gpadmin   | Superuser, Create role, Create DB, Replication | {}
- lily      |                                                | {}
 tutorial=>
 </code></p>
 </blockquote>

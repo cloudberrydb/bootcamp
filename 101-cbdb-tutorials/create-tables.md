@@ -42,7 +42,10 @@ distribution policy for a table. Ideally, each segment would possess an equal vo
 
 <ol>
 <blockquote>
-<pre><code>[gpadmin@mdw tmp]$ cd faa
+<pre><code>
+[gpadmin@mdw tmp]$ cd /tmp
+[gpadmin@mdw tmp]$ tar xzf faa.tar.gz
+[gpadmin@mdw tmp]$ cd faa
 [gpadmin@mdw faa]$
 [gpadmin@mdw faa]$ more create_dim_tables.sql
 drop table if exists faa.d_airports;

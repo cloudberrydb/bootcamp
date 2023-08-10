@@ -174,6 +174,9 @@ tutorial=#
 tutorial=# \i create_load_tables.sql
 CREATE TABLE
 CREATE TABLE
+tutorial=# \i create_ext_table.sql
+psql:create_ext_table.sql:5: NOTICE:  HEADER means that each one of the data files has a header row
+CREATE EXTERNAL TABLE
 tutorial=#
 tutorial=# INSERT INTO faa.faa_otp_load SELECT * FROM faa.ext_load_otp;
 NOTICE:  HEADER means that each one of the data files has a header row
@@ -192,9 +195,11 @@ tutorial=#
 tutorial=# \x
 Expanded display is on.
 tutorial=#
-tutorial=# SELECT DISTINCT relname, errmsg, count(*)
-tutorial-#            FROM faa.faa_load_errors GROUP BY 1,2;
-(0 rows)
+tutorial=#  select DISTINCT relname, errmsg, count(*) from gp_read_error_log('faa.ext_load_otp') GROUP BY 1,2;
+-[ RECORD 1 ]------------------------------------------------------
+relname | ext_load_otp
+errmsg  | invalid input syntax for type integer: "", column deptime
+count   | 26526
 
 tutorial=#
 tutorial=# \q
@@ -216,16 +221,13 @@ of the work to set up external table and data movement.  In this exercise, you w
 
 <blockquote>
 <pre><code>[gpadmin@mdw faa]$
-[gpadmin@mdw faa]$ ps -ef | grep gpfdist
-gpadmin   6581  6552  0 16:02 pts/8    00:00:02 gpfdist -d /tmp/faa -p 8081
-gpadmin   6936  6552  0 16:20 pts/8    00:00:00 grep --color=auto gpfdist
-[gpadmin@mdw faa]$
-[gpadmin@mdw faa]$ killall gpfdist
--bash: killall: command not found
-[gpadmin@mdw faa]$ sudo yum install psmisc
-[gpadmin@mdw faa]$ killall gpfdist
-[1]+  Exit 1                  gpfdist -d /tmp/faa -p 8081 > /tmp/gpfdist.log 2>&1  (wd: /tmp)
-(wd now: /tmp/faa)
+[gpadmin@cbdb14-master faa]$ ps -ef|grep gpfdist
+gpadmin  119294 117148  0 16:10 pts/0    00:00:01 gpfdist -d /tmp/faa -p 8081
+gpadmin  119484 117148  0 16:25 pts/0    00:00:00 grep --color=auto gpfdist
+[gpadmin@mdw faa]$ pkill gpfdist
+[gpadmin@mdw faa]$ ps -ef|grep gpfdist
+gpadmin  119489 117148  0 16:25 pts/0    00:00:00 grep --color=auto gpfdist
+[1]+  Exit 1                  gpfdist -d /tmp/faa -p 8081 > /tmp/gpfdist.log 2>&1
 [gpadmin@mdw faa]$
 [gpadmin@mdw faa]$ cat ./gpload.yaml
 ---
@@ -255,19 +257,18 @@ GPLOAD:
    PRELOAD:
     - TRUNCATE: true
 [gpadmin@mdw faa]$
-[gpadmin@mdw faa]$  gpload -f gpload.yaml -l gpload.log
-2023-07-25 16:23:07|INFO|gpload session started 2023-07-25 16:23:07
-2023-07-25 16:23:07|WARN|ERROR_TABLE is not supported. We will set LOG_ERRORS and REUSE_TABLES to True for compatibility.
-2023-07-25 16:23:07|INFO|started gpfdist -p 8081 -P 8082 -f "/tmp/faa/otp*.gz" -t 30
-2023-07-25 16:23:07|INFO|reusing external table ext_gpload_reusable_aae323d6_2a03_11ee_b4f7_0242ac110002
-2023-07-25 16:23:19|WARN|26528 bad rows
-2023-07-25 16:23:19|WARN|Please use following query to access the detailed error
-2023-07-25 16:23:19|WARN|select * from gp_read_error_log('ext_gpload_reusable_aae323d6_2a03_11ee_b4f7_0242ac110002') where cmdtime > to_timestamp('1690273387.3157442')
-2023-07-25 16:23:19|INFO|running time: 12.42 seconds
-2023-07-25 16:23:19|INFO|rows Inserted          = 1024552
-2023-07-25 16:23:19|INFO|rows Updated           = 0
-2023-07-25 16:23:19|INFO|data formatting errors = 26528
-2023-07-25 16:23:19|INFO|gpload succeeded with warnings
+[gpadmin@mdw faa]$ gpload -f gpload.yaml -l gpload.log
+2023-08-09 16:48:35|INFO|gpload session started 2023-08-09 16:48:35
+2023-08-09 16:48:35|INFO|started gpfdist -p 8081 -P 8082 -f "/tmp/faa/otp*.gz" -t 30
+2023-08-09 16:48:35|INFO|reusing external table ext_gpload_reusable_a7ac9df2_3690_11ee_bcb5_fa163eed75ee
+2023-08-09 16:48:37|WARN|26528 bad rows
+2023-08-09 16:48:37|WARN|Please use following query to access the detailed error
+2023-08-09 16:48:37|WARN|select * from gp_read_error_log('ext_gpload_reusable_a7ac9df2_3690_11ee_bcb5_fa163eed75ee') where cmdtime > to_timestamp('1691570915.7685921')
+2023-08-09 16:48:37|INFO|running time: 1.96 seconds
+2023-08-09 16:48:37|INFO|rows Inserted          = 1024552
+2023-08-09 16:48:37|INFO|rows Updated           = 0
+2023-08-09 16:48:37|INFO|data formatting errors = 26528
+2023-08-09 16:48:37|INFO|gpload succeeded with warnings
 [gpadmin@mdw faa]$
 </code></pre>
 </blockquote>

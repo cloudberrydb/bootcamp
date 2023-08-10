@@ -374,61 +374,135 @@ INSERT 0 1024552
 Distributed by: (uniquecarrier, flightnum)
 </code></pre>
 
-<p>Notice that the column-oriented version is append-only and partitioned. It has seventeen child files for the partitions, one for each month from June 2009 through October 2010.
-<code>tutorial=# \d faa.otp_c</code></p>
+<p>Notice that the column-oriented version is append-only and partitioned. It has seventeen child files for the partitions, one for each month from June 2009 through October 2010.</p>
+<p><code>tutorial=# \d+ faa.otp_c</code></p>
 
-<pre><code> Partitioned table "faa.otp_c"
-        Column        |       Type       | Collation | Nullable | Default
-----------------------+------------------+-----------+----------+---------
- flt_year             | smallint         |           |          |
- flt_quarter          | smallint         |           |          |
- flt_month            | smallint         |           |          |
- flt_dayofmonth       | smallint         |           |          |
- flt_dayofweek        | smallint         |           |          |
- flightdate           | date             |           |          |
- uniquecarrier        | text             |           |          |
- airlineid            | integer          |           |          |
- carrier              | text             |           |          |
- flightnum            | text             |           |          |
- origin               | text             |           |          |
- origincityname       | text             |           |          |
- originstate          | text             |           |          |
- originstatename      | text             |           |          |
- dest                 | text             |           |          |
- destcityname         | text             |           |          |
- deststate            | text             |           |          |
- deststatename        | text             |           |          |
- crsdeptime           | text             |           |          |
- deptime              | integer          |           |          |
- depdelay             | double precision |           |          |
- depdelayminutes      | double precision |           |          |
- departuredelaygroups | smallint         |           |          |
- taxiout              | smallint         |           |          |
- wheelsoff            | text             |           |          |
- wheelson             | text             |           |          |
- taxiin               | smallint         |           |          |
- crsarrtime           | text             |           |          |
- arrtime              | text             |           |          |
- arrdelay             | double precision |           |          |
- arrdelayminutes      | double precision |           |          |
- arrivaldelaygroups   | smallint         |           |          |
- cancelled            | smallint         |           |          |
- cancellationcode     | text             |           |          |
- diverted             | smallint         |           |          |
- crselapsedtime       | integer          |           |          |
- actualelapsedtime    | double precision |           |          |
- airtime              | double precision |           |          |
- flights              | smallint         |           |          |
- distance             | double precision |           |          |
- distancegroup        | smallint         |           |          |
- carrierdelay         | smallint         |           |          |
- weatherdelay         | smallint         |           |          |
- nasdelay             | smallint         |           |          |
- securitydelay        | smallint         |           |          |
- lateaircraftdelay    | smallint         |           |          |
+<pre><code> tutorial=# \d+ faa.otp_c
+                                                 Partitioned table "faa.otp_c"
+        Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Description
+----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+-------------
+ flt_year             | smallint         |           |          |         | plain    |             |              |
+ flt_quarter          | smallint         |           |          |         | plain    |             |              |
+ flt_month            | smallint         |           |          |         | plain    |             |              |
+ flt_dayofmonth       | smallint         |           |          |         | plain    |             |              |
+ flt_dayofweek        | smallint         |           |          |         | plain    |             |              |
+ flightdate           | date             |           |          |         | plain    |             |              |
+ uniquecarrier        | text             |           |          |         | extended |             |              |
+ airlineid            | integer          |           |          |         | plain    |             |              |
+ carrier              | text             |           |          |         | extended |             |              |
+ flightnum            | text             |           |          |         | extended |             |              |
+ origin               | text             |           |          |         | extended |             |              |
+ origincityname       | text             |           |          |         | extended |             |              |
+ originstate          | text             |           |          |         | extended |             |              |
+ originstatename      | text             |           |          |         | extended |             |              |
+ dest                 | text             |           |          |         | extended |             |              |
+ destcityname         | text             |           |          |         | extended |             |              |
+ deststate            | text             |           |          |         | extended |             |              |
+ deststatename        | text             |           |          |         | extended |             |              |
+ crsdeptime           | text             |           |          |         | extended |             |              |
+ deptime              | integer          |           |          |         | plain    |             |              |
+ depdelay             | double precision |           |          |         | plain    |             |              |
+ depdelayminutes      | double precision |           |          |         | plain    |             |              |
+ departuredelaygroups | smallint         |           |          |         | plain    |             |              |
+ taxiout              | smallint         |           |          |         | plain    |             |              |
+ wheelsoff            | text             |           |          |         | extended |             |              |
+ wheelson             | text             |           |          |         | extended |             |              |
+ taxiin               | smallint         |           |          |         | plain    |             |              |
+ crsarrtime           | text             |           |          |         | extended |             |              |
+ arrtime              | text             |           |          |         | extended |             |              |
+ arrdelay             | double precision |           |          |         | plain    |             |              |
+ arrdelayminutes      | double precision |           |          |         | plain    |             |              |
+ arrivaldelaygroups   | smallint         |           |          |         | plain    |             |              |
+ cancelled            | smallint         |           |          |         | plain    |             |              |
+ cancellationcode     | text             |           |          |         | extended |             |              |
+ diverted             | smallint         |           |          |         | plain    |             |              |
+ crselapsedtime       | integer          |           |          |         | plain    |             |              |
+ actualelapsedtime    | double precision |           |          |         | plain    |             |              |
+ airtime              | double precision |           |          |         | plain    |             |              |
+ flights              | smallint         |           |          |         | plain    |             |              |
+ distance             | double precision |           |          |         | plain    |             |              |
+ distancegroup        | smallint         |           |          |         | plain    |             |              |
+ carrierdelay         | smallint         |           |          |         | plain    |             |              |
+ weatherdelay         | smallint         |           |          |         | plain    |             |              |
+ nasdelay             | smallint         |           |          |         | plain    |             |              |
+ securitydelay        | smallint         |           |          |         | plain    |             |              |
+ lateaircraftdelay    | smallint         |           |          |         | plain    |             |              |
 Partition key: RANGE (flightdate)
-Number of partitions: 17 (Use \d+ to list them.)
+Partitions: otp_c_1_prt_mth_1 FOR VALUES FROM ('2009-06-01') TO ('2009-07-01'),
+            otp_c_1_prt_mth_10 FOR VALUES FROM ('2010-03-01') TO ('2010-04-01'),
+            otp_c_1_prt_mth_11 FOR VALUES FROM ('2010-04-01') TO ('2010-05-01'),
+            otp_c_1_prt_mth_12 FOR VALUES FROM ('2010-05-01') TO ('2010-06-01'),
+            otp_c_1_prt_mth_13 FOR VALUES FROM ('2010-06-01') TO ('2010-07-01'),
+            otp_c_1_prt_mth_14 FOR VALUES FROM ('2010-07-01') TO ('2010-08-01'),
+            otp_c_1_prt_mth_15 FOR VALUES FROM ('2010-08-01') TO ('2010-09-01'),
+            otp_c_1_prt_mth_16 FOR VALUES FROM ('2010-09-01') TO ('2010-10-01'),
+            otp_c_1_prt_mth_17 FOR VALUES FROM ('2010-10-01') TO ('2010-10-31'),
+            otp_c_1_prt_mth_2 FOR VALUES FROM ('2009-07-01') TO ('2009-08-01'),
+            otp_c_1_prt_mth_3 FOR VALUES FROM ('2009-08-01') TO ('2009-09-01'),
+            otp_c_1_prt_mth_4 FOR VALUES FROM ('2009-09-01') TO ('2009-10-01'),
+            otp_c_1_prt_mth_5 FOR VALUES FROM ('2009-10-01') TO ('2009-11-01'),
+            otp_c_1_prt_mth_6 FOR VALUES FROM ('2009-11-01') TO ('2009-12-01'),
+            otp_c_1_prt_mth_7 FOR VALUES FROM ('2009-12-01') TO ('2010-01-01'),
+            otp_c_1_prt_mth_8 FOR VALUES FROM ('2010-01-01') TO ('2010-02-01'),
+            otp_c_1_prt_mth_9 FOR VALUES FROM ('2010-02-01') TO ('2010-03-01')
 Distributed by: (uniquecarrier, flightnum)</code></pre>
+<pre><code> 
+tutorial=# \d+ otp_c_1_prt_mth_1
+                                                                           Table "faa.otp_c_1_prt_mth_1"
+        Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Compression Type | Compression Level | Block Size | Description
+----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+------------------+-------------------+------------+-------------
+ flt_year             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ flt_quarter          | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ flt_month            | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ flt_dayofmonth       | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ flt_dayofweek        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ flightdate           | date             |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ uniquecarrier        | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ airlineid            | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ carrier              | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ flightnum            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ origin               | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ origincityname       | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ originstate          | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ originstatename      | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ dest                 | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ destcityname         | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ deststate            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ deststatename        | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ crsdeptime           | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ deptime              | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ depdelay             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ depdelayminutes      | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ departuredelaygroups | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ taxiout              | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ wheelsoff            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ wheelson             | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ taxiin               | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ crsarrtime           | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ arrtime              | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ arrdelay             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ arrdelayminutes      | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ arrivaldelaygroups   | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ cancelled            | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ cancellationcode     | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+ diverted             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ crselapsedtime       | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ actualelapsedtime    | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ airtime              | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ flights              | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ distance             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ distancegroup        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ carrierdelay         | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ weatherdelay         | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ nasdelay             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ securitydelay        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+ lateaircraftdelay    | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+Partition of: otp_c FOR VALUES FROM ('2009-06-01') TO ('2009-07-01')
+Partition constraint: ((flightdate IS NOT NULL) AND (flightdate >= '2009-06-01'::date) AND (flightdate < '2009-07-01'::date))
+Checksum: t
+Distributed by: (uniquecarrier, flightnum)
+Access method: ao_column
+</code></pre>
 </blockquote>
 </li>
 <li>
@@ -451,19 +525,19 @@ Distributed by: (uniquecarrier, flightnum)</code></pre>
 (1 row)
 </code></pre>
 
-<p><code>tutorial=# SELECT pg_size_pretty(pg_relation_size('faa.otp_c'));</code></p>
+<p><code>tutorial=# SELECT pg_size_pretty(sum(pg_relation_size(inhrelid))) FROM pg_inherits WHERE inhparent = 'faa.otp_c'::regclass;</code></p>
 
-<pre><code> pg_size_pretty
+<pre><code>  pg_size_pretty
 ----------------
- 0 bytes
+ 202 MB
 (1 row)
 </code></pre>
 
-<p><code>tutorial=# SELECT pg_size_pretty(pg_total_relation_size('faa.otp_c'));</code></p>
+<p><code>tutorial=# SELECT pg_size_pretty(sum(pg_total_relation_size(inhrelid))) FROM pg_inherits WHERE inhparent = 'faa.otp_c'::regclass;</code></p>
 
-<pre><code> pg_size_pretty
+<pre><code>  pg_size_pretty
 ----------------
- 0 bytes
+ 216 MB
 (1 row)
 </code></pre>
 </blockquote>
