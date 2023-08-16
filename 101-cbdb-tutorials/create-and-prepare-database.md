@@ -9,7 +9,7 @@ In the following operations, you will be guided to create a new database using t
 
 ### Prerequisites
 
-Before moving on to the operations, make sure that you have completed the previous tutorial [Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md). You will connect to the tutorial database as the user `lily` with password set up in the previous tutorial.
+Before moving on to the operations, make sure that you have completed the previous tutorial [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md). You will connect to the tutorial database as the user `lily` with password set up in the previous tutorial.
 
 ### Create database
 
