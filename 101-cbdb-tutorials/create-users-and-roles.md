@@ -158,7 +158,7 @@ psql: error: connection to server on socket "/tmp/.s.PGSQL.5432" failed: FATAL: 
 
 To make users (`lily` and `lucy`) able to log into the database, you need to adjust the `pg_hba.conf` configuration file on the master node and use `gpstop` to populate the change.
 
-1. Append the following lines to the `pg_hba.conf` file on the master node.
+1. Append `local gpadmin lily md5` and `local gpadmin lucy trust` to the `pg_hba.conf` file on the master node.
 
     ```shell
     [gpadmin@mdw ~]$ echo "local gpadmin lily md5" >> /data0/database/master/gpseg-1/pg_hba.conf
