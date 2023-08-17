@@ -59,16 +59,16 @@ After the script finishes without error, the Cloudberry Database is installed su
     ssh gpadmin@localhost # Password: Hashdata@123
     ```
 
-    Alternatively, you can also use the following command. The `<container_id>` can be found by running `docker ps`:
+    Alternatively, you can also use the following command.
 
     ```shell
-    docker exec -it <container_id> /bin/bash
+    docker exec -it $(docker ps -q) /bin/bash
     ```
 
     If it is successful, you will see the following prompt:
 
     ```shell
-    [gpadmin@mdw ~]$
+    [root@mdw /]$
     ```
 
 2. Log into Cloudberry Database in Docker. See the following commands and example outputs:

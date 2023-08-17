@@ -1,17 +1,15 @@
 
-# Lession 1: Create Users and Roles
+# Lesson 1: Create Users and Roles
 
 Cloudberry Database manages database access using roles. Initially, there is one superuser role—the role associated with the OS user who initialized the database instance, usually `gpadmin`. This user owns all of the Cloudberry Database files and OS processes, so it is important to reserve the `gpadmin` role for system tasks only.
 
-A role can be a user or a group. A user role can log in to a database; that is, it has the LOGIN attribute. A user or group role can become a member of a group.
+A role can be a user or a group. A user role can login to a database; that is, it has the `LOGIN` attribute. A user or group role can become a member of a group.
 
 Permissions can be granted to users or groups. Initially, of course, only the `gpadmin` role is able to create roles. You can add roles with the `createuser` utility command, `CREATE ROLE` SQL command, or the `CREATE USER` SQL command. The `CREATE USER` command is the same as the `CREATE ROLE` command except that it automatically assigns the role the `LOGIN` attribute.
 
 ## Quick-start operations
 
-You can following the examples below to create users and roles.
-
-### Prerequisites
+You can follow the examples below to create users and roles.
 
 Before moving on to the operations, make sure that you have installed Cloudberry Database by following [Install a Single-Node Cloudberry Database](../000-cbdb-sandbox/README.md).
 
@@ -30,7 +28,7 @@ Before moving on to the operations, make sure that you have installed Cloudberry
     gpadmin=#
     ```
 
-2. Create a user named `lily` using the `CREATE USER` command, with a password `changeme`. After the creation, you need to enter the password to log in as the `lily` user.
+2. Create a user named `lily` using the `CREATE USER` command, with a password `changeme`. After the creation, you need to enter the password to log in as the user `lily`.
 
     ```sql
     gpadmin=# CREATE USER lily WITH PASSWORD 'changeme';
@@ -41,7 +39,7 @@ Before moving on to the operations, make sure that you have installed Cloudberry
     CREATE ROLE
     ```
 
-3. Verify that the user was created.
+3. Verify that the user `lily` has been created.
 
     ```sql
     gpadmin=# \du
@@ -52,20 +50,22 @@ Before moving on to the operations, make sure that you have installed Cloudberry
      lily      |                                                | {}
     ```
 
-    ```sql
-    gpadmin=#
-    ```
-
 ### Create a user using the createuser utility command
 
 1. Create a user named `lucy` using the `createuser` utility command.
+
+    ```sql
+    gpadmin=# \q  -- exit psql
+    ```
 
     ```shell
     [gpadmin@mdw ~]$ createuser --interactive lucy
     ```
 
+    You will be asked to choose whether the new role should be a superuser. Enter `y` to create a superuser.
+
     ```shell
-    Shall the new role be a superuser? (y/n) y
+    Shall the new role be a superuser? (y/n)
     ```
 
 2. Connect to the database as the `gpadmin` user.
@@ -77,7 +77,7 @@ Before moving on to the operations, make sure that you have installed Cloudberry
     Type "help" for help.
     ```
 
-3. Verify that the user was created.
+3. Verify that the user `lucy` has been created.
 
     ```sql
     gpadmin=# \du
@@ -87,10 +87,6 @@ Before moving on to the operations, make sure that you have installed Cloudberry
      gpadmin   | Superuser, Create role, Create DB, Replication | {}
      lily      |                                                | {}
      lucy      | Superuser, Create role, Create DB              | {}
-    ```
-
-    ```sql
-    gpadmin=#
     ```
 
 ### Create a users group and add the users to it
@@ -114,21 +110,26 @@ Before moving on to the operations, make sure that you have installed Cloudberry
     gpadmin=# CREATE ROLE users;
     ```
 
+    Output:
+
     ```sql
     NOTICE:  resource queue required -- using default resource queue "pg_default"
     CREATE ROLE
     ```
+
 3. Add the `lily` and `lucy` users to the `users` group.
 
     ```sql
     gpadmin=# GRANT users TO lily, lucy;
     ```
 
+    Output:
+
     ```sql
     GRANT ROLE
     ```
 
-4. Verify that the users were added to the group.
+4. Verify that the two users have been added to the `users` group.
 
     ```sql
     gpadmin=# \du
@@ -164,7 +165,7 @@ To make users (`lily` and `lucy`) able to log into the database, you need to adj
     [gpadmin@mdw ~]$ echo "local gpadmin lucy trust" >> /data0/database/master/gpseg-1/pg_hba.conf
     ```
 
-    > **Tip:**
+    > **Info:**
     >
     > - `pg_hba.conf` is a configuration file in Cloudberry Database to control access permissions.
     > - `md5` and `trust` are the authentication methods. `md5` means that the user needs to enter the password to log in. `trust` means that the user can log in without entering the password.
@@ -173,7 +174,9 @@ To make users (`lily` and `lucy`) able to log into the database, you need to adj
 
     ```shell
     [gpadmin@mdw ~]$ gpstop -u
+    ```
 
+    ```shell
     20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -u
     20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
     20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
@@ -182,7 +185,7 @@ To make users (`lily` and `lucy`) able to log into the database, you need to adj
     20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Signalling all postmaster processes to reload
     ```
 
-3. Verify that the users can log into the database.
+3. Verify that the two users can log into the database.
 
     ```shell
     [gpadmin@mdw ~]$ psql -U lily -d gpadmin
@@ -201,14 +204,13 @@ To make users (`lily` and `lucy`) able to log into the database, you need to adj
 
     User `lily` and user `lucy` have had different privileges. You need to provide the password "changeme" for lily when login.
 
-## What's more
+## What's next
 
-- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/create-and-prepare-database.md)
+After creating users and groups, you can follow [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/create-and-prepare-database.md) to create and prepare a database for the users
+
+Other tutorials:
 
 - [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md)
-
 - [Lesson 4: Data Loading](../101-cbdb-tutorials/data-loading.md)
-
 - [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/queries-and-performance-tuning.md)
-
 - [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/backup-and-recovery-operations.md)

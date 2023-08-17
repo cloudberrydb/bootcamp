@@ -1,13 +1,11 @@
 
 # Lesson 2: Create and Prepare Database
 
-To create a new database in Cloudberry Database, you can either use the `CREATE DATABASE` SQL command in the `psql` client, or use the `createdb` utility. The createdb utility is a wrapper around the `CREATE DATABASE` command. 
+To create a new database in Cloudberry Database, you can either use the `CREATE DATABASE` SQL command in the `psql` client, or use the `createdb` utility. The `createdb` utility is a wrapper around the `CREATE DATABASE` command. 
 
 ## Quick-start operations
 
-In the following operations, you will be guided to create a new database using the `createdb` utility, create a schema and search path for schemas. You will also learn how to create a user and grant privileges to the user.
-
-### Prerequisites
+In the following operations, you will be guided to create a new database using the `createdb` utility, to create a schema, and to set search path for schemas. You will also learn how to create a user and grant privileges to the user.
 
 Before moving on to the operations, make sure that you have completed the previous tutorial [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md). You will connect to the tutorial database as the user `lily` with password set up in the previous tutorial.
 
@@ -30,7 +28,7 @@ Before moving on to the operations, make sure that you have completed the previo
     ```
 
     ```shell
-    [gpadmin@mdw ~]$ psql -l  # Verifies that the database was created.
+    [gpadmin@mdw ~]$ psql -l  # Verifies that this database has been created.
                                     List of databases
        Name    |  Owner  | Encoding |   Collate   |    Ctype    |  Access privileges
     -----------+---------+----------+-------------+-------------+---------------------
@@ -44,7 +42,7 @@ Before moving on to the operations, make sure that you have completed the previo
     (5 rows)
     ```
 
-    > **Tip:**
+    > **Info:**
     >
     > Unless you specify a different database, the newly created database is a copy of the `template1` database.
 
@@ -56,11 +54,11 @@ Before moving on to the operations, make sure that you have completed the previo
 
     > **Info:**
     >
-    > - `pg_hba.conf` is the configuration file for client access control.
+    > - `pg_hba.conf` is the configuration file for client access control in Cloudberry Database.
     > - `md5` is the authentication methods, which means that the user needs to enter the password to log in.
 
 
-4. Reload the configuration file.
+4. Reload the configuration file to populate the change.
 
     ```shell
     [gpadmin@mdw ~]$ gpstop -u
@@ -87,9 +85,9 @@ Before moving on to the operations, make sure that you have completed the previo
 
 ### Grant database privileges to users
 
-You are expected to grant users the minimum permissions required to do their work. For example, a user might need `SELECT` permissions on a table to view data, and need `UPDATE`, `INSERT`, or `DELETE` to modify the data.
+For database users to properly do their works, you need to grant them the minimum permissions required. For example, a user might need `SELECT` permissions on a table to view data, and need `UPDATE`, `INSERT`, or `DELETE` to modify the data.
 
-To complete the following operations, the database users will require permissions to create and manipulate objects in the `tutorial` database.
+In the following operations, the database user `lily` will require permissions to create and manipulate objects in the `tutorial` database.
 
 1. Connect to the `tutorial` database as `gpadmin`.
 
@@ -107,12 +105,14 @@ To complete the following operations, the database users will require permission
     tutorial=# GRANT ALL PRIVILEGES ON DATABASE tutorial TO lily;
     ```
 
+    Output:
+
     ```sql
     GRANT
     ```
 
     ```sql
-    tutorial=# \q
+    tutorial=# \q    -- Exits the database.
     ```
 
 ### Create schema and set search path
@@ -121,13 +121,11 @@ In this section, you will be guided to create a `faa` schema and set the search 
 
 > **Info:**
 >
-> Database schema is a named container for a set of database objects, including tables, data types, and functions. One database can have multiple schemas. Objects in the schema are referenced by prefixing the object name with the schema name, separated with a period. For example, the person table in the employee schema is written employee.person.
+> Database schema is a named container for a set of database objects, including tables, data types, and functions. One database can have multiple schemas. Objects in the schema are referenced by prefixing the object name with the schema name, separated with a period. For example, the `person` table in the `employee schema` is written as `employee.person`.
 >
 > The schema provides a namespace for the objects it contains. If the database is used for multiple applications, each with its own schema, the same table name can be used in each schema. For example, `employee.person` is a different table than `customer.person`. Both tables can be accessed in the same query as long as they are with accordingly schema name.
 >
 > The database contains a schema search path including a list of schema names. The first schema in the search path is also the schema where new objects are created when no schema is specified. The default search path is user,public, so by default, each object you create belongs to a schema associated with your login name. 
-
-
 
 1. Change to the directory containing the `faa` data and scripts.
 
@@ -135,7 +133,7 @@ In this section, you will be guided to create a `faa` schema and set the search 
     [gpadmin@mdw ~]$ cd ./faa
     ```
 
-2. Connect to the `tutorial` database as `lily`.
+2. Connect to the `tutorial` database as the user `lily`.
 
     ```shell
     [gpadmin@mdw faa]$ psql -U lily tutorial
@@ -155,11 +153,13 @@ In this section, you will be guided to create a `faa` schema and set the search 
     tutorial=> CREATE SCHEMA faa;
     ```
 
-4. Set the search path to `faa`, `public`, `pg_catalog`, and `gp_toolkit`.
+4. Set the search path to `faa`, `public`, `pg_catalog`, and `gp_toolkit` schemas.
 
     ```sql
     tutorial=> SET SEARCH_PATH TO faa, public, pg_catalog, gp_toolkit;
     ```
+
+    Output:
 
     ```sql
     SET
@@ -171,6 +171,8 @@ In this section, you will be guided to create a `faa` schema and set the search 
     tutorial=> SHOW search_path;
     ```
 
+    Output:
+
     ```sql
     search_path
     -------------------------------------
@@ -180,24 +182,25 @@ In this section, you will be guided to create a `faa` schema and set the search 
 
 6. Associate a search path with the user role `lily`.
 
-    The search path you set in the previous step is not persistent. You need to set it each time you connect to the database. You can associate a search path with the user role by using the `ALTER ROLE` command, so that each time you connect to the database with that role, the search path is restored.
+    The search path you have set in the previous step is not persistent. You need to set it each time you connect to the database. You can associate a search path with the user role by using the `ALTER ROLE` command, so that each time you connect to the database with that role, the search path is restored.
 
     ```sql
     tutorial=> ALTER ROLE lily SET search_path TO faa, public, pg_catalog, gp_toolkit;
     ```
 
+    Output:
+
     ```sql
     ALTER ROLE
     ```
 
-## What's more
+## What's next
+
+After creating and preparing the database, you can start to load data into the database. See [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md) for more information.
+
+Other tutorials:
 
 - [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md)
-
-- [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md)
-
 - [Lesson 4: Data Loading](../101-cbdb-tutorials/data-loading.md)
-
 - [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/queries-and-performance-tuning.md)
-
 - [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/backup-and-recovery-operations.md)
