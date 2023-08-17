@@ -15,7 +15,7 @@ Before moving on to the operations, make sure that you have installed Cloudberry
 
 ### Create a user using the CREATE USER command
 
-1. Connect to the database as the `gpadmin` user.
+1. Log into Cloudberry Database in Docker. Connect to the database as the `gpadmin` user.
 
     ```shell
     [gpadmin@mdw ~]$ psql

@@ -53,7 +53,7 @@ Installation steps:
 After the script finishes without error, the Cloudberry Database is installed successfully. You can now connect to the database and get ready to perform some simple operations on it.
 
 
-1. Connect to the Docker container from hosting machine:
+1. Connect to the Docker container from the host machine:
 
     ```shell
     ssh gpadmin@localhost # Password: Hashdata@123

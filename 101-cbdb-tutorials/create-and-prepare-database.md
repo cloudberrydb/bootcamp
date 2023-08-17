@@ -11,7 +11,7 @@ Before moving on to the operations, make sure that you have completed the previo
 
 ### Create database
 
-1. Before creating the `tutorial` database, make sure that this database does not exist.
+1. Log into Cloudberry Database in Docker. Before creating the `tutorial` database, make sure that this database does not exist.
 
     ```shell
     [gpadmin@mdw ~]$ dropdb tutorial
@@ -196,7 +196,7 @@ In this section, you will be guided to create a `faa` schema and set the search 
 
 ## What's next
 
-After creating and preparing the database, you can start to load data into the database. See [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md) for more information.
+After creating and preparing the database, you can start to create tables in the database. See [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md) for more information.
 
 Other tutorials:
 
