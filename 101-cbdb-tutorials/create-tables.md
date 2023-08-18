@@ -64,7 +64,7 @@ In the following steps, you will be guided to run a SQL file `create_dim_tables.
     DISTRIBUTED BY (distance_group_code);
     ```
 
-3. Connect to the `tutorial` database as `lily` using the `psql`. In the following step, you will run the SQL file as `lily`.
+3. Connect to the `tutorial` database as `lily` using the `psql`. You will run the SQL file as `lily`.
 
     ```shell
     [gpadmin@mdw faa]$ psql -U lily tutorial

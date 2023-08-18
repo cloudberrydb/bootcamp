@@ -52,14 +52,7 @@ Installation steps:
 
 After the script finishes without error, the Cloudberry Database is installed successfully. You can now connect to the database and get ready to perform some simple operations on it.
 
-
 1. Connect to the Docker container from the host machine:
-
-    ```shell
-    ssh gpadmin@localhost # Password: Hashdata@123
-    ```
-
-    Alternatively, you can also use the following command.
 
     ```shell
     docker exec -it $(docker ps -q) /bin/bash
@@ -94,6 +87,12 @@ After the script finishes without error, the Cloudberry Database is installed su
     8:02
     (1 row)
     ```
+
+In addition to using the `docker exec` command, you can also use the `ssh` command. This command will connect to the database with the default database name `gpadmin`:
+
+```shell
+ssh gpadmin@localhost # Password: Hashdata@123
+```
 
 Now you have got a Cloudberry Database for testing, enjoy!
 

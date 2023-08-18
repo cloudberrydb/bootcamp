@@ -34,6 +34,8 @@ Before moving on to the operations, make sure that you have installed Cloudberry
     gpadmin=# CREATE USER lily WITH PASSWORD 'changeme';
     ```
 
+    Output:
+
     ```sql
     NOTICE:  resource queue required -- using default resource queue "pg_default"
     CREATE ROLE
@@ -89,6 +91,10 @@ Before moving on to the operations, make sure that you have installed Cloudberry
      lucy      | Superuser, Create role, Create DB              | {}
     ```
 
+    ```sql
+    gpadmin=# \q  -- exit psql
+    ```
+
 ### Create a users group and add the users to it
 
 1. Connect to the database as the `gpadmin` user.
@@ -99,6 +105,8 @@ Before moving on to the operations, make sure that you have installed Cloudberry
     psql (14.4, server 14.4)
     Type "help" for help.
     ```
+
+    Output:
 
     ```shell
     gpadmin=#
@@ -160,6 +168,10 @@ To make users (`lily` and `lucy`) able to log into the database, you need to adj
 
 1. Append `local gpadmin lily md5` and `local gpadmin lucy trust` to the `pg_hba.conf` file on the master node.
 
+    ```sql
+    gpadmin=# \q  -- exit psql
+    ```
+
     ```shell
     [gpadmin@mdw ~]$ echo "local gpadmin lily md5" >> /data0/database/master/gpseg-1/pg_hba.conf
     [gpadmin@mdw ~]$ echo "local gpadmin lucy trust" >> /data0/database/master/gpseg-1/pg_hba.conf
@@ -177,19 +189,19 @@ To make users (`lily` and `lucy`) able to log into the database, you need to adj
     ```
 
     ```shell
-    20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -u
-    20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
-    20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
-    20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
-    20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
-    20230721:16:14:55:029695 gpstop:mdw:gpadmin-[INFO]:-Signalling all postmaster processes to reload
+    20230818:14:16:05:003653 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -u
+    20230818:14:16:05:003653 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
+    20230818:14:16:05:003653 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
+    20230818:14:16:05:003653 gpstop:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
+    20230818:14:16:05:003653 gpstop:mdw:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
+    20230818:14:16:05:003653 gpstop:mdw:gpadmin-[INFO]:-Signalling all postmaster processes to reload
     ```
 
 3. Verify that the two users can log into the database.
 
     ```shell
     [gpadmin@mdw ~]$ psql -U lily -d gpadmin
-    Password for user lily:
+    Password for user lily:  # changeme
 
     psql (14.4, server 14.4)
     Type "help" for help.

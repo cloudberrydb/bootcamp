@@ -65,12 +65,12 @@ Before moving on to the operations, make sure that you have completed the previo
     ```
 
     ```shell
-    20230724:13:32:42:006438 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -u
-    20230724:13:32:42:006438 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
-    20230724:13:32:42:006438 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
-    20230724:13:32:42:006438 gpstop:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
-    20230724:13:32:42:006438 gpstop:mdw:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
-    20230724:13:32:42:006438 gpstop:mdw:gpadmin-[INFO]:-Signalling all postmaster processes to reload
+    20230818:14:18:45:003733 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -u
+    20230818:14:18:45:003733 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
+    20230818:14:18:45:003733 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
+    20230818:14:18:45:003733 gpstop:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
+    20230818:14:18:45:003733 gpstop:mdw:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
+    20230818:14:18:45:003733 gpstop:mdw:gpadmin-[INFO]:-Signalling all postmaster processes to reload
     ```
 
 5. Connect to the `tutorial` database as the user `lily`. You need to enter the password set up in the [previous tutorial](../101-cbdb-tutorials/create-users-and-roles.md#create-a-user-using-the-create-user-command).
@@ -78,9 +78,13 @@ Before moving on to the operations, make sure that you have completed the previo
     ```shell
     [gpadmin@mdw ~]$ psql -U lily tutorial
 
-    Password for user lily:
+    Password for user lily:  # changeme
     psql (14.4, server 14.4)
     Type "help" for help.
+    ```
+
+    ```sql
+    tutorial=> \q    -- Exits the database.
     ```
 
 ### Grant database privileges to users
@@ -127,33 +131,27 @@ In this section, you will be guided to create a `faa` schema and set the search 
 >
 > The database contains a schema search path including a list of schema names. The first schema in the search path is also the schema where new objects are created when no schema is specified. The default search path is user,public, so by default, each object you create belongs to a schema associated with your login name. 
 
-1. Change to the directory containing the `faa` data and scripts.
+1. Connect to the `tutorial` database as the user `lily`.
 
     ```shell
-    [gpadmin@mdw ~]$ cd ./faa
-    ```
-
-2. Connect to the `tutorial` database as the user `lily`.
-
-    ```shell
-    [gpadmin@mdw faa]$ psql -U lily tutorial
+    [gpadmin@mdw ~]$ psql -U lily tutorial
     ```
 
     ```shell
-    Password for user lily:
+    Password for user lily:  # changeme
 
     psql (14.4, server 14.4)
     Type "help" for help.
     ```
 
-3. Create the `faa` schema.
+2. Create the `faa` schema.
 
     ```sql
     tutorial=> DROP SCHEMA IF EXISTS faa CASCADE;
     tutorial=> CREATE SCHEMA faa;
     ```
 
-4. Set the search path to `faa`, `public`, `pg_catalog`, and `gp_toolkit` schemas.
+3. Set the search path to `faa`, `public`, `pg_catalog`, and `gp_toolkit` schemas.
 
     ```sql
     tutorial=> SET SEARCH_PATH TO faa, public, pg_catalog, gp_toolkit;
@@ -165,7 +163,7 @@ In this section, you will be guided to create a `faa` schema and set the search 
     SET
     ```
 
-5. Verify that the search path is set correctly.
+4. Verify that the search path is set correctly.
 
     ```sql
     tutorial=> SHOW search_path;
@@ -180,7 +178,7 @@ In this section, you will be guided to create a `faa` schema and set the search 
     (1 row)
     ```
 
-6. Associate a search path with the user role `lily`.
+5. Associate a search path with the user role `lily`.
 
     The search path you have set in the previous step is not persistent. You need to set it each time you connect to the database. You can associate a search path with the user role by using the `ALTER ROLE` command, so that each time you connect to the database with that role, the search path is restored.
 
