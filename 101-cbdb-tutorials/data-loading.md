@@ -381,3 +381,14 @@ tutorial=#
         - Users need to be cautious and verify data when using Web tables.
 
 Understanding and using these features and mechanisms effectively can ensure optimal data loading and management within the Cloudberry Database.
+
+## What's next
+
+In this tutorial, you learned how to load data into Cloudberry Database. You learned about the different loading mechanisms and how to use them. You also learned how to use the `gpload` utility to load data. Finally, you learned how to create and load fact tables. You can now move on to the next tutorial, [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/queries-and-performance-tuning.md), to learn about query performance tuning in Cloudberry Database.
+
+Other tutorials:
+
+- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md)
+- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/create-and-prepare-database.md)
+- [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md)
+- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/backup-and-recovery-operations.md)
