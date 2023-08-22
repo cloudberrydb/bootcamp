@@ -1,7 +1,7 @@
 
 # Lesson 5: Queries and Performance Tuning
 
-This lesson provides an overview of how Cloudberry Database processes queries. Understanding this process can be useful when you write and tune queries. 
+This lesson provides an overview of how Cloudberry Database processes queries. Understanding this process can be useful when you write and tune queries.
 
 ## Concepts
 
@@ -37,12 +37,11 @@ The following section introduces some of the basic principles of query and perfo
 Some items to consider in performance tuning:
 
 - VACUUM and ANALYZE
-<li><strong>Explain plans</strong></li>
-<li><strong>Indexing</strong></li>
-<li><strong>Column or row orientation</strong></li>
-<li><strong>Set based vs. row based</strong></li>
-<li><strong>Distribution and partitioning</strong></li>
-</ul>
+- Explain plans
+- Indexing
+- Column or row orientation
+- Set based vs. row based
+- Distribution and partitioning
 
 ## Exercises
 
@@ -58,26 +57,26 @@ The ANALYZE command generates statistics about the distribution of data in a tab
 
 1. Connect to the database as `gpadmin` and run the `ANALYZE` command on each of the tables:
 
-      ```shell
-      $ psql -U gpadmin tutorial
-      ```
+    ```shell
+    $ psql -U gpadmin tutorial
+    ```
 
-      ```sql
-      tutorial=# ANALYZE faa.d_airports;
-      ANALYZE
-      tutorial=# ANALYZE faa.d_airlines;
-      ANALYZE
-      tutorial=# ANALYZE faa.d_wac;
-      ANALYZE
-      tutorial=# ANALYZE faa.d_cancellation_codes;
-      ANALYZE
-      tutorial=# ANALYZE faa.faa_otp_load;
-      ANALYZE
-      tutorial=# ANALYZE faa.otp_r;
-      ANALYZE
-      tutorial=# ANALYZE faa.otp_c;
-      ANALYZE
-      ```
+    ```sql
+    tutorial=# ANALYZE faa.d_airports;
+    ANALYZE
+    tutorial=# ANALYZE faa.d_airlines;
+    ANALYZE
+    tutorial=# ANALYZE faa.d_wac;
+    ANALYZE
+    tutorial=# ANALYZE faa.d_cancellation_codes;
+    ANALYZE
+    tutorial=# ANALYZE faa.faa_otp_load;
+    ANALYZE
+    tutorial=# ANALYZE faa.otp_r;
+    ANALYZE
+    tutorial=# ANALYZE faa.otp_c;
+    ANALYZE
+    ```
 
 ### View `EXPLAIN` plans
 
@@ -136,7 +135,7 @@ In the following exercise, you will generate some small tables that you can quer
     Time: 5.635 ms
     ```
 
-    Query plans are read from bottom to top. In this example, there are 4 steps. First, there is a sequential scan on each segment server to access the rows. Then there is an aggregation on each segment server to produce a count of the number of rows from that segment. Then there is a gathering of the count value to a single location. Finally, the counts from each segment are aggregated to produce the final result.
+    You are expected to read query plans from bottom to top. In this example, there are 4 steps. First, there is a sequential scan on each segment server to access the rows. Then there is an aggregation on each segment server to produce a count of the number of rows from that segment. Then there is a gathering of the count value to a single location. Finally, the counts from each segment are aggregated to produce the final result.
 
     The cost number on each step has a start and stop value. For the sequential scan, this begins at time zero and goes until 431.00. This is a fictional number created by the optimizer. It is not a number of seconds or I/O operations.
 
@@ -214,7 +213,7 @@ By default, the sandbox instance disables the Pivotal Query Optimizer and you mi
 
 Cloudberry Database does not depend upon indexes to the same degree as traditional data warehouse systems. Because the segments execute table scans in parallel, each segment scanning a small part of the table, the traditional performance advantage from indexes is gone. Indexes consume large amounts of space and require considerable CPU time slot to compute during data loads. There are, however, times when indexes are useful, especially for highly selective queries. When a query looks up a single row, an index can dramatically improve performance.
 
-In this exercise, you work with legacy optimizer to know how index can improve performance. You first run a single row lookup on the sample table without an index, then rerun the query after creating an index. 
+In this exercise, you work with the legacy optimizer to know how index can improve performance. You first run a single row lookup on the sample table without an index, then rerun the query after creating an index.
 
 ```sql
 tutorial=# SELECT * FROM sample WHERE big = 12345;
@@ -264,7 +263,7 @@ tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
 Time: 0.627 ms
 ```
 
-Notice the difference in timing between the single-row `SELECT` with and without the index. The difference would have been much greater for a larger table. Not that even when there is an index, the optimizer can choose not to use the index if the optimizer has a more efficient plan.
+Notice the difference in timing between the single-row SELECT with and without the index. The difference would have been much greater for a larger table, since indexes improve performance for queries on large datasets. Note that even when an index exists, the optimizer may choose not to use it if another more efficient plan is available.
 
 View the following `EXPLAIN` plans to compare plans for some other common types of queries.
 
@@ -278,320 +277,320 @@ tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345 OR big = 12355;
 
 ### Row vs. column orientation
 
-Cloudberry Database offers the ability to store a table in either row or column orientation. Both storage options have advantages, depending upon data compression characteristics, the kinds of queries executed, the row length, and the complexity, and number of join columns.
+Cloudberry Database offers the ability to store a table in either row or column orientation. Both storage options have advantages, depending upon data compression characteristics, the kinds of queries executed, the row length, and the complexity, and the number of join columns.
 
 As a general rule, very wide tables are better stored in row orientation, especially if there are joins on many columns. Column orientation works well to save space with compression and to reduce I/O when there is much duplicated data in columns.
 
 In this exercise, you will create a column-oriented version of the fact table and compare it with the row-oriented version.
 
-<ol>
-<li>
-Create a column-oriented version of the FAA On Time Performance fact table and insert the data from the row-oriented version.
+1. Create a column-oriented version of the FAA On Time Performance fact table and insert the data from the row-oriented version.
 
-<blockquote>
-<pre><code>tutorial=# CREATE TABLE FAA.OTP_C (LIKE faa.otp_r) WITH (appendonly=true,
-orientation=column)
-DISTRIBUTED BY (UniqueCarrier, FlightNum) PARTITION BY RANGE(FlightDate)
-( PARTITION mth START('2009-06-01'::date) END ('2010-10-31'::date)
-EVERY ('1 mon'::interval));
-CREATE TABLE
-tutorial=#
-</code></pre>
+    ```sql
+    tutorial=# CREATE TABLE FAA.OTP_C (LIKE faa.otp_r) WITH (appendonly=true,
+    orientation=column)
+    DISTRIBUTED BY (UniqueCarrier, FlightNum) PARTITION BY RANGE(FlightDate)
+    ( PARTITION mth START('2009-06-01'::date) END ('2010-10-31'::date)
+    EVERY ('1 mon'::interval));
+    CREATE TABLE
+    tutorial=#
+    ```
 
-<pre><code>tutorial=# INSERT INTO faa.otp_c SELECT * FROM faa.otp_r;
-INSERT 0 1024552
-</code></pre>
-</blockquote>
-</li>
-<li>
-Compare the definitions of the row and the column versions of the table.
+    ```sql
+    tutorial=# INSERT INTO faa.otp_c SELECT * FROM faa.otp_r;
+    INSERT 0 1024552
+    ```
 
-<blockquote>
-<code>tutorial=# \d faa.otp_r</code>
+2. Compare the definitions of the row and the column versions of the table.
 
-<pre><code>                  Table "faa.otp_r"
-        Column        |       Type       | Collation | Nullable | Default
-----------------------+------------------+-----------+----------+---------
- flt_year             | smallint         |           |          |
- flt_quarter          | smallint         |           |          |
- flt_month            | smallint         |           |          |
- flt_dayofmonth       | smallint         |           |          |
- flt_dayofweek        | smallint         |           |          |
- flightdate           | date             |           |          |
- uniquecarrier        | text             |           |          |
- airlineid            | integer          |           |          |
- carrier              | text             |           |          |
- flightnum            | text             |           |          |
- origin               | text             |           |          |
- origincityname       | text             |           |          |
- originstate          | text             |           |          |
- originstatename      | text             |           |          |
- dest                 | text             |           |          |
- destcityname         | text             |           |          |
- deststate            | text             |           |          |
- deststatename        | text             |           |          |
- crsdeptime           | text             |           |          |
- deptime              | integer          |           |          |
- depdelay             | double precision |           |          |
- depdelayminutes      | double precision |           |          |
- departuredelaygroups | smallint         |           |          |
- taxiout              | smallint         |           |          |
- wheelsoff            | text             |           |          |
- wheelson             | text             |           |          |
- taxiin               | smallint         |           |          |
- crsarrtime           | text             |           |          |
- arrtime              | text             |           |          |
- arrdelay             | double precision |           |          |
- arrdelayminutes      | double precision |           |          |
- arrivaldelaygroups   | smallint         |           |          |
- cancelled            | smallint         |           |          |
- cancellationcode     | text             |           |          |
- diverted             | smallint         |           |          |
- crselapsedtime       | integer          |           |          |
- actualelapsedtime    | double precision |           |          |
- airtime              | double precision |           |          |
- flights              | smallint         |           |          |
- distance             | double precision |           |          |
- distancegroup        | smallint         |           |          |
- carrierdelay         | smallint         |           |          |
- weatherdelay         | smallint         |           |          |
- nasdelay             | smallint         |           |          |
- securitydelay        | smallint         |           |          |
- lateaircraftdelay    | smallint         |           |          |
-Distributed by: (uniquecarrier, flightnum)
-</code></pre>
+    ```sql
+    tutorial=# \d faa.otp_r
 
-Notice that the column-oriented version is append-only and partitioned. It has seventeen child files for the partitions, one for each month from June 2009 through October 2010.
-<code>tutorial=# \d+ faa.otp_c</code>
+                    Table "faa.otp_r"
+            Column        |       Type       | Collation | Nullable | Default
+    ----------------------+------------------+-----------+----------+---------
+    flt_year             | smallint         |           |          |
+    flt_quarter          | smallint         |           |          |
+    flt_month            | smallint         |           |          |
+    flt_dayofmonth       | smallint         |           |          |
+    flt_dayofweek        | smallint         |           |          |
+    flightdate           | date             |           |          |
+    uniquecarrier        | text             |           |          |
+    airlineid            | integer          |           |          |
+    carrier              | text             |           |          |
+    flightnum            | text             |           |          |
+    origin               | text             |           |          |
+    origincityname       | text             |           |          |
+    originstate          | text             |           |          |
+    originstatename      | text             |           |          |
+    dest                 | text             |           |          |
+    destcityname         | text             |           |          |
+    deststate            | text             |           |          |
+    deststatename        | text             |           |          |
+    crsdeptime           | text             |           |          |
+    deptime              | integer          |           |          |
+    depdelay             | double precision |           |          |
+    depdelayminutes      | double precision |           |          |
+    departuredelaygroups | smallint         |           |          |
+    taxiout              | smallint         |           |          |
+    wheelsoff            | text             |           |          |
+    wheelson             | text             |           |          |
+    taxiin               | smallint         |           |          |
+    crsarrtime           | text             |           |          |
+    arrtime              | text             |           |          |
+    arrdelay             | double precision |           |          |
+    arrdelayminutes      | double precision |           |          |
+    arrivaldelaygroups   | smallint         |           |          |
+    cancelled            | smallint         |           |          |
+    cancellationcode     | text             |           |          |
+    diverted             | smallint         |           |          |
+    crselapsedtime       | integer          |           |          |
+    actualelapsedtime    | double precision |           |          |
+    airtime              | double precision |           |          |
+    flights              | smallint         |           |          |
+    distance             | double precision |           |          |
+    distancegroup        | smallint         |           |          |
+    carrierdelay         | smallint         |           |          |
+    weatherdelay         | smallint         |           |          |
+    nasdelay             | smallint         |           |          |
+    securitydelay        | smallint         |           |          |
+    lateaircraftdelay    | smallint         |           |          |
+    Distributed by: (uniquecarrier, flightnum)
+    ```
 
-<pre><code> tutorial=# \d+ faa.otp_c
-                                                 Partitioned table "faa.otp_c"
-        Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Description
-----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+-------------
- flt_year             | smallint         |           |          |         | plain    |             |              |
- flt_quarter          | smallint         |           |          |         | plain    |             |              |
- flt_month            | smallint         |           |          |         | plain    |             |              |
- flt_dayofmonth       | smallint         |           |          |         | plain    |             |              |
- flt_dayofweek        | smallint         |           |          |         | plain    |             |              |
- flightdate           | date             |           |          |         | plain    |             |              |
- uniquecarrier        | text             |           |          |         | extended |             |              |
- airlineid            | integer          |           |          |         | plain    |             |              |
- carrier              | text             |           |          |         | extended |             |              |
- flightnum            | text             |           |          |         | extended |             |              |
- origin               | text             |           |          |         | extended |             |              |
- origincityname       | text             |           |          |         | extended |             |              |
- originstate          | text             |           |          |         | extended |             |              |
- originstatename      | text             |           |          |         | extended |             |              |
- dest                 | text             |           |          |         | extended |             |              |
- destcityname         | text             |           |          |         | extended |             |              |
- deststate            | text             |           |          |         | extended |             |              |
- deststatename        | text             |           |          |         | extended |             |              |
- crsdeptime           | text             |           |          |         | extended |             |              |
- deptime              | integer          |           |          |         | plain    |             |              |
- depdelay             | double precision |           |          |         | plain    |             |              |
- depdelayminutes      | double precision |           |          |         | plain    |             |              |
- departuredelaygroups | smallint         |           |          |         | plain    |             |              |
- taxiout              | smallint         |           |          |         | plain    |             |              |
- wheelsoff            | text             |           |          |         | extended |             |              |
- wheelson             | text             |           |          |         | extended |             |              |
- taxiin               | smallint         |           |          |         | plain    |             |              |
- crsarrtime           | text             |           |          |         | extended |             |              |
- arrtime              | text             |           |          |         | extended |             |              |
- arrdelay             | double precision |           |          |         | plain    |             |              |
- arrdelayminutes      | double precision |           |          |         | plain    |             |              |
- arrivaldelaygroups   | smallint         |           |          |         | plain    |             |              |
- cancelled            | smallint         |           |          |         | plain    |             |              |
- cancellationcode     | text             |           |          |         | extended |             |              |
- diverted             | smallint         |           |          |         | plain    |             |              |
- crselapsedtime       | integer          |           |          |         | plain    |             |              |
- actualelapsedtime    | double precision |           |          |         | plain    |             |              |
- airtime              | double precision |           |          |         | plain    |             |              |
- flights              | smallint         |           |          |         | plain    |             |              |
- distance             | double precision |           |          |         | plain    |             |              |
- distancegroup        | smallint         |           |          |         | plain    |             |              |
- carrierdelay         | smallint         |           |          |         | plain    |             |              |
- weatherdelay         | smallint         |           |          |         | plain    |             |              |
- nasdelay             | smallint         |           |          |         | plain    |             |              |
- securitydelay        | smallint         |           |          |         | plain    |             |              |
- lateaircraftdelay    | smallint         |           |          |         | plain    |             |              |
-Partition key: RANGE (flightdate)
-Partitions: otp_c_1_prt_mth_1 FOR VALUES FROM ('2009-06-01') TO ('2009-07-01'),
-            otp_c_1_prt_mth_10 FOR VALUES FROM ('2010-03-01') TO ('2010-04-01'),
-            otp_c_1_prt_mth_11 FOR VALUES FROM ('2010-04-01') TO ('2010-05-01'),
-            otp_c_1_prt_mth_12 FOR VALUES FROM ('2010-05-01') TO ('2010-06-01'),
-            otp_c_1_prt_mth_13 FOR VALUES FROM ('2010-06-01') TO ('2010-07-01'),
-            otp_c_1_prt_mth_14 FOR VALUES FROM ('2010-07-01') TO ('2010-08-01'),
-            otp_c_1_prt_mth_15 FOR VALUES FROM ('2010-08-01') TO ('2010-09-01'),
-            otp_c_1_prt_mth_16 FOR VALUES FROM ('2010-09-01') TO ('2010-10-01'),
-            otp_c_1_prt_mth_17 FOR VALUES FROM ('2010-10-01') TO ('2010-10-31'),
-            otp_c_1_prt_mth_2 FOR VALUES FROM ('2009-07-01') TO ('2009-08-01'),
-            otp_c_1_prt_mth_3 FOR VALUES FROM ('2009-08-01') TO ('2009-09-01'),
-            otp_c_1_prt_mth_4 FOR VALUES FROM ('2009-09-01') TO ('2009-10-01'),
-            otp_c_1_prt_mth_5 FOR VALUES FROM ('2009-10-01') TO ('2009-11-01'),
-            otp_c_1_prt_mth_6 FOR VALUES FROM ('2009-11-01') TO ('2009-12-01'),
-            otp_c_1_prt_mth_7 FOR VALUES FROM ('2009-12-01') TO ('2010-01-01'),
-            otp_c_1_prt_mth_8 FOR VALUES FROM ('2010-01-01') TO ('2010-02-01'),
-            otp_c_1_prt_mth_9 FOR VALUES FROM ('2010-02-01') TO ('2010-03-01')
-Distributed by: (uniquecarrier, flightnum)</code></pre>
-<pre><code> 
-tutorial=# \d+ otp_c_1_prt_mth_1
-                                                                           Table "faa.otp_c_1_prt_mth_1"
-        Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Compression Type | Compression Level | Block Size | Description
-----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+------------------+-------------------+------------+-------------
- flt_year             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- flt_quarter          | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- flt_month            | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- flt_dayofmonth       | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- flt_dayofweek        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- flightdate           | date             |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- uniquecarrier        | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- airlineid            | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- carrier              | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- flightnum            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- origin               | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- origincityname       | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- originstate          | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- originstatename      | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- dest                 | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- destcityname         | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- deststate            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- deststatename        | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- crsdeptime           | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- deptime              | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- depdelay             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- depdelayminutes      | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- departuredelaygroups | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- taxiout              | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- wheelsoff            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- wheelson             | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- taxiin               | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- crsarrtime           | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- arrtime              | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- arrdelay             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- arrdelayminutes      | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- arrivaldelaygroups   | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- cancelled            | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- cancellationcode     | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
- diverted             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- crselapsedtime       | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- actualelapsedtime    | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- airtime              | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- flights              | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- distance             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- distancegroup        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- carrierdelay         | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- weatherdelay         | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- nasdelay             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- securitydelay        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
- lateaircraftdelay    | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
-Partition of: otp_c FOR VALUES FROM ('2009-06-01') TO ('2009-07-01')
-Partition constraint: ((flightdate IS NOT NULL) AND (flightdate >= '2009-06-01'::date) AND (flightdate < '2009-07-01'::date))
-Checksum: t
-Distributed by: (uniquecarrier, flightnum)
-Access method: ao_column
-</code></pre>
-</blockquote>
-</li>
-<li>
-Compare the sizes of the tables using the pg_relation_size() and pg_total_relation_size() functions. The pg_size_pretty() function converts the size in bytes to human-readable units.  
+    Notice that the column-oriented version is append-only and partitioned. It has seventeen child files for the partitions, one for each month from June 2009 through October 2010.
 
-<blockquote>
-<code>tutorial=# SELECT pg_size_pretty(pg_relation_size('faa.otp_r'));</code>
+    ```sql
+    tutorial=# \d+ faa.otp_c
+    ```
 
-<pre><code>pg_size_pretty
-----------------
- 256 MB
-(1 row)
-</code></pre>
+    ```sql
+                                                    Partitioned table "faa.otp_c"
+            Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Description
+    ----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+-------------
+    flt_year             | smallint         |           |          |         | plain    |             |              |
+    flt_quarter          | smallint         |           |          |         | plain    |             |              |
+    flt_month            | smallint         |           |          |         | plain    |             |              |
+    flt_dayofmonth       | smallint         |           |          |         | plain    |             |              |
+    flt_dayofweek        | smallint         |           |          |         | plain    |             |              |
+    flightdate           | date             |           |          |         | plain    |             |              |
+    uniquecarrier        | text             |           |          |         | extended |             |              |
+    airlineid            | integer          |           |          |         | plain    |             |              |
+    carrier              | text             |           |          |         | extended |             |              |
+    flightnum            | text             |           |          |         | extended |             |              |
+    origin               | text             |           |          |         | extended |             |              |
+    origincityname       | text             |           |          |         | extended |             |              |
+    originstate          | text             |           |          |         | extended |             |              |
+    originstatename      | text             |           |          |         | extended |             |              |
+    dest                 | text             |           |          |         | extended |             |              |
+    destcityname         | text             |           |          |         | extended |             |              |
+    deststate            | text             |           |          |         | extended |             |              |
+    deststatename        | text             |           |          |         | extended |             |              |
+    crsdeptime           | text             |           |          |         | extended |             |              |
+    deptime              | integer          |           |          |         | plain    |             |              |
+    depdelay             | double precision |           |          |         | plain    |             |              |
+    depdelayminutes      | double precision |           |          |         | plain    |             |              |
+    departuredelaygroups | smallint         |           |          |         | plain    |             |              |
+    taxiout              | smallint         |           |          |         | plain    |             |              |
+    wheelsoff            | text             |           |          |         | extended |             |              |
+    wheelson             | text             |           |          |         | extended |             |              |
+    taxiin               | smallint         |           |          |         | plain    |             |              |
+    crsarrtime           | text             |           |          |         | extended |             |              |
+    arrtime              | text             |           |          |         | extended |             |              |
+    arrdelay             | double precision |           |          |         | plain    |             |              |
+    arrdelayminutes      | double precision |           |          |         | plain    |             |              |
+    arrivaldelaygroups   | smallint         |           |          |         | plain    |             |              |
+    cancelled            | smallint         |           |          |         | plain    |             |              |
+    cancellationcode     | text             |           |          |         | extended |             |              |
+    diverted             | smallint         |           |          |         | plain    |             |              |
+    crselapsedtime       | integer          |           |          |         | plain    |             |              |
+    actualelapsedtime    | double precision |           |          |         | plain    |             |              |
+    airtime              | double precision |           |          |         | plain    |             |              |
+    flights              | smallint         |           |          |         | plain    |             |              |
+    distance             | double precision |           |          |         | plain    |             |              |
+    distancegroup        | smallint         |           |          |         | plain    |             |              |
+    carrierdelay         | smallint         |           |          |         | plain    |             |              |
+    weatherdelay         | smallint         |           |          |         | plain    |             |              |
+    nasdelay             | smallint         |           |          |         | plain    |             |              |
+    securitydelay        | smallint         |           |          |         | plain    |             |              |
+    lateaircraftdelay    | smallint         |           |          |         | plain    |             |              |
+    Partition key: RANGE (flightdate)
+    Partitions: otp_c_1_prt_mth_1 FOR VALUES FROM ('2009-06-01') TO ('2009-07-01'),
+                otp_c_1_prt_mth_10 FOR VALUES FROM ('2010-03-01') TO ('2010-04-01'),
+                otp_c_1_prt_mth_11 FOR VALUES FROM ('2010-04-01') TO ('2010-05-01'),
+                otp_c_1_prt_mth_12 FOR VALUES FROM ('2010-05-01') TO ('2010-06-01'),
+                otp_c_1_prt_mth_13 FOR VALUES FROM ('2010-06-01') TO ('2010-07-01'),
+                otp_c_1_prt_mth_14 FOR VALUES FROM ('2010-07-01') TO ('2010-08-01'),
+                otp_c_1_prt_mth_15 FOR VALUES FROM ('2010-08-01') TO ('2010-09-01'),
+                otp_c_1_prt_mth_16 FOR VALUES FROM ('2010-09-01') TO ('2010-10-01'),
+                otp_c_1_prt_mth_17 FOR VALUES FROM ('2010-10-01') TO ('2010-10-31'),
+                otp_c_1_prt_mth_2 FOR VALUES FROM ('2009-07-01') TO ('2009-08-01'),
+                otp_c_1_prt_mth_3 FOR VALUES FROM ('2009-08-01') TO ('2009-09-01'),
+                otp_c_1_prt_mth_4 FOR VALUES FROM ('2009-09-01') TO ('2009-10-01'),
+                otp_c_1_prt_mth_5 FOR VALUES FROM ('2009-10-01') TO ('2009-11-01'),
+                otp_c_1_prt_mth_6 FOR VALUES FROM ('2009-11-01') TO ('2009-12-01'),
+                otp_c_1_prt_mth_7 FOR VALUES FROM ('2009-12-01') TO ('2010-01-01'),
+                otp_c_1_prt_mth_8 FOR VALUES FROM ('2010-01-01') TO ('2010-02-01'),
+                otp_c_1_prt_mth_9 FOR VALUES FROM ('2010-02-01') TO ('2010-03-01')
+    Distributed by: (uniquecarrier, flightnum)
+    ```
 
-<code>tutorial=# SELECT pg_size_pretty(pg_total_relation_size('faa.otp_r'));</code>
+    ```sql
+    tutorial=# \d+ otp_c_1_prt_mth_1
+    ```
 
-<pre><code> pg_size_pretty
-----------------
- 256 MB
-(1 row)
-</code></pre>
+    ```sql
+                                                                            Table "faa.otp_c_1_prt_mth_1"
+            Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Compression Type | Compression Level | Block Size | Description
+    ----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+------------------+-------------------+------------+-------------
+    flt_year             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    flt_quarter          | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    flt_month            | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    flt_dayofmonth       | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    flt_dayofweek        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    flightdate           | date             |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    uniquecarrier        | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    airlineid            | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    carrier              | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    flightnum            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    origin               | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    origincityname       | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    originstate          | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    originstatename      | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    dest                 | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    destcityname         | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    deststate            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    deststatename        | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    crsdeptime           | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    deptime              | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    depdelay             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    depdelayminutes      | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    departuredelaygroups | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    taxiout              | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    wheelsoff            | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    wheelson             | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    taxiin               | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    crsarrtime           | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    arrtime              | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    arrdelay             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    arrdelayminutes      | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    arrivaldelaygroups   | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    cancelled            | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    cancellationcode     | text             |           |          |         | extended |             |              | none             | 0                 | 32768      |
+    diverted             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    crselapsedtime       | integer          |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    actualelapsedtime    | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    airtime              | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    flights              | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    distance             | double precision |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    distancegroup        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    carrierdelay         | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    weatherdelay         | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    nasdelay             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    securitydelay        | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    lateaircraftdelay    | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
+    Partition of: otp_c FOR VALUES FROM ('2009-06-01') TO ('2009-07-01')
+    Partition constraint: ((flightdate IS NOT NULL) AND (flightdate >= '2009-06-01'::date) AND (flightdate < '2009-07-01'::date))
+    Checksum: t
+    Distributed by: (uniquecarrier, flightnum)
+    Access method: ao_column
+    ```
 
-<code>tutorial=# SELECT pg_size_pretty(sum(pg_relation_size(inhrelid))) FROM pg_inherits WHERE inhparent = 'faa.otp_c'::regclass;</code>
+3. Compare the sizes of the tables using the `pg_relation_size()` and `pg_total_relation_size()` functions. The `pg_size_pretty()` function converts the size in bytes to human-readable units.
 
-<pre><code>  pg_size_pretty
-----------------
- 202 MB
-(1 row)
-</code></pre>
+    ```sql
+    tutorial=# SELECT pg_size_pretty(pg_relation_size('faa.otp_r'));
+    ```
 
-<code>tutorial=# SELECT pg_size_pretty(sum(pg_total_relation_size(inhrelid))) FROM pg_inherits WHERE inhparent = 'faa.otp_c'::regclass;</code>
+    ```sql
+    pg_size_pretty
+    ----------------
+    256 MB
+    (1 row)
+    ```
 
-<pre><code>  pg_size_pretty
-----------------
- 216 MB
-(1 row)
-</code></pre>
-</blockquote>
-</li>
-</ol>
+    ```sql
+    tutorial=# SELECT pg_size_pretty(pg_total_relation_size('faa.otp_r'));
+    ```
 
-<h4>
-<a id="check-for-even-data-distribution-on-segments" class="anchor" href="#check-for-even-data-distribution-on-segments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Check for even data distribution on segments</h4>
+    ```sql
+    pg_size_pretty
+    ----------------
+    256 MB
+    (1 row)
+    ```
 
-The faa.otp_r and faa.otp_c tables are distributed with a hash function on UniqueCarrier and FlightNum. These two columns were selected because they produce an even distribution of the data onto the segments. Also, with frequent joins expected on the fact table and dimension tables on these two columns, less data moves between segments, reducing query execution time.  When there is no advantage to co-locating data from different tables on the segments, a distribution based on a unique column ensures even distribution. Distributing on a column with low cardinality, such as Diverted, which has only two values, will yield a poor distribution.
+    ```sql
+    tutorial=# SELECT pg_size_pretty(sum(pg_relation_size(inhrelid))) FROM pg_inherits WHERE inhparent = 'faa.otp_c'::regclass;
+    ```
 
-<ol>
-<li>
-One of the goals of distribution is to ensure that there is approximately the same amount of data in each segment. The query below shows one way of determining this. Since the column-oriented and row-oriented tables are distributed by the same columns, the counts should be the same for each.
+    ```sql
+    pg_size_pretty
+    ----------------
+    202 MB
+    (1 row)
+    ```
 
-<blockquote>
-<pre><code>tutorial=# SELECT gp_segment_id, COUNT(*) FROM faa.otp_c GROUP BY
+    ```sql
+    tutorial=# SELECT pg_size_pretty(sum(pg_total_relation_size(inhrelid))) FROM pg_inherits WHERE inhparent = 'faa.otp_c'::regclass;
+    ```
+
+    ```sql
+    pg_size_pretty
+    ----------------
+    216 MB
+    (1 row)
+    ```
+
+### Check for even data distribution on segments
+
+The `faa.otp_r` and `faa.otp_c` tables use a hash distribution on the UniqueCarrier and FlightNum columns. These columns ensure an even data distribution across segments and, due to frequent joins involving them, optimize query execution by minimizing data movement between segments. When there is no benefit in co-locating data from various tables on the segments, using a unique column guarantees balanced distribution. However, using a low-cardinality column like Diverted, having only two values, results in poor distribution.
+
+A primary goal of distribution is to have a balanced amount of data in each segment. The subsequent query demonstrates this. Given that both column-oriented and row-oriented tables share the same distribution columns, their counts should match.
+
+```sql
+tutorial=# SELECT gp_segment_id, COUNT(*) FROM faa.otp_c GROUP BY
 gp_segment_id ORDER BY gp_segment_id;
-</code></pre>
+```
 
-<pre><code> gp_segment_id | count
+```sql
+ gp_segment_id | count
 ---------------+--------
              0 | 513746
              1 | 510806
 (2 rows)
-</code></pre>
-</blockquote>
-</li>
-</ol>
+```
 
-<h4>
-<a id="about-partitioning" class="anchor" href="#about-partitioning" aria-hidden="true"><span class="octicon octicon-link"></span></a>About partitioning</h4>
+### About partitioning
 
 Partitioning a table can improve query performance and simplify data administration. The table is divided into smaller child files using a range or a list value, such as a date range or a country code.
 
 Partitions can improve query performance dramatically. When a query predicate filters on the same criteria used to define partitions, the optimizer can avoid searching partitions that do not contain relevant data.
 
-A common application for partitioning is to maintain a rolling window of data based on date, for example, a fact table containing the most recent 12 months of data. Using the ALTER TABLE statement, an existing partition can be dropped by removing its child file. This is much more efficient than scanning the entire table and removing rows with a DELETE statement.
+A common application for partitioning is to maintain a rolling window of data based on date, for example, a fact table containing the most recent 12 months of data. Using the `ALTER TABLE` statement, an existing partition can be dropped by removing its child file. This is much more efficient than scanning the entire table and removing rows with a `DELETE` statement.
 
-Partitions may also be subpartitioned. For example, a table could be partitioned by month, and the month partitions could be subpartitioned by week. Cloudberry Database creates child files for the months and weeks. The actual data, however, is stored in the child files created for the week subpartitions—only child files at the leaf level hold data.
+Partitions might also be sub-partitioned. For example, a table can be partitioned by month, and the month partitions can be sub-partitioned by week. Cloudberry Database creates child files for the months and weeks. The actual data, however, is stored in the child files created for the week subpartitions. Only child files at the leaf level hold data.
 
-When a new partition is added, you can run ANALYZE on just the data in that partition. ANALYZE can run on the root partition (the name of the table in the CREATE TABLE statement) or on a child file created for a leaf partition. If ANALYZE has already run on the other partitions and the data is static, it is not necessary to run it again on those partitions.  
+When a new partition is added, you can run `ANALYZE` on just the data in that partition. `ANALYZE` can run on the root partition (the name of the table in the `CREATE TABLE` statement) or on a child file created for a leaf partition. If `ANALYZE` has already run on the other partitions and the data is static, it is not necessary to run it again on those partitions.
 
 Cloudberry Database supports:
 
-<ul>
-<li>Range partitioning: division of data based on a numerical range, such as date or price.<br>
-</li>
-<li>List partitioning: division of data based on a list of values, such as sales territory or product line.<br>
-</li>
-<li>A combination of both types.<br>
-</li>
-</ul>
+- Range partitioning: division of data based on a numerical range, such as date or price.
+- List partitioning: division of data based on a list of values, such as sales territory or product line.
+- A combination of both types.
 
 <img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/part.jpg" width="400" alt="Cloudberry Database partitioning">  
 
-The following exercise compares SELECT statements with WHERE clauses that do and
-do not use a partitioned column.
+The following exercise compares `SELECT` statements with `WHERE` clauses that do and do not use a partitioned column.
 
-<ol>
-<li>
-The column-oriented version of the fact table you created is partitioned by date.  First, execute a query that filters on a non-partitioned column and note the execution time.  
+The column-oriented version of the fact table you created is partitioned by date. First, execute a query that filters on a non-partitioned column and note the execution time.
 
-<blockquote>
-<pre>tutorial=# \timing on
+```sql
+tutorial=# \timing on
+
 Timing is on.
+
 tutorial=# EXPLAIN SELECT MAX(depdelay) FROM faa.otp_c WHERE UniqueCarrier = 'UA';
+
 NOTICE:  One or more columns in the following table(s) do not have statistics: otp_c
 HINT:  For non-partitioned tables, run analyze <table_name>(<column_list>). For partitioned tables, run analyze rootpartition <table_name>(<column_list>). See log for columns missing statistics.
                                             QUERY PLAN
@@ -639,9 +638,12 @@ HINT:  For non-partitioned tables, run analyze <table_name>(<column_list>). For 
 Time: 16.113 ms
 tutorial=#
 tutorial=#
+
 tutorial=# EXPLAIN SELECT MAX(depdelay) FROM faa.otp_c WHERE flightdate ='2009-11-01';
+
 NOTICE:  One or more columns in the following table(s) do not have statistics: otp_c
 HINT:  For non-partitioned tables, run analyze <table_name>(<column_list>). For partitioned tables, run analyze rootpartition <table_name>(<column_list>). See log for columns missing statistics.
+
                                            QUERY PLAN
 ------------------------------------------------------------------------------------------------
  Finalize Aggregate  (cost=0.00..470.52 rows=1 width=8)
@@ -653,11 +655,7 @@ HINT:  For non-partitioned tables, run analyze <table_name>(<column_list>). For 
  Optimizer: Pivotal Optimizer (GPORCA)
 (7 rows)
 
-Time: 7.434 ms<code>
-</code></pre>
-</blockquote>
+Time: 7.434 ms
+```
 
 The query on the partitioned column takes much less time to execute. If you compare the explain plans for the queries in this exercise, you will see that the first query scans each of the seventeen child files, while the second scans just one child file. The reduction in I/O and CPU time explains the improved execution time. 
-</li>
-</ol>
-
