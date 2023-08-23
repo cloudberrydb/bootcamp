@@ -501,7 +501,7 @@ Exercise: Initialize standby master. Remove it. Initialize it again. Activate th
 
 Track gp\_segment\_configuration to understand the changes.
 
-# 12. Expansion
+# 10. Expansion
 
 If the cluster needs to be expanded, the "gpexpand" tool can be used.
 
@@ -531,7 +531,7 @@ Exercise: Run gpexpand and add segments to the existing servers. Run gpexpand to
 
 Observe gp\_segment\_configuration and connect the changes to the actions.
 
-# 13. Performance check
+# 11. Performance check
 
 "gpcheckperf" utility checks performance on a set of hosts (cluster):
 
@@ -554,7 +554,7 @@ Observe gp\_segment\_configuration and connect the changes to the actions.
 Exercise: Run gpcheckcat with the various options and interpret the results.
 
 
-# 14. User data and table distribution
+# 12. User data and table distribution
 
 - master does not have user data
 
@@ -646,7 +646,7 @@ gpadmin=#
 
 Exercise: Reproduce the above with your own table and observe the effects.
 
-# 15. Database catalog
+# 13. Database catalog
 
 - located on master and segments
 
@@ -666,7 +666,7 @@ Exercise: Reproduce the above with your own table and observe the effects.
 
 Exercise: Run gpcheckcat on your cluster and attempt to make sense of the results.
 
-# 16. Data directories
+# 14. Data directories
 
 Contents of a data directory:
 
@@ -747,7 +747,7 @@ drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:44 pg_stat_tmp
 
 Exercise: Explore the data directory and subdirectories. Take a look at the configuration files.
 
-# 17. Instance processes
+# 15. Instance processes
 
 ======================
 
@@ -823,7 +823,7 @@ gpadmin   4387  0.1  0.1 213788  9740 ?        Ss   16:14   0:04 postgres: 41000
 
 Exercise: Try to identify the processes for the instances in your cluster.
 
-# 18. Database log files
+# 16. Database log files
 
 Each instance has its own log files, which are located under <data_directory>/log directory.
 ```
@@ -838,71 +838,9 @@ total 20
 
 The standard log file name is gpdb_\<date\>-\<time\>.csv
 
-Log line format:
-
-logtime | timestamp with time zone |
-
-loguser | text |
-
-logdatabase | text |
-
-logpid | text |
-
-logthread | text |
-
-loghost | text |
-
-logport | text |
-
-logsessiontime | timestamp with time zone |
-
-logtransaction | integer |
-
-logsession | text |
-
-logcmdcount | text |
-
-logsegment | text |
-
-logslice | text |
-
-logdistxact | text |
-
-loglocalxact | text |
-
-logsubxact | text |
-
-logseverity | text |
-
-logstate | text |
-
-logmessage | text |
-
-logdetail | text |
-
-loghint | text |
-
-logquery | text |
-
-logquerypos | integer |
-
-logcontext | text |
-
-logdebug | text |
-
-logcursorpos | integer |
-
-logfunction | text |
-
-logfile | text |
-
-logline | integer |
-
-logstack | text |
-
 Exercise: Look at the log file and do different things in the database (create table, run queries, etc.)
 
-# 19. AO/AOCO Tables
+# 17. AO/AOCO Tables
 
 - Heap Tables
 
@@ -922,7 +860,7 @@ AOCO tables also support compression, which is even better than AO because of th
 
 Exercise: Create heap table, AO table, AOCO table. Use the \d+ psql command to see the result.
 
-# 20. External tables
+# 18. External tables
 
 CBDB supports external tables. These are tables that have the table structure in the database, but point to data outside of the database:
 
@@ -939,7 +877,7 @@ External tables are useful when importing data into CBDB (insert into table sele
 Exercise: Create external tables of different kinds and work with them to get comfortable.
 
 
-# 21. Workload management
+# 19. Workload management
 
 Resource queues - CBDB has a concept of RQ. RQ is a set of sessions that have similar requirements and use common pool of resources. Every user can be assigned to a RQ.
 
