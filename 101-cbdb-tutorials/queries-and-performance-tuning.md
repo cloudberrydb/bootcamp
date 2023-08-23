@@ -45,6 +45,8 @@ Some items to consider in performance tuning:
 
 ## Exercises
 
+After doing the following exercises, you are expected to finish the previous tutorial [Lesson 4: Data Loading](../101-cbdb-tutorials/data-loading.md).
+
 ### Analyze the tables
 
 Cloudberry Database uses Multi-version Concurrency Control (MVCC) to guarantee data isolation, one of the ACID properties of relational databases. MVCC allows multiple users of the database to obtain consistent results for a query, even if the data is changing as the query is being executed. There can be multiple versions of rows in the database, but a query sees a snapshot of the database at a single point in time, containing only the versions of rows that are valid at that point in time. When a row is updated or deleted and no active transactions continue to reference it, it can be removed. The `VACUUM` command removes older versions that are no longer needed, leaving free space that can be reused.
@@ -141,7 +143,7 @@ In the following exercise, you will generate some small tables that you can quer
 
     The cost numbers are cumulative, so the cost for the second operation includes the cost for the first operation. Notice that nearly all the time to process this query is in the sequential scan.
 
-4. The `EXPLAIN ANALYZE` command actually runs the query (without returning te result set). The cost numbers reflect the actual timings. It also produces some memory and I/O statistics.
+4. The `EXPLAIN ANALYZE` command actually runs the query (without returning the result set). The cost numbers reflect the actual timings. It also produces some memory and I/O statistics.
 
     ```sql
     tutorial=# EXPLAIN ANALYZE SELECT COUNT(*) FROM sample WHERE id &gt; 100;
@@ -263,7 +265,7 @@ tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
 Time: 0.627 ms
 ```
 
-Notice the difference in timing between the single-row SELECT with and without the index. The difference would have been much greater for a larger table, since indexes improve performance for queries on large datasets. Note that even when an index exists, the optimizer may choose not to use it if another more efficient plan is available.
+Notice the difference in timing between the single-row `SELECT` with and without the index. The difference would have been much greater for a larger table, because indexes improve performance for queries on large datasets. Note that even when an index exists, the optimizer might choose not to use it if another more efficient plan is available.
 
 View the following `EXPLAIN` plans to compare plans for some other common types of queries.
 

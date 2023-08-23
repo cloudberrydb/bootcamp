@@ -111,7 +111,6 @@ The `COPY` statement moves data from the file system to database tables. Data fo
     - `copy_into_distance_groups.sql`
     - `copy_into_wac.sql`
 
-
 3. Log into the `tutorial` database as `lily`.
 
     ```shell
@@ -150,7 +149,7 @@ The `COPY` statement moves data from the file system to database tables. Data fo
 
 ### Load data using the `gpdist` utility
 
-For the `faa` fact table, you will use an ETL (Extract, Transform, Load) process to load data from the source gzip files into a data table. For the best loading speed, use the `gpfdist` utility to distribute rows to segments. 
+For the `faa` fact table, you will use an ETL (Extract, Transform, Load) process to load data from the source gzip files into a data table. For the best loading speed, use the `gpfdist` utility to distribute rows to segments.
 
 In production system, `gpfdist` runs on file servers that external data resides. However, for a single-node Cloudberry Database instance, there is only one logical host, so you run `gpfdist` on it as well. Starting `gpfdist` is similar as a file server, no data movement will occur until SQL query request has been ended.
 
@@ -171,7 +170,7 @@ In production system, `gpfdist` runs on file servers that external data resides.
     - `> /tmp/gpfdist.log`: Redirects standard output to a log file at `/tmp/gpfdist.log`.
     - `2>&1`: Ensures that both standard output and standard error are redirected to the same log file.
     - `&`: Runs the process in the background.
-    
+
     Once executed, you see `6581`, which indicates the background job number `[1]` and its process ID `6581`.
 
 2. Check the running processes:
@@ -194,7 +193,6 @@ In production system, `gpfdist` runs on file servers that external data resides.
     ```
 
     This command allows you to view the contents of the `gpfdist.log` file. The log messages indicate the initialization steps of the `gpfdist` utility:
-
 
     ```shell
     2023-07-25 16:02:41 6581 INFO Before opening listening sockets - following listening sockets are available:

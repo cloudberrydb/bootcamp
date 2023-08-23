@@ -107,7 +107,7 @@ In the following steps, you will be guided to run a SQL file `create_dim_tables.
     CREATE TABLE
     ```
 
-5. Use the `\dt` command to display all tables in the `faa` schema. You can see that 6 tables are created.
+5. Use the `\dt` command to display all tables in the `faa` schema. You can see that 6 tables have been created.
 
     ```sql
     tutorial=> \dt
@@ -129,12 +129,12 @@ In the following steps, you will be guided to run a SQL file `create_dim_tables.
 
 <summary>Distribution Policy</summary>
 
-The definition of a table includes the distribution policy for the data, which is critical for query performance. The goals for the distribution policy are to:  
+The definition of a table includes the distribution policy for the data, which is critical for query performance. The goals for the distribution policy are to:
 
 - Distribute the volume of data and query execution work evenly among segments.
 - Enable segments to accomplish complicated query processing steps locally.
 
-The distribution policy determines how data is distributed among segments. To get an effective distribution policy requires understanding of the data’s characteristics, what kind of queries that would be executed on the data and what distribution strategy will best utilize the parallel execution capacity among segments.
+The distribution policy determines how data is distributed among segments. To get an effective distribution policy requires understanding of the data's characteristics, what kind of queries that would be executed on the data and what distribution strategy will best utilize the parallel execution capacity among segments.
 
 Use the `DISTRIBUTED` clause in `CREATE TABLE` statement to define the distribution policy for a table. Ideally, each segment possesses an equal volume of data and performs equal share of work when queries run. There are 2 kinds of distribution policy syntax in Cloudberry Database:
 

@@ -1,11 +1,11 @@
 
 # Lesson 1: Create Users and Roles
 
-Cloudberry Database manages database access using roles. Initially, there is one superuser role—the role associated with the OS user who initialized the database instance, usually `gpadmin`. This user owns all of the Cloudberry Database files and OS processes, so it is important to reserve the `gpadmin` role for system tasks only.
+Cloudberry Database manages database access using roles. Initially, there is one superuser role, the role associated with the OS user who initialized the database instance, usually `gpadmin`. This user owns all of the Cloudberry Database files and OS processes, so it is important to reserve the `gpadmin` role for system tasks only.
 
-A role can be a user or a group. A user role can login to a database; that is, it has the `LOGIN` attribute. A user or group role can become a member of a group.
+A role can be a user or a group. A user role can log into a database; that is, it has the `LOGIN` attribute. A user or group role can become a member of a group.
 
-Permissions can be granted to users or groups. Initially, of course, only the `gpadmin` role is able to create roles. You can add roles with the `createuser` utility command, `CREATE ROLE` SQL command, or the `CREATE USER` SQL command. The `CREATE USER` command is the same as the `CREATE ROLE` command except that it automatically assigns the role the `LOGIN` attribute.
+Permissions can be granted to users or groups. Initially, only the `gpadmin` role is able to create roles. You can add roles using the `createuser` utility command, `CREATE ROLE` SQL command, or the `CREATE USER` SQL command. The `CREATE USER` command is the same as the `CREATE ROLE` command except that it automatically assigns the role the `LOGIN` attribute.
 
 ## Quick-start operations
 

@@ -1,7 +1,7 @@
 
 # Lesson 2: Create and Prepare Database
 
-To create a new database in Cloudberry Database, you can either use the `CREATE DATABASE` SQL command in the `psql` client, or use the `createdb` utility. The `createdb` utility is a wrapper around the `CREATE DATABASE` command. 
+To create a new database in Cloudberry Database, you can either use the `CREATE DATABASE` SQL command in the `psql` client, or use the `createdb` utility. The `createdb` utility is a wrapper around the `CREATE DATABASE` command.
 
 ## Quick-start operations
 
