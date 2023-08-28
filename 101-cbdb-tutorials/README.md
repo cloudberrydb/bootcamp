@@ -8,7 +8,7 @@ Before starting to read the tutorials, you are expected to finish installing the
 
 The series includes the following tutorials. Follow them in sequence.
 
-- [Backgound: Database Concepts](../101-cbdb-tutorials/backgroud-database-concepts.md)
+- [Lesson 0: Background Concepts of Databases](../101-cbdb-tutorials/backgroud-database-concepts.md)
 - [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md)
 - [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/create-and-prepare-database.md)
 - [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md)
