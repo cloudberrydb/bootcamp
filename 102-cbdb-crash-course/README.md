@@ -564,7 +564,7 @@ If you need to expand a cluster, you can use the `gpexpand` tool. You can add ne
 
     `gpexpand` also makes a new area called the `gpexpand` schema. This area has a list of tables that need to be spread out in the next step.
 
-3. Run `gpexpand` to redistribute or spread out the data.
+3. Run `gpexpand` again to redistribute or spread out the data.
 
     Here, the data, which was only in the old instances, is now spread out to the expanded cluster. You can do this step many times by setting a time limit with the `-d` option. When all data is spread out, `gpexpand` stops.
 
@@ -576,38 +576,32 @@ If you need to expand a cluster, you can use the `gpexpand` tool. You can add ne
 
 **Practical exercise**
 
-1. Run `gpexpand` to add more segments to your current servers. 2. Run `gpexpand` again to add segments on new servers. Look at the `gp_segment_configuration` table to see how it changes with each action.
+1. Run `gpexpand` to add more segments to your current servers.
+2. Run `gpexpand` again to add segments on new servers.
+3. Look at the `gp_segment_configuration` table to see how it changes with each action.
 
-## 11. Performance check
+## 11. Check cluster performance
 
-"gpcheckperf" utility checks performance on a set of hosts (cluster):
+You can use the `gpcheckperf` utility to check performance on a set of hosts (cluster). This utility can be used to check the following:
 
-- IO performance per host (-r d) - gpcheckperf will use "dd" to perform
+- I/O performance per host (with the `-r -d` options)
 
-- read test
+    > Note: gpcheckperf will use the `dd` command to perform read test and write test on each host.
 
-- write test
+- Network performance (with the `-r -n|N|M` options)
 
-- network performance (-r n|N|M)
+    > Note: `-n` means sequential. `-N` means parallel with even number of hosts. `-M` means full matrix mode.
 
-- n = sequential
+- Memory bandwidth test per host (with the `-r -s` options)
 
-- N = parallel (must use even number of hosts)
+    > Note: The utility uses the STREAM benchmark program to measure sustainable memory bandwidth (in MB/s).
 
-- M = full matrix mode
-
-- memory bandwidth test per host (-r s) - the utility uses the STREAM benchmark program to measure sustainable memory bandwidth (in MB/s).
-
-Exercise: Run gpcheckcat with the various options and interpret the results.
-
+Exercise: Run `gpcheckcat` with the various options and interpret the results.
 
 ## 12. User data and table distribution
 
-- master does not have user data
+In Cloudberry Database, the master instance does not store user data. Segments store user data, and the data is not shared between segments.
 
-- segments have user data
-
-- data is not shared
 
 - create table (...) distributed by (...)
 
