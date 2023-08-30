@@ -704,16 +704,19 @@ Exercise: Reproduce the above with your own table and observe the effects.
 
 - gpcheckcat
 
-Exercise: Run gpcheckcat on your cluster and attempt to make sense of the results.
+Exercise: Run `gpcheckcat` on your cluster and attempt to make sense of the results.
 
-# 14. Data directories
+## 14. Data directories
 
-Contents of a data directory:
+In the master instance, the data directory is located at `/data0/database/master/gpseg-1`.
 
-Coordinator data directory:
+The following are the contents in the data directory of the master instance and coordinator instance:
 
-```
+```shell
 [gpadmin@mdw gpseg-1]$ ls -tlr
+```
+
+```shell
 total 156
 -rw------- 1 gpadmin gpadmin     3 Aug 23 15:59 PG_VERSION
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 15:59 pg_twophase
@@ -747,11 +750,15 @@ drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:14 global
 drwx------ 4 gpadmin gpadmin  4096 Aug 23 16:39 pg_logical
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:44 pg_stat_tmp
 ```
-Segment data directory:
 
-```
+In the segment instances, the data directory is located at `/data0/database/primary/gpseg0` and `/data0/database/primary/gpseg1`. The following are the contents in the data directory of a segment instance:
+
+```shell
 [gpadmin@mdw gpseg-1]$ cd /data0/database/primary/gpseg0
 [gpadmin@mdw gpseg0]$ ls -ltr
+```
+
+```shell
 total 180
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 15:59 pg_twophase
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 15:59 pg_tblspc
@@ -787,9 +794,7 @@ drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:44 pg_stat_tmp
 
 Exercise: Explore the data directory and subdirectories. Take a look at the configuration files.
 
-# 15. Instance processes
-
-======================
+## 15. Instance processes
 
 - postmaster process - the process with the data directory in its name (-D ...) - this process is the parent for all other database processes and it handles connections to this instance
 
@@ -863,66 +868,62 @@ gpadmin   4387  0.1  0.1 213788  9740 ?        Ss   16:14   0:04 postgres: 41000
 
 Exercise: Try to identify the processes for the instances in your cluster.
 
-# 16. Database log files
+## 16. Database log files
 
-Each instance has its own log files, which are located under <data_directory>/log directory.
-```
+Each instance has its own log files which are located in the `<data_directory>/log` directory.
+
+```shell
 [gpadmin@mdw log]$ pwd
+
 /data0/database/primary/gpseg0/log
+
 [gpadmin@mdw log]$ ls -ltr
+
 total 20
 -rw------- 1 gpadmin gpadmin 8842 Aug 23 16:14 gpdb-2023-08-23_155951.csv
 -rw------- 1 gpadmin gpadmin  468 Aug 23 16:14 startup.log
 -rw------- 1 gpadmin gpadmin 3269 Aug 23 16:17 gpdb-2023-08-23_161424.csv
 ```
 
-The standard log file name is gpdb_\<date\>-\<time\>.csv
+The standard log file name is `gpdb_<date>-<time>.csv`.
 
 Exercise: Look at the log file and do different things in the database (create table, run queries, etc.)
 
-# 17. AO/AOCO Tables
+## 17. Table types in CBDB: heap, AO, and AOCO
 
-- Heap Tables
+**Heap tables**
 
-The default table type in CBDB is 'heap'. In heap tables rows are stored in pages and a data file can have many pages. Heap tables support all SQL operations - SELECT, INSERT, UPDATE, DELETE, TRUNCATE.
+In CBDB, the standard table type is "heap". These tables store rows on pages, and one data file can contain multiple pages. They support common SQL tasks such as `SELECT`, `INSERT`, `UPDATE`, `DELETE`, and `TRUNCATE`. Each row in a heap table has a header. However, these tables do not support compression.
 
-To support this functionality rows in CBDB have row header. Heap tables do not support compression.
+**AO tables**
 
-- AO tables do not have row header and support compression. This makes them appropriate choice for huge fact tables.
+Unlike heap tables, AO tables do not have a row header but they do allow compression. This feature makes AO tables a good fit for big fact tables.
 
-- AO CO (Column Oriented) tables
+**AOCO (column-oriented) tables**
 
-Row oriented storage is not optimal when executing queries on single columns (avg, sum, etc.).
+For tasks that focus on single columns, like average (`AVG`) or sum, using row-oriented storage is not the ideal option. Instead, column-oriented tables, which store data by its column, are more efficient. This is because when you query one column, it does not get slowed down by the size or count of other columns.
 
-Column oriented tables store data by column, so querying one column does not depend on the number and size of other columns.
+AOCO tables offer compression, and they compress even better than AO tables. This is due to the consistent type of data in one file, which means that all data in a single column is of the same kind.
 
-AOCO tables also support compression, which is even better than AO because of the homogenity of the data in single file (single column all data of same type)
+Exercise: Make a heap table, an AO table, and an AOCO table. After creating them, use the `\d+ psql` command to view the results.
 
-Exercise: Create heap table, AO table, AOCO table. Use the \d+ psql command to see the result.
+## 18. External tables
 
-# 18. External tables
+CBDB supports external tables. These tables are set up in the database, but they link to data outside of the database. Here is where the data for these tables can come from:
 
-CBDB supports external tables. These are tables that have the table structure in the database, but point to data outside of the database:
+- A file on your local filesystem.
+- A file on a remote host (you need to use the `gpfdist` server for this).
+- HDFS, which stands for the `gphdfs` type.
+- Data generated on the spot with a command.
 
-- data can be in file on the local filesystem
+One good thing about external tables is they make it easy to load data into CBDB. When you use a command like `INSERT INTO table SELECT * FROM ext_table`, data gets loaded all at once from different parts, instead of one piece at a time.
 
-- data can be in file on a remote host (gpfdist server used)
+Exercise: Try making different types of external tables and play around with them to learn more.
 
-- data can be in HDFS (gphdfs type)
+## 19. Workload management
 
-- data can be generated on the fly via command
+In CBDB, we have something called Resource Queues, or RQ for short. Think of an RQ as a group of sessions that need similar things and share resources. You can put any user into an RQ.
 
-External tables are useful when importing data into CBDB (insert into table select \* from ext\_table) because the data ingestion happens in parallel from segments as opposed to serial ingestion from master.
+Also, there is a feature called Priority. You can set a priority level for a whole RQ, which means every session in that RQ will have that priority. But if you want, you can set a priority for just one session using the `gp_adjust_priority()` function.
 
-Exercise: Create external tables of different kinds and work with them to get comfortable.
-
-
-# 19. Workload management
-
-Resource queues - CBDB has a concept of RQ. RQ is a set of sessions that have similar requirements and use common pool of resources. Every user can be assigned to a RQ.
-
-Priority - each resource queue can be assigned a priority. Every session which is assigned to this RQ will have the specified priority. Priority can be assigned to a single session also with
-
-gp\_adjust\_priority() function.
-
-Exercise: create user, create RQ, assign the user to the RQ, run query and observe the RQ state.
+Practice Time: Make a user, set up an RQ, put the user in the RQ, then run a query. Watch and see what happens to the RQ.
