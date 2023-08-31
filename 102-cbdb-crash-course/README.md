@@ -5,32 +5,24 @@ This crash course provides an extensive overview of Cloudberry Database (CBDB), 
 
 Topics include:
 
-- CBDB architecture and components like master, segments, primary/mirror roles.
-- Installing and configuring CBDB.
-- Management utilities like `gpstart`, `gpstop`, `gpstate`, `gprecoverseg`, `gpaddmirrors`, `gpexpand`.
-- High availability with standby master and replication.
-- Performance features like resource queues and workload management.
-- Table distribution and query processing.
-- Database catalog, directories, processes.
-- Advanced features like columnar storage (AO/AOCO), external tables.
-- Hands-on exercises to create a cluster, recover segments, expand a cluster, work with different table types, etc.
 
-## 0. Prerequisite
+
+## Lesson 0. Prerequisite
 
 Before starting this crash course, spend some time going through the [Cloudberry Database Tutorials Based on Single-Node Installation](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md) to get familiar with Cloudberry Database and how it works.
 
-## 1. Where to read the official documentation
+## Lesson 1. Where to read the official documentation
 
 Take a quick look at the official [CBDB Documentation](https://cloudberrydb.org/docs/cbdb-overview). No need to worry if you do not understand everything.
 
-## 2. How to install CBDB
+## Lesson 2. How to install CBDB
 
 To begin your journey with CBDB, you are expected to install CBDB in your preferred environment. The following options are available:
 
 - For testing or trying out CBDB in a sandbox environment, see [Install CBDB in a Sandbox](https://github.com/cloudberrydb/bootcamp/blob/main/000-cbdb-sandbox/README.md).
 - For deploying CBDB in other environments (including the production environment) and the prerequisite software/hardware configuration, see [CBDB Deployment Guide](https://cloudberrydb.org/docs/cbdb-op-deploy-guide).
 
-## 3. Cluster architecture
+## Lesson 3. Cluster architecture
 
 A CBDB cluster has one master host (usually named `mdw`) and multiple segment hosts (usually named `sdwXX`).
 
@@ -79,7 +71,7 @@ The columns of this system are described as follows.
 
 Connect to the CBDB cluster that you have created and take a look at the `gp_segment_configuration` table. Try to learn the rows and columns. Take a look at the cluster configuration file that you used to create the cluster.
 
-## 4. Management utilities
+## Lesson 4. Management utilities
 
 Management utilities in CBDB are command-line tools used to administer and manage the database cluster. Some key points:
 
@@ -107,7 +99,7 @@ In summary, management utilities are command-line programs and scripts used by D
 
 Read the help information for these tools (`<tool_name> --help`).
 
-## 5. Start and stop a cluster
+## Lesson 5. Start and stop a cluster
 
 - Start a CBDB cluster using `gpstart`:
 
@@ -183,7 +175,7 @@ Read the help information for these tools (`<tool_name> --help`).
 
 Read the log entries for `gpstop` and `gpstart`, and try to understand what they mean. Read and exercise the different options for `gpstart` and `gpstop`.
 
-## 6. Check cluster state
+## Lesson 6. Check cluster state
 
 - Check the state of a cluster using `gpstate`.
 
@@ -243,7 +235,7 @@ Read the log entries for `gpstop` and `gpstart`, and try to understand what they
 
 Check the cluster state and try to collect the information using `gpstate` or `gp_segment_configuration`.
 
-## 7. How CBDB segment mirroring works
+## Lesson 7. How CBDB segment mirroring works
 
 **CBDB mirroring overview:**
 
@@ -481,7 +473,7 @@ mdw (dbid 5): pg_basebackup: base backup completed
 
 Add mirrors to your cluster. If your cluster already has mirrors, delete the cluster and recreate one without mirrors (removing mirror segments is not supported).
 
-## 8. CBDB's fault tolerance and segment recovery
+## Lesson 8. CBDB's fault tolerance and segment recovery
 
 **CBDB's fault tolerance system**
 
@@ -528,7 +520,7 @@ If a segment is down, you can recover it using the `gprecoverseg` utility. This 
 4. To fix the failed segment, use the recovery tools.
 5. Confirm in the `gp_segment_configuration` table that the segment has been recovered.
 
-## 9. Set up and manage the standby master instance in CBDB
+## Lesson 9. Set up and manage the standby master instance in CBDB
 
 **Understand the role of the standby master**
 
@@ -559,7 +551,7 @@ Upon running this command, the roles change: the standby master becomes the mast
 
 Throughout these steps, keep an eye on the `gp_segment_configuration` table. This will help you understand the changes in roles and the state of each instance.
 
-## 10. Expand a cluster
+## Lesson 10. Expand a cluster
 
 If you need to expand a cluster, you can use the `gpexpand` tool. You can add new hosts or more segments to the current hosts.
 
@@ -591,7 +583,7 @@ If you need to expand a cluster, you can use the `gpexpand` tool. You can add ne
 2. Run `gpexpand` again to add segments on new servers.
 3. Look at the `gp_segment_configuration` table to see how it changes with each action.
 
-## 11. Check cluster performance
+## Lesson 11. Check cluster performance
 
 You can use the `gpcheckperf` utility to check performance on a set of hosts (cluster). This utility can be used to check the following:
 
@@ -611,7 +603,7 @@ You can use the `gpcheckperf` utility to check performance on a set of hosts (cl
 
 Run `gpcheckcat` with the various options and interpret the results.
 
-## 12. User data and table distribution
+## Lesson 12. User data and table distribution
 
 In CBDB, the master instance does not store user data. Segments store user data, and the data is not shared between segments.
 
@@ -699,7 +691,7 @@ gpadmin=#
 
 Exercise: Reproduce the above with your own table and observe the effects.
 
-## 13. Database catalog
+## Lesson 13. Database catalog
 
 - located on master and segments
 
@@ -719,7 +711,7 @@ Exercise: Reproduce the above with your own table and observe the effects.
 
 Exercise: Run `gpcheckcat` on your cluster and attempt to make sense of the results.
 
-## 14. Data directories
+## Lesson 14. CBDB data directories
 
 In the master instance, the data directory is located at `/data0/database/master/gpseg-1`.
 
@@ -809,7 +801,7 @@ drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:44 pg_stat_tmp
 
 Explore the data directory and subdirectories. Take a look at the configuration files.
 
-## 15. Instance processes
+## Lesson 15. Instance processes
 
 - postmaster process - the process with the data directory in its name (-D ...) - this process is the parent for all other database processes and it handles connections to this instance
 
@@ -883,7 +875,7 @@ gpadmin   4387  0.1  0.1 213788  9740 ?        Ss   16:14   0:04 postgres: 41000
 
 Exercise: Try to identify the processes for the instances in your cluster.
 
-## 16. Database log files
+## Lesson 16. Database log files
 
 Each instance has its own log files which are located in the `<data_directory>/log` directory.
 
@@ -906,7 +898,7 @@ The standard log file name is `gpdb_<date>-<time>.csv`.
 
 Look at the log file and do different things in the database (create table, run queries, etc.)
 
-## 17. Table types in CBDB: heap, AO, and AOCO
+## Lesson 17. Table types in CBDB: heap, AO, and AOCO
 
 **Heap tables**
 
@@ -926,7 +918,7 @@ AOCO tables offer compression, and they compress even better than AO tables. Thi
 
 Make a heap table, an AO table, and an AOCO table. After creating them, use the `\d+ psql` command to view the results.
 
-## 18. External tables
+## Lesson 18. External tables
 
 CBDB supports external tables. These tables are set up in the database, but they link to data outside of the database. Here is where the data for these tables can come from:
 
@@ -941,7 +933,7 @@ One good thing about external tables is they make it easy to load data into CBDB
 
 Try making different types of external tables and play around with them to learn more.
 
-## 19. Workload management
+## Lesson 19. Workload management
 
 In CBDB, we have something called Resource Queues, or RQ for short. Think of an RQ as a group of sessions that need similar things and share resources. You can put any user into an RQ.
 
