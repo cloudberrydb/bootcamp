@@ -13,7 +13,7 @@ Topics include:
 - Table distribution and query processing.
 - Database catalog, directories, processes.
 - Advanced features like columnar storage (AO/AOCO), external tables.
-- Hands-on exercises to create a cluster, recover segments, expand a cluster, work with different table types etc.
+- Hands-on exercises to create a cluster, recover segments, expand a cluster, work with different table types, etc.
 
 ## 0. Prerequisite
 
@@ -21,14 +21,14 @@ Before starting this crash course, spend some time going through the [Cloudberry
 
 ## 1. Where to read the official documentation
 
-Take a quick look at the official [CBDB Documentation](https://cloudberrydb.org/docs/cbdb-overview). No need to worry if you don't understand everything.
+Take a quick look at the official [CBDB Documentation](https://cloudberrydb.org/docs/cbdb-overview). No need to worry if you do not understand everything.
 
 ## 2. How to install CBDB
 
-To begin the knowledge journey with CBDB, you are expected to install CBDB in your preferred environment. The following options are available:
+To begin your journey with CBDB, you are expected to install CBDB in your preferred environment. The following options are available:
 
-- For testing or trying out CBDB in a sandbox environment, see [CBDB Sandbox](https://github.com/cloudberrydb/bootcamp/blob/main/000-cbdb-sandbox/README.md).
-- For deploying CBDB in other environments (including the production environment) and the prerequisite software/hardware configuration, see [CBDB Deploy Guide](https://cloudberrydb.org/docs/cbdb-op-deploy-guide).
+- For testing or trying out CBDB in a sandbox environment, see [Install CBDB in a Sandbox](https://github.com/cloudberrydb/bootcamp/blob/main/000-cbdb-sandbox/README.md).
+- For deploying CBDB in other environments (including the production environment) and the prerequisite software/hardware configuration, see [CBDB Deployment Guide](https://cloudberrydb.org/docs/cbdb-op-deploy-guide).
 
 ## 3. Cluster architecture
 
@@ -36,16 +36,17 @@ A CBDB cluster has one master host (usually named `mdw`) and multiple segment ho
 
 > **Tip**: if someone is referring to `mdw`, he is referring to the "master host". Similarly, when somebody is referring to "sdw10", he is referring to the 10th segment host.
 
-A master host usually contains only one instance - the master instance. The segment hosts might contain many worker instances. Every instance has its own set of processes, data directory, and listening port. For example, usually, the listening port of the master instance (where all clients will connect) is `5432`.
+A master host usually contains only one instance - the master instance. The segment hosts might contain many worker instances. Every instance has its own set of processes, data directory, and listening port. For example, usually, the listening port of the master instance (where all clients will connect to) is `5432`.
 
 Every segment instance has its own listening port, and the base port is specified in the cluster configuration file.
 
 Instances can have 2 roles - primary and mirror. Primary instances serve database queries. Mirror instances simply track and record data changes in primary instances, but do not serve database queries. If the primary instance goes down for some reason, then the corresponding mirror instance transitions to the primary role and starts serving queries (the original primary instance, currently down, is marked as mirror).
 
-The cluster information is stored in the `gp_segment_configuration` system table. It looks like this (use the "psql" command to connect to the database to execute queries):
+The cluster information is stored in the `gp_segment_configuration` system table, which looks like this (use the "psql" command to connect to the database to execute queries):
 
 ```shell
 [gpadmin@mdw ~]$ psql
+
 psql (14.4, server 14.4)
 Type "help" for help.
 ```
@@ -61,24 +62,26 @@ gpadmin=# SELECT * FROM gp_segment_configuration;
 (3 rows)
 ```
 
-The columns of this system are described as follows:
+The columns of this system are described as follows.
 
-- `dbid`, uniquely identifies a segment.
-- `content`, uniquely identifies segment pair (primary and mirror). The primary and the corresponding mirror will have the same content ID, but different `dbid`s. The master has the `content` value of `-1`. The worker instances have incremental content values of `0`, `1`, `2`, `3`...
-- `role`, the current role of the segment.
-- `preferred_role`, the role of the segment in the original configuration. Note that if an original mirror instance has taken over and become primary now, the role will be changed. This column records the original role.
-- `mode`, the mode of the segment. The value options are `s` (in sync), `c` (in change tracking), and `r` (in recovery).
-- `status`, the status of the segment. The value options are `u` (up) and `d` (down).
-- `port`, the listening port of the segment. For clients, only the listening port of the master is important. The segment listening ports are important for the master to communicate with them.
-- `hostname`, the hostname of the segment.
-- `address`, each host can have different network controllers with different IP addresses and different names associated with them.
-- `datadir`, the data directory where data is stored for each segment.
+- `dbid`: uniquely identifies a segment.
+- `content`: uniquely identifies segment pairs (primary and mirror). The primary and the corresponding mirror will have the same `content` ID, but different `dbid` values. The master has the `content` value of `-1`. The worker instances have incremental content values of `0`, `1`, `2`, `3`...
+- `role`: the current role of the segment.
+- `preferred_role`: the role of the segment in the original configuration. Note that if an original mirror instance has taken over and become primary now, the role will be changed. This column records the original role.
+- `mode`: the mode of the segment. The value options are `s` (in sync), `c` (in change tracking), and `r` (in recovery).
+- `status`: the status of the segment. The value options are `u` (up) and `d` (down).
+- `port`: the listening port of the segment. For clients, only the listening port of the master is important. The segment listening ports are important for the master to communicate with them.
+- `hostname`: the hostname of the segment.
+- `address`: each host can have different network controllers with different IP addresses and different names associated.
+- `datadir`: the data directory where data is stored for each segment.
 
-Exercise: Connect to the CBDB cluster that you have created and take a look at the `gp_segment_configuration` table. Try to learn the rows and columns and connect it to the cluster configuration file that you used to create the cluster.
+**Exercise**
+
+Connect to the CBDB cluster that you have created and take a look at the `gp_segment_configuration` table. Try to learn the rows and columns. Take a look at the cluster configuration file that you used to create the cluster.
 
 ## 4. Management utilities
 
-Management utilities in CloudBerry DB are command-line tools used to administer and manage the database cluster. Some key points:
+Management utilities in CBDB are command-line tools used to administer and manage the database cluster. Some key points:
 
 - They allow performing tasks like starting, stopping, and configuring the database.
 - Help monitor the health and status of the cluster.
@@ -86,21 +89,23 @@ Management utilities in CloudBerry DB are command-line tools used to administer 
 - Help scale out the cluster by expanding with more nodes.
 - Utilities work across master, standby master, and multiple segment instances.
 
-So in summary, management utilities are command-line programs and scripts used by DBAs to administer, monitor, maintain and manage a CloudBerry DB cluster. The following are some common utilities:
+In summary, management utilities are command-line programs and scripts used by DBAs to administer, monitor, maintain and manage a CBDB cluster. The following are some common utilities.
 
-- `gpstop`, stops database cluster.
-- `gpstart`, starts database cluster.
-- `psql`, a command-line client.
-- `gpconfig`, shows or changes configuration parameters.
-- `gpdeletesystem`, deletes a cluster.
-- `pg_dump`, `gpbackup`, `gprestore`, performs backup and restore operations.
-- `gpinitstanby`, `gpactivatestandby`, manages the standby master instance.
-- `gprecoverseg`, recovers segment.
-- `gpfdist`, `gpload`, operates with external tables.
-- `gpssh`, `gpscp`, `gpssh-exkeys`, for cluster navigation.
+- `gpstop`: stops database cluster.
+- `gpstart`: starts database cluster.
+- `psql`: a command-line client.
+- `gpconfig`: shows or changes configuration parameters.
+- `gpdeletesystem`: deletes a cluster.
+- `pg_dump`, `gpbackup`, `gprestore`: performs backup and restore operations.
+- `gpinitstanby`, `gpactivatestandby`: manages the standby master instance.
+- `gprecoverseg`: recovers segment.
+- `gpfdist`, `gpload`: operates with external tables.
+- `gpssh`, `gpscp`, `gpssh-exkeys`: for cluster navigation.
 - Logging - all utilities write log files under `~/gpAdminLogs/` - one file per day
 
-Exercise: Read the help for these tools (`<tool_name> --help`).
+**Exercise**
+
+Read the help information for these tools (`<tool_name> --help`).
 
 ## 5. Start and stop a cluster
 
@@ -174,13 +179,15 @@ Exercise: Read the help for these tools (`<tool_name> --help`).
     20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-Database successfully shutdown with no errors reported
     ```
 
-Exercise: Read the log entries for `gpstop` and `gpstart`, and try to understand what they mean. Read and exercise the different options for `gpstart` and `gpstop`.
+**Exercise**
+
+Read the log entries for `gpstop` and `gpstart`, and try to understand what they mean. Read and exercise the different options for `gpstart` and `gpstop`.
 
 ## 6. Check cluster state
 
 - Check the state of a cluster using `gpstate`.
 
-    `gpstate` is the utility that can give you information about the state of the cluster. You can add different arguments to see different aspects of the cluster state.
+    `gpstate` is the utility that can give you information about the state of the cluster. You can add different options to see different aspects of the cluster state.
 
     ```shell
     [gpadmin@mdw ~]$ gpstate
@@ -230,9 +237,11 @@ Exercise: Read the log entries for `gpstop` and `gpstart`, and try to understand
     20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
     ```
 
-- Check the status of a cluster by querying the `gp_segment_configuration` system table. The `gp_segment_configuration` table displays the "master instance" knowledge about the state of the cluster.
+- Check the status of a cluster by querying the `gp_segment_configuration` system table. The `gp_segment_configuration` table displays the "master instance" information about the state of the cluster.
 
-Exercise: Check the cluster state and try to collect the information using `gpstate` or `gp_segment_configuration`.
+**Exercise**
+
+Check the cluster state and try to collect the information using `gpstate` or `gp_segment_configuration`.
 
 ## 7. How CBDB segment mirroring works
 
@@ -247,7 +256,7 @@ If the primary segment instance encounters an issue and goes down, its correspon
 
 **Segment modes**
 
-A segment can exist in one of 3 modes:
+A segment can exist in one of the following modes:
 
 - `s`: In sync.
 - `c`: Change tracking.
@@ -257,17 +266,17 @@ The ideal state for both primary and mirror segments is to be up and in-sync (re
 
 **Scenarios for CBDB mirroring**
 
-- Scenario 1: When the mirror instance goes down, the following process happens.
+- Scenario 1: When the mirror instance goes down, the following process occurs.
 
     1. The primary segment transitions from the in-sync mode to the change tracking mode (`P:u/c` and `M:d/s`).
     2. All data changes are recorded and stored.
     3. The DBA, upon noticing this, investigates and starts a recovery for the mirror instance using the `gprecoverseg` command.
     4. Both the primary and mirror segments transition to the recovery mode (`P:u/r`, `M:u/r`).
-    5 Post recovery, both the primary and mirror segments revert to the in-sync mode (`P:u/s`, `M:u/s`).
+    5. Post recovery, both the primary and mirror segments revert to the in-sync mode (`P:u/s`, `M:u/s`).
 
     This scenario remains transparent to users because the primary segment is still functional. Therefore, queries continue to run without interruptions.
 
-- Scenario 2: When the primary instance goes down, the following process happens.
+- Scenario 2: When the primary instance goes down, the following process occurs.
 
     1. All active sessions on the primary instance are terminated.
     2. The database system marks the primary instance as "down" and promotes the mirror instance to the primary role, enabling it to track changes (`M:d/s`, `P:u/c`).
@@ -468,7 +477,9 @@ mdw (dbid 5): pg_basebackup: base backup completed
 <br />
 </details>
 
-Exercise: Add mirrors to your cluster. If your cluster already has mirrors, delete the cluster and recreate one without mirrors (removing mirror segments is not supported).
+**Exercise**
+
+Add mirrors to your cluster. If your cluster already has mirrors, delete the cluster and recreate one without mirrors (removing mirror segments is not supported).
 
 ## 8. CBDB's fault tolerance and segment recovery
 
@@ -509,7 +520,7 @@ If a segment is down, you can recover it using the `gprecoverseg` utility. This 
 5. Once you know the cause of the failure, use `gprecoverseg` to restore the segments.
 6. To keep an eye on the recovery, use the `gpstate -e` command.
 
-**Practical exercise**
+**Exercise**
 
 1. Find the processes related to one of your database instances and stop it.
 2. Watch the `gp_segment_configuration` table for any changes.
@@ -526,7 +537,7 @@ In the CBDB architecture, the master instance can be a single point of failure. 
 **Manage standby master**
 
 - To create the standby master (from the master server), use `gpinitstandby -s smdw`.
-- If the standby master falls out-of-sync, you can resynchronize it with `gpinitstandby -n`.
+- If the standby master falls out-of-sync, you can resynchronize it using `gpinitstandby -n`.
 - To remove the standby master, use `gpinitstandby -r`.
 
 After setting up the standby instance, you can query the `gp_segment_configuration` table. In the table output, the new standby instance will be visible, which is identified by a `content` value of `-1` and a `role` value of `'m'`.
@@ -537,7 +548,7 @@ If the master server or master instance is unavailable, the standby master can s
 
 Upon running this command, the roles change: the standby master becomes the master, while the original master gets demoted to the role of the standby instance, although it remains offline. You can query the `gp_segment_configuration` table again to notice these changes.
 
-**Practical exercise**
+**Exercise**
 
 1. Create the standby master.
 2. Remove the standby master.
@@ -574,7 +585,7 @@ If you need to expand a cluster, you can use the `gpexpand` tool. You can add ne
 
     But if you want to expand the cluster again, `gpexpand` will tell you to remove it using `gpexpand -c` before it can continue.
 
-**Practical exercise**
+**Exercise**
 
 1. Run `gpexpand` to add more segments to your current servers.
 2. Run `gpexpand` again to add segments on new servers.
@@ -596,11 +607,13 @@ You can use the `gpcheckperf` utility to check performance on a set of hosts (cl
 
     > Note: The utility uses the STREAM benchmark program to measure sustainable memory bandwidth (in MB/s).
 
-Exercise: Run `gpcheckcat` with the various options and interpret the results.
+**Exercise**
+
+Run `gpcheckcat` with the various options and interpret the results.
 
 ## 12. User data and table distribution
 
-In Cloudberry Database, the master instance does not store user data. Segments store user data, and the data is not shared between segments.
+In CBDB, the master instance does not store user data. Segments store user data, and the data is not shared between segments.
 
 
 - create table (...) distributed by (...)
@@ -792,7 +805,9 @@ drwx------ 4 gpadmin gpadmin  4096 Aug 23 16:44 pg_logical
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:44 pg_stat_tmp
 ```
 
-Exercise: Explore the data directory and subdirectories. Take a look at the configuration files.
+**Exercise**
+
+Explore the data directory and subdirectories. Take a look at the configuration files.
 
 ## 15. Instance processes
 
@@ -887,7 +902,9 @@ total 20
 
 The standard log file name is `gpdb_<date>-<time>.csv`.
 
-Exercise: Look at the log file and do different things in the database (create table, run queries, etc.)
+**Exercise**
+
+Look at the log file and do different things in the database (create table, run queries, etc.)
 
 ## 17. Table types in CBDB: heap, AO, and AOCO
 
@@ -905,7 +922,9 @@ For tasks that focus on single columns, like average (`AVG`) or sum, using row-o
 
 AOCO tables offer compression, and they compress even better than AO tables. This is due to the consistent type of data in one file, which means that all data in a single column is of the same kind.
 
-Exercise: Make a heap table, an AO table, and an AOCO table. After creating them, use the `\d+ psql` command to view the results.
+**Exercise**
+
+Make a heap table, an AO table, and an AOCO table. After creating them, use the `\d+ psql` command to view the results.
 
 ## 18. External tables
 
@@ -918,7 +937,9 @@ CBDB supports external tables. These tables are set up in the database, but they
 
 One good thing about external tables is they make it easy to load data into CBDB. When you use a command like `INSERT INTO table SELECT * FROM ext_table`, data gets loaded all at once from different parts, instead of one piece at a time.
 
-Exercise: Try making different types of external tables and play around with them to learn more.
+**Exercise**
+
+Try making different types of external tables and play around with them to learn more.
 
 ## 19. Workload management
 
@@ -926,4 +947,6 @@ In CBDB, we have something called Resource Queues, or RQ for short. Think of an 
 
 Also, there is a feature called Priority. You can set a priority level for a whole RQ, which means every session in that RQ will have that priority. But if you want, you can set a priority for just one session using the `gp_adjust_priority()` function.
 
-Practice Time: Make a user, set up an RQ, put the user in the RQ, then run a query. Watch and see what happens to the RQ.
+**Exercise**
+
+Make a user, set up an RQ, put the user in the RQ, then run a query. Watch and see what happens to the RQ.
