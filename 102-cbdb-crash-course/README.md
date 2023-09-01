@@ -946,7 +946,7 @@ CBDB supports external tables. These tables are set up in the database, but they
 - HDFS, which stands for the `gphdfs` type.
 - Data generated on the spot with a command.
 
-One good thing about external tables is they make it easy to load data into CBDB. When you use a command like `INSERT INTO table SELECT * FROM ext_table`, data gets loaded all at once from different parts, instead of one piece at a time.
+One good thing about external tables is that they make it easy to load data into CBDB. When you use a command like `INSERT INTO table SELECT * FROM ext_table`, data gets loaded all at once from different parts, instead of one piece at a time.
 
 **Exercise**
 
