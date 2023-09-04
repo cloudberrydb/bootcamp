@@ -627,85 +627,69 @@ Run `gpcheckcat` with the various options and interpret the results.
 In CBDB, the master instance does not store user data. Segments store user data, and the data is not shared between segments.
 
 
-- create table (...) distributed by (...)
+All CBDB Database tables are distributed. When you create or alter a table, you optionally specify DISTRIBUTED BY (hash distribution), DISTRIBUTED RANDOMLY (random distribution), or DISTRIBUTED REPLICATED (fully distributed) to determine the table row distribution.
 
-- create table (...) distributed randomly
+Consider the following points when deciding on a table distribution policy.
 
-- `gp_segment_id`
+- *Even Data Distribution* — For the best possible performance, all segments should contain equal portions of data. If the data is unbalanced or skewed, the segments with more data must work harder to perform their portion of the query processing. Choose a distribution key that is unique for each record, such as the primary key.
+- *Local and Distributed Operations* — Local operations are faster than distributed operations. Query processing is fastest if the work associated with join, sort, or aggregation operations is done locally, at the segment level. Work done at the system level requires distributing tuples across the segments, which is less efficient. When tables share a common distribution key, the work of joining or sorting on their shared distribution key columns is done locally. With a random distribution policy, local join operations are not an option.
+- *Even Query Processing* — For best performance, all segments should handle an equal share of the query workload. Query workload can be skewed if a table's data distribution policy and the query predicates are not well matched. For example, suppose that a sales transactions table is distributed on the customer ID column (the distribution key). If a predicate in a query references a single customer ID, the query processing work is concentrated on just one segment.
 
-```sql
-gpadmin=# create table test(a int, b int) distributed by (a);
+The replicated table distribution policy (DISTRIBUTED REPLICATED) should be used only for small tables. Replicating data to every segment is costly in both storage and maintenance, and prohibitive for large fact tables. The primary use cases for replicated tables are to:
+
+- remove restrictions on operations that user-defined functions can perform on segments, and
+- improve query performance by making it unnecessary to broadcast frequently used tables to all segments.
+
+
+In the following example, we can see the vaule "1" for c1 column is alwasy located in the same segment (gp_segment_id=1) if the table is distributed by hash.
+
+```
+gpadmin=# create table t1 (c1 int) distributed by (c1);
 CREATE TABLE
-gpadmin=# \d+ test
-                                          Table "public.test"
- Column |  Type   | Collation | Nullable | Default | Storage | Compression | Stats target | Description
---------+---------+-----------+----------+---------+---------+-------------+--------------+-------------
- a      | integer |           |          |         | plain   |             |              |
- b      | integer |           |          |         | plain   |             |              |
-Distributed by: (a)
-Access method: heap
 
-gpadmin=# select * from test;
- a | b
----+---
-(0 rows)
-
-gpadmin=# insert into test values (1,100);
+gpadmin=# insert into t1 values (1);
 INSERT 0 1
-gpadmin=# select gp_segment_id, * from test;
- gp_segment_id | a |  b
----------------+---+-----
-             1 | 1 | 100
-(1 row)
-
-gpadmin=# insert into test values (2,100);
+gpadmin=# insert into t1 values (1);
 INSERT 0 1
-gpadmin=# select gp_segment_id, * from test;
- gp_segment_id | a |  b
----------------+---+-----
-             0 | 2 | 100
-             1 | 1 | 100
-(2 rows)
-
-gpadmin=# insert into test values (1,300);
+gpadmin=# insert into t1 values (1);
 INSERT 0 1
-gpadmin=# select gp_segment_id, * from test;
- gp_segment_id | a |  b
----------------+---+-----
-             1 | 1 | 100
-             1 | 1 | 300
-             0 | 2 | 100
-(3 rows)
+gpadmin=# insert into t1 values (1);
+INSERT 0 1
 
-gpadmin=# create table test(a int, b int) distributed randomly;
+gpadmin=# select gp_segment_id, * from t1;
+ gp_segment_id | c1
+---------------+----
+             1 |  1
+             1 |  1
+             1 |  1
+             1 |  1
+(4 rows)
+
+```
+
+In the following example, we can see the vaule "1" for c1 column is randomly distributed on all segments (gp_segment_id=0 and gp_segment_id=1) if the table is distributed randomly.
+
+```
+gpadmin=# create table t2 (c1 int) distributed randomly;
 CREATE TABLE
-gpadmin=# \d+ test
-                                          Table "public.test"
- Column |  Type   | Collation | Nullable | Default | Storage | Compression | Stats target | Description
---------+---------+-----------+----------+---------+---------+-------------+--------------+-------------
- a      | integer |           |          |         | plain   |             |              |
- b      | integer |           |          |         | plain   |             |              |
-Distributed randomly
-Access method: heap
 
-gpadmin=# insert into test values (1,100);
+gpadmin=# insert into t2 values (1);
 INSERT 0 1
-gpadmin=# select gp_segment_id, * from test;
- gp_segment_id | a |  b
----------------+---+-----
-             1 | 1 | 100
-(1 row)
-
-gpadmin=# insert into test values (1,200);
+gpadmin=# insert into t2 values (1);
 INSERT 0 1
-gpadmin=# select gp_segment_id, * from test;
- gp_segment_id | a |  b
----------------+---+-----
-             0 | 1 | 200
-             1 | 1 | 100
-(2 rows)
+gpadmin=# insert into t2 values (1);
+INSERT 0 1
+gpadmin=# insert into t2 values (1);
+INSERT 0 1
 
-gpadmin=#
+gpadmin=# select gp_segment_id, * from t2;
+ gp_segment_id | c1
+---------------+----
+             0 |  1
+             1 |  1
+             1 |  1
+             1 |  1
+(4 rows)
 ```
 
 Exercise: Reproduce the above with your own table and observe the effects.
