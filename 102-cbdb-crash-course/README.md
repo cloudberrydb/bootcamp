@@ -1,258 +1,318 @@
-**CBDB Crash Course**
 
-This course will guide you through some extensive features that Cloudberry database holds as MPP database.
+# Cloudberry Database Crash Course
 
-# **0. Prerequisite** :
+This crash course provides an extensive overview of Cloudberry Database (CBDB), an open-source Massively Parallel Processing (MPP) database. It covers key concepts, features, utilities, and hands-on exercises to become proficient with CBDB.
 
-Before starting this crash course, spend some time to go trough [CBDB Tourials](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md) to get falmiliar with what is Cloudberry database and how it works. 
+Topics include:
 
-# 1. Documentation
+- [Lesson 0. Prerequisite](#lesson-0-prerequisite)
+- [Lesson 1. Where to read the official documentation](#lesson-1-where-to-read-the-official-documentation)
+- [Lesson 2. How to install CBDB](#lesson-2-how-to-install-cbdb)
+- [Lesson 3. Cluster architecture](#lesson-3-cluster-architecture)
+- [Lesson 4. Management utilities](#lesson-4-management-utilities)
+- [Lesson 5. Start and stop a cluster](#lesson-5-start-and-stop-a-cluster)
+- [Lesson 6. Check cluster state](#lesson-6-check-cluster-state)
+- [Lesson 7. How CBDB segment mirroring works](#lesson-7-how-cbdb-segment-mirroring-works)
+- [Lesson 8. CBDB's fault tolerance and segment recovery](#lesson-8-cbdbs-fault-tolerance-and-segment-recovery)
+- [Lesson 9. Set up and manage the standby master instance in CBDB](#lesson-9-set-up-and-manage-the-standby-master-instance-in-cbdb)
+- [Lesson 10. Expand a cluster](#lesson-10-expand-a-cluster)
+- [Lesson 11. Check cluster performance](#lesson-11-check-cluster-performance)
+- [Lesson 12. User data and table distribution](#lesson-12-user-data-and-table-distribution)
+- [Lesson 13. Database catalog](#lesson-13-database-catalog)
+- [Lesson 14. CBDB data directories](#lesson-14-cbdb-data-directories)
+- [Lesson 15. Instance processes](#lesson-15-instance-processes)
+- [Lesson 16. Database log files](#lesson-16-database-log-files)
+- [Lesson 17. Table types in CBDB: heap, AO, and AOCO](#lesson-17-table-types-in-cbdb-heap-ao-and-aoco)
+- [Lesson 18. External tables](#lesson-18-external-tables)
+- [Lesson 19. Workload management](#lesson-19-workload-management)
 
-Here is a link to the documentation [CBDB Documentation](https://cloudberrydb.org/docs/cbdb-overview). Now is the time to do a quick read of the documentation. No need to worry if you don't understand everything.
+## Lesson 0. Prerequisite
 
+Before starting this crash course, spend some time going through the [Cloudberry Database Tutorials Based on Single-Node Installation](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md) to get familiar with Cloudberry Database and how it works.
 
-# 2. Installing CBDB
+## Lesson 1. Where to read the official documentation
 
-- You can get a sandbox environment as refer to [CBDB Sandbox](https://github.com/cloudberrydb/bootcamp/blob/main/000-cbdb-sandbox/README.md).
+Take a quick look at the official [CBDB Documentation](https://cloudberrydb.org/docs/cbdb-overview). No need to worry if you do not understand everything.
 
-- Read up the [CBDB Deploy Guide](https://cloudberrydb.org/docs/cbdb-op-deploy-guide). The guide has some conceptual information about CBDB and the steps to install the software and create your own cluster in your preferred environment.
+## Lesson 2. How to install CBDB
 
+To begin your journey with CBDB, you are expected to install CBDB in your preferred environment. The following options are available:
 
-# 3. Cluster description
+- For testing or trying out CBDB in a sandbox environment, see [Install CBDB in a Sandbox](https://github.com/cloudberrydb/bootcamp/blob/main/000-cbdb-sandbox/README.md).
+- For deploying CBDB in other environments (including the production environment) and the prerequisite software/hardware configuration, see [CBDB Deployment Guide](https://cloudberrydb.org/docs/cbdb-op-deploy-guide).
 
-Cluster has one master host and many segment hosts. These are usually named "mdw" and "sdwXX" respectively. Therefore if somebody is referring to "mdw" he is referring to the "master host".
+## Lesson 3. Cluster architecture
 
-Similarly when somebody is referring to "sdw10" he is referring to the 10th segment host. Master host usually contains only one instance - the master instance. The segment hosts can contain
+A CBDB cluster has one master host (usually named `mdw`) and multiple segment hosts (usually named `sdwXX`).
 
-many worker instances.
+> **Tip**: if someone is referring to `mdw`, he is referring to the "master host". Similarly, when somebody is referring to "sdw10", he is referring to the 10th segment host.
 
-Every instance has its own set of processes, own data directory and own listening port. For example usually the listening port of the master instance (where all clients will connect) is 5432.
+A master host usually contains only one instance - the master instance. The segment hosts might contain many worker instances. Every instance has its own set of processes, data directory, and listening port. For example, usually, the listening port of the master instance (where all clients will connect to) is `5432`.
 
-Every segment instance has its own listening port (the base port is specified in the cluster configuration file).
+Every segment instance has its own listening port, and the base port is specified in the cluster configuration file.
 
-Instances can have 2 roles - primary and mirror. Primary instances serve database queries. Mirror instances simply track and record data changes in primary instances, but do not serve database queries. If the primary instance goes down for some reason, then the corresponding mirror instance transitions to primary role and starts serving queries (the original primary instance, currently down, is marked as mirror). We will talk later how to recover failed instances.
+Instances can have 2 roles - primary and mirror. Primary instances serve database queries. Mirror instances simply track and record data changes in primary instances, but do not serve database queries. If the primary instance goes down for some reason, then the corresponding mirror instance transitions to the primary role and starts serving queries (the original primary instance, currently down, is marked as mirror).
 
-The cluster information is stored in the "gp\_segment\_configuration" table. It looks like this (use the "psql" command to connect to the database in order to execute queries):
+The cluster information is stored in the `gp_segment_configuration` system table, which looks like this (use the "psql" command to connect to the database to execute queries):
 
-```
+```shell
 [gpadmin@mdw ~]$ psql
+
 psql (14.4, server 14.4)
 Type "help" for help.
+```
 
-gpadmin=# select * from gp_segment_configuration ;
+```sql
+gpadmin=# SELECT * FROM gp_segment_configuration;
+
  dbid | content | role | preferred_role | mode | status | port  | hostname | address |            datadir
 ------+---------+------+----------------+------+--------+-------+----------+---------+--------------------------------
     1 |      -1 | p    | p              | n    | u      |  5432 | mdw      | mdw     | /data0/database/master/gpseg-1
     2 |       0 | p    | p              | n    | u      | 40000 | mdw      | mdw     | /data0/database/primary/gpseg0
     3 |       1 | p    | p              | n    | u      | 40001 | mdw      | mdw     | /data0/database/primary/gpseg1
 (3 rows)
-
 ```
 
-Columns:
+The columns of this system are described as follows.
 
-- dbid - uniquely identifies a segment
+- `dbid`: uniquely identifies a segment.
+- `content`: uniquely identifies segment pairs (primary and mirror). The primary and the corresponding mirror will have the same `content` ID, but different `dbid` values. The master has the `content` value of `-1`. The worker instances have incremental content values of `0`, `1`, `2`, `3`...
+- `role`: the current role of the segment.
+- `preferred_role`: the role of the segment in the original configuration. Note that if an original mirror instance has taken over and become primary now, the role will be changed. This column records the original role.
+- `mode`: the mode of the segment. The value options are `s` (in sync), `c` (in change tracking), and `r` (in recovery).
+- `status`: the status of the segment. The value options are `u` (up) and `d` (down).
+- `port`: the listening port of the segment. For clients, only the listening port of the master is important. The segment listening ports are important for the master to communicate with them.
+- `hostname`: the hostname of the segment.
+- `address`: each host can have different network controllers with different IP addresses and different names associated.
+- `datadir`: the data directory where data is stored for each segment.
 
-- content - uniquely identifies segment pair (primary and mirror). The primary and corresponding mirror will have the same content id, but different dbid.
+**Exercise**
 
-The master has content of -1. The worker instances have content 0,1,2,3...
+Connect to the CBDB cluster that you have created and take a look at the `gp_segment_configuration` table. Try to learn the rows and columns. Take a look at the cluster configuration file that you used to create the cluster.
 
-- role - the current role of the segment
+## Lesson 4. Management utilities
 
-- preferred\_role - the role of the segment in the original configuration (if an instance that was originally mirror has taken over and became primary now - these will be different)
+Management utilities in CBDB are command-line tools used to administer and manage the database cluster. Some key points:
 
-- mode - 's' (in-sync), 'c' (in-changetracking), 'r'(in-recovery)
+- They allow performing tasks like starting, stopping, and configuring the database.
+- Help monitor the health and status of the cluster.
+- Used for maintenance like recovering nodes and rebalancing data.
+- Help scale out the cluster by expanding with more nodes.
+- Utilities work across master, standby master, and multiple segment instances.
 
-- status - 'u' (up), 'd' (down)
+In summary, management utilities are command-line programs and scripts used by DBAs to administer, monitor, maintain and manage a CBDB cluster. The following are some common utilities.
 
-- port - segment listening port. For clients only the listening port of the master is important. The segment listening ports are important for the master to communicate with them.
+- `gpstop`: stops database cluster.
+- `gpstart`: starts database cluster.
+- `psql`: a command-line client.
+- `gpconfig`: shows or changes configuration parameters.
+- `gpdeletesystem`: deletes a cluster.
+- `pg_dump`, `gpbackup`, `gprestore`: performs backup and restore operations.
+- `gpinitstanby`, `gpactivatestandby`: manages the standby master instance.
+- `gprecoverseg`: recovers segment.
+- `gpfdist`, `gpload`: operates with external tables.
+- `gpssh`, `gpscp`, `gpssh-exkeys`: for cluster navigation.
+- Logging - all utilities write log files under `~/gpAdminLogs/` - one file per day
 
-- hostname - hostname of this segment
+**Exercise**
 
-- address - each host can have different network controllers with different IP addresses and different names associated with them
+Read the help information for these tools (`<tool_name> --help`).
 
-- datadir - data directory where data is stored for each segment
+## Lesson 5. Start and stop a cluster
 
-Exercise: Connect to the CBDB cluster that you created and take a look at the "gp\_segment\_configuration" table. Try to make sense of the rows and columns and connect it to the cluster configuration file that you used to create the cluster.
+- Start a CBDB cluster using `gpstart`:
 
-# 4. Management utilities
+    ```shell
+    [gpadmin@mdw ~]$ gpstart -a
+    ```
 
-- gpstop - stops database cluster
+    ```shell
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Starting gpstart with args: -a
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Cloudberry Binary Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Cloudberry Catalog Version: '302206171'
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Starting Coordinator instance in admin mode
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-CoordinatorStart pg_ctl cmd is env GPSESSID=0000000000 GPERA=None $GPHOME/bin/pg_ctl -D /data0/database/master/gpseg-1 -l /data0/database/master/gpseg-1/log/startup.log -w -t 600 -o " -p 5432 -c gp_role=utility " start
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Setting new coordinator era
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Coordinator Started...
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Shutting down coordinator
+    20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Commencing parallel primary and mirror segment instance startup, please wait...
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Process results...
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-   Successful segment starts                                            = 4
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-   Failed segment starts                                                = 0
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-   Skipped segment starts (segments are marked down in configuration)   = 0
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Successfully started 4 of 4 segment instances
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Starting Coordinator instance mdw directory /data0/database/master/gpseg-1
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-CoordinatorStart pg_ctl cmd is env GPSESSID=0000000000 GPERA=45b5ca734de32094_230823161423 $GPHOME/bin/pg_ctl -D /data0/database/master/gpseg-1 -l /data0/database/master/gpseg-1/log/startup.log -w -t 600 -o " -p 5432 -c gp_role=dispatch " start
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Command pg_ctl reports Coordinator mdw instance active
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Connecting to db template1 on host localhost
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-No standby coordinator configured.  skipping...
+    20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Database successfully started
+    ```
 
-- gpstart - starts database cluster
+- Stop a CBDB cluster using `gpstop`:
 
-- psql - command line client
+    ```shell
+    [gpadmin@mdw ~]$ gpstop -a
+    ```
 
-- gpconfig - show/change configuration parameters
+    ```shell
+    20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -a
+    20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
+    20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
+    20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
+    20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
+    20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Commencing Coordinator instance shutdown with mode='smart'
+    20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Coordinator segment instance directory=/data0/database/master/gpseg-1
+    20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Stopping coordinator segment and waiting for user connections to finish ...
+    server shutting down
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Attempting forceful termination of any leftover coordinator process
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Terminating processes for segment /data0/database/master/gpseg-1
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-No standby coordinator host configured
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Targeting dbid [2, 4, 3, 5] for shutdown
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Commencing parallel primary segment instance shutdown, please wait...
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-0.00% of jobs completed
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-100.00% of jobs completed
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Commencing parallel mirror segment instance shutdown, please wait...
+    20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-0.00% of jobs completed
+    20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-100.00% of jobs completed
+    20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-   Segments stopped successfully      = 4
+    20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-   Segments with errors during stop   = 0
+    20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-Successfully shutdown 4 of 4 segment instances
+    20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-Database successfully shutdown with no errors reported
+    ```
 
-- gpdeletesystem - deletes a cluster
+**Exercise**
 
-- pg\_dump, gpbackup, gprestore - backup and restore utilities
+Read the log entries for `gpstop` and `gpstart`, and try to understand what they mean. Read and exercise the different options for `gpstart` and `gpstop`.
 
-- gpinitstanby, gpactivatestandby - standby master instance management
+## Lesson 6. Check cluster state
 
-- gprecoverseg - segment recovery
+- Check the state of a cluster using `gpstate`.
 
-- gpfdist, gpload - external tables
+    `gpstate` is the utility that can give you information about the state of the cluster. You can add different options to see different aspects of the cluster state.
 
-- gpssh, gpscp, gpssh-exkeys - cluster navigation
+    ```shell
+    [gpadmin@mdw ~]$ gpstate
+    ```
 
-- Logging - all utilities write log files under ~/gpAdminLogs/ - one file per day
+    ```shell
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-Starting gpstate with args:
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-local Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-coordinator Cloudberry Version: 'PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Aug  9 2023 14:45:43'
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-Gathering data from segments...
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-Cloudberry instance status summary
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Coordinator instance                                      = Active
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Coordinator standby                                       = No coordinator standby configured
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total segment instance count from metadata                = 4
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Primary Segment Status
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total primary segments                                    = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total primary segment valid (at coordinator)              = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total primary segment failures (at coordinator)           = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid files missing              = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid files found                = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid PIDs missing               = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid PIDs found                 = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of /tmp lock files missing                   = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of /tmp lock files found                     = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number postmaster processes missing                 = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number postmaster processes found                   = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Mirror Segment Status
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total mirror segments                                     = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total mirror segment valid (at coordinator)               = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total mirror segment failures (at coordinator)            = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid files missing              = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid files found                = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid PIDs missing               = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid PIDs found                 = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of /tmp lock files missing                   = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of /tmp lock files found                     = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number postmaster processes missing                 = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number postmaster processes found                   = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number mirror segments acting as primary segments   = 0
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number mirror segments acting as mirror segments    = 2
+    20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
+    ```
 
-Exercise: Read the help for these tools (\<tool\> --help)
+- Check the status of a cluster by querying the `gp_segment_configuration` system table. The `gp_segment_configuration` table displays the "master instance" information about the state of the cluster.
 
-# 5. Starting and stopping cluster
+**Exercise**
 
-- gpstart
+Check the cluster state and try to collect the information using `gpstate` or `gp_segment_configuration`.
 
-```
-[gpadmin@mdw ~]$ gpstart -a
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Starting gpstart with args: -a
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Cloudberry Binary Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Cloudberry Catalog Version: '302206171'
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Starting Coordinator instance in admin mode
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-CoordinatorStart pg_ctl cmd is env GPSESSID=0000000000 GPERA=None $GPHOME/bin/pg_ctl -D /data0/database/master/gpseg-1 -l /data0/database/master/gpseg-1/log/startup.log -w -t 600 -o " -p 5432 -c gp_role=utility " start
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Setting new coordinator era
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Coordinator Started...
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Shutting down coordinator
-20230823:16:14:23:004256 gpstart:mdw:gpadmin-[INFO]:-Commencing parallel primary and mirror segment instance startup, please wait...
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Process results...
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-   Successful segment starts                                            = 4
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-   Failed segment starts                                                = 0
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-   Skipped segment starts (segments are marked down in configuration)   = 0
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Successfully started 4 of 4 segment instances
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Starting Coordinator instance mdw directory /data0/database/master/gpseg-1
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-CoordinatorStart pg_ctl cmd is env GPSESSID=0000000000 GPERA=45b5ca734de32094_230823161423 $GPHOME/bin/pg_ctl -D /data0/database/master/gpseg-1 -l /data0/database/master/gpseg-1/log/startup.log -w -t 600 -o " -p 5432 -c gp_role=dispatch " start
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Command pg_ctl reports Coordinator mdw instance active
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Connecting to db template1 on host localhost
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-No standby coordinator configured.  skipping...
-20230823:16:14:24:004256 gpstart:mdw:gpadmin-[INFO]:-Database successfully started
-```
+## Lesson 7. How CBDB segment mirroring works
 
-- gpstop
-``` 
-[gpadmin@mdw ~]$ gpstop -a
-20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Starting gpstop with args: -a
-20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Gathering information and validating the environment...
-20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Obtaining Cloudberry Coordinator catalog information
-20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
-20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
-20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Commencing Coordinator instance shutdown with mode='smart'
-20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Coordinator segment instance directory=/data0/database/master/gpseg-1
-20230823:16:14:18:004143 gpstop:mdw:gpadmin-[INFO]:-Stopping coordinator segment and waiting for user connections to finish ...
-server shutting down
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Attempting forceful termination of any leftover coordinator process
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Terminating processes for segment /data0/database/master/gpseg-1
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-No standby coordinator host configured
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Targeting dbid [2, 4, 3, 5] for shutdown
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Commencing parallel primary segment instance shutdown, please wait...
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-0.00% of jobs completed
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-100.00% of jobs completed
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-Commencing parallel mirror segment instance shutdown, please wait...
-20230823:16:14:19:004143 gpstop:mdw:gpadmin-[INFO]:-0.00% of jobs completed
-20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-100.00% of jobs completed
-20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-   Segments stopped successfully      = 4
-20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-   Segments with errors during stop   = 0
-20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-Successfully shutdown 4 of 4 segment instances
-20230823:16:14:20:004143 gpstop:mdw:gpadmin-[INFO]:-Database successfully shutdown with no errors reported
-```
+**CBDB mirroring overview:**
 
-Exercise: Read the log entries for gpstop and gpstart and try to understand what they mean. Read and exercise the different options for gpstart/gpstop.
+Each segment instance in a Cloudberry Database has 2 possible roles: primary and mirror.
 
-# 6. Cluster state
+- Primary role: serves user queries.
+- Mirror role: tracks and records data changes from the primary using WAL replication but does not serve user queries.
 
-- gpstate
+If the primary segment instance encounters an issue and goes down, its corresponding mirror segment takes over the primary role to ensure continuity in serving queries. The system will then mark the original, now non-functional, primary segment as a mirror.
 
-gpstate is the utility that can give you information about the state of the cluster. It has different arguments to show different aspects of the state.
+**Segment modes**
 
-``` 
-[gpadmin@mdw ~]$ gpstate
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-Starting gpstate with args:
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-local Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-coordinator Cloudberry Version: 'PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Aug  9 2023 14:45:43'
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-Obtaining Segment details from coordinator...
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-Gathering data from segments...
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-Cloudberry instance status summary
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Coordinator instance                                      = Active
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Coordinator standby                                       = No coordinator standby configured
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total segment instance count from metadata                = 4
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Primary Segment Status
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total primary segments                                    = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total primary segment valid (at coordinator)              = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total primary segment failures (at coordinator)           = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid files missing              = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid files found                = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid PIDs missing               = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid PIDs found                 = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of /tmp lock files missing                   = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of /tmp lock files found                     = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number postmaster processes missing                 = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number postmaster processes found                   = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Mirror Segment Status
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total mirror segments                                     = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total mirror segment valid (at coordinator)               = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total mirror segment failures (at coordinator)            = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid files missing              = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid files found                = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid PIDs missing               = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of postmaster.pid PIDs found                 = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of /tmp lock files missing                   = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number of /tmp lock files found                     = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number postmaster processes missing                 = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number postmaster processes found                   = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number mirror segments acting as primary segments   = 0
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-   Total number mirror segments acting as mirror segments    = 2
-20230823:16:17:41:004530 gpstate:mdw:gpadmin-[INFO]:-----------------------------------------------------
+A segment can exist in one of the following modes:
 
-```
-- gp\_segment\_configuration
+- `s`: In sync.
+- `c`: Change tracking.
+- `r`: In recovery.
 
-gp\_segment\_configuration expresses the 'master instance' knowledge about the state of the cluster.
+The ideal state for both primary and mirror segments is to be up and in-sync (represented as `P:u/s` and `M:u/s`).
 
-Exercise: Look at the cluster state and try to connect the information from gpstate and gp\_segment\_configuration.
+**Scenarios for CBDB mirroring**
 
-# 7. Adding mirrors
+- Scenario 1: When the mirror instance goes down, the following process occurs.
 
-How CBDB mirroring works
+    1. The primary segment transitions from the in-sync mode to the change tracking mode (`P:u/c` and `M:d/s`).
+    2. All data changes are recorded and stored.
+    3. The DBA, upon noticing this, investigates and starts a recovery for the mirror instance using the `gprecoverseg` command.
+    4. Both the primary and mirror segments transition to the recovery mode (`P:u/r`, `M:u/r`).
+    5. Post recovery, both the primary and mirror segments revert to the in-sync mode (`P:u/s`, `M:u/s`).
 
-Each segment can be in two roles - primary or mirror. Primary role - servers user queries. Mirror role - tracks changes via WAL replication from primary, does not serve user queries.
+    This scenario remains transparent to users because the primary segment is still functional. Therefore, queries continue to run without interruptions.
 
-The normal state of primary and mirror is both are Up and In-sync (P:u/s, M:u/s)
+- Scenario 2: When the primary instance goes down, the following process occurs.
 
-- possibility 1 - mirror instance goes down
-  - at this point primary is transitioned into special state with changetracking (all changes to data are recorded and stored) -\> P:u/c M:d/s
-  - at some point the DBA will notice this, investigate the failure and attempt to recover the mirror (see gprecoverseg)
-  - as soon as recovery starts both segments will go in recovery mode -\> P:u/r M:u/r
-  - when recovery finishes both segments will go in sync mode -\> P:u/s M:u/s
-  - note that as primary is never down in this case, this situation is transparent to user - queries run and never stop running
-- possibility 2 - primary instance goes down
-  - at this point primary instance is down and all running sessions are terminated
-  - database transitions the primary to down and promotes the mirror to primary with changetracking -\> M:d/s P:u/c
-  - at some point the DBA will notice this, investigate the failure and attempt to recover the mirror (see gprecoverseg)
-  - as soon as recovery starts both segments will go in recovery mode -\> M:u/r P:u/r
-  - when recovery finishes both segments will go in sync mode -\> M:u/s P:u/s
-  - note that at this point the instances still have switched roles (original primary is now mirror). To fix this segments need to be rebalanced: 1) gpstop/gpstart or 2) gprecoverseg -r (rebalance)
+    1. All active sessions on the primary instance are terminated.
+    2. The database system marks the primary instance as "down" and promotes the mirror instance to the primary role, enabling it to track changes (`M:d/s`, `P:u/c`).
+    3. The DBA, upon detecting this situation, investigates and starts recovering the mirror using the `gprecoverseg` command.
+    4. On starting the recovery, both primary and mirror segments transition to the recovery mode `(M:u/r`, `P:u/r`).
+    5. Once the recovery is completed, both segments switch to the in-sync mode (`M:u/s`, `P:u/s`).
 
-- gpaddmirrors
+    After this recovery, the roles of the instances have been changed (the original primary is now a mirror). To revert the segments to their original roles, you need to rebalance them. This can be done by either:
 
-- if the cluster was initially created without mirrors, "gpaddmirrors" is the utility to add mirrors to existing cluster
+    - Using the `gpstop` and `gpstart` commands.
+    - Using the `gprecoverseg -r` command for rebalancing.
 
-``` 
+**Add mirrors to an existing cluster**
+
+If your CBDB cluster was initially created without mirrors, you can use the `gpaddmirrors` utility to add mirrors to the existing cluster. See the following example:
+
+```shell
 [gpadmin@mdw ~]$ gpaddmirrors
+```
+
+<details>
+
+<summary>The example output of gpaddmirrors</summary>
+
+```shell
 20230823:16:02:50:003517 gpaddmirrors:mdw:gpadmin-[INFO]:-Starting gpaddmirrors with args:
 20230823:16:02:50:003517 gpaddmirrors:mdw:gpadmin-[INFO]:-local Cloudberry Version: 'postgres (Cloudberry Database) 1.0.0 build dev'
 20230823:16:02:50:003517 gpaddmirrors:mdw:gpadmin-[INFO]:-coordinator Cloudberry Version: 'PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Aug  9 2023 14:45:43'
@@ -425,19 +485,28 @@ mdw (dbid 5): pg_basebackup: base backup completed
 20230823:16:03:34:003517 gpaddmirrors:mdw:gpadmin-[INFO]:-Use  gpstate -s  to check the resynchronization progress.
 20230823:16:03:34:003517 gpaddmirrors:mdw:gpadmin-[INFO]:-******************************************************************
 ```
+<br />
+</details>
 
-Exercise: Add mirrors to your cluster. If your cluster already have mirrors - delete the cluster and recreate without mirrors (removing mirror segments is not supported).
+**Exercise**
 
-# 8. FTS, segment failures and recovering mirrors
+Add mirrors to your cluster. If your cluster already has mirrors, delete the cluster and recreate one without mirrors (removing mirror segments is not supported).
 
-- CBDB has a Fault Tolerant Service that monitors the cluster and makes sure that work continues with working segments. When segment does down, it performs transitions to always have available primary instance for every content. If both instances for one content go down (primary does down, mirror goes down) - this is known as "double fault" and database is non-operable.
+## Lesson 8. CBDB's fault tolerance and segment recovery
 
-- FTS service runs on master in the "ftsprober" process. At certain intervals the prober will scan segments and if there is difference with the last known configuration, it will perform transitions accordingly.
+**CBDB's fault tolerance system**
 
-Information about the transition event is recorded in the master log file and in "gp\_configuration\_history" and the instance status is updated in "gp\_segment\_configuration"
+CBDB's Fault Tolerant Service (FTS) continuously watches over the cluster to ensure uninterrupted work with active segments. If a segment goes down, the system makes adjustments to ensure a primary instance is always ready for every content. A situation where both the primary and mirror instances of a content fail is called a "double fault," rendering the database unusable.
 
-```
-gpadmin=# select * from gp_configuration_history ;
+**Working principle of the FTS service**
+
+The FTS service operates from the master node using the "ftsprober" process. This process periodically scans segments. If it identifies any changes compared to the last saved configuration, it makes the necessary adjustments. Details about these adjustments are stored in the master log file and the `gp_configuration_history` table, while the status of each instance is updated in the `gp_segment_configuration` table.
+
+The following is a preview of the `gp_configuration_history` table:
+
+```sql
+gpadmin=# SELECT * FROM gp_configuration_history;
+
              time              | dbid |                                      desc
 -------------------------------+------+--------------------------------------------------------------------------------
  2023-08-23 16:03:33.917057+08 |    4 | gpaddmirrors: segment config for resync: inserted mirror segment configuration
@@ -449,110 +518,114 @@ gpadmin=# select * from gp_configuration_history ;
 (6 rows)
 ```
 
-To recover a segment which is down, use the "gprecoverseg" utility. it will inspect "gp\_segment\_configuration" table, will find out the segment marked "down" and will attempt to recover them
+**Recover a downed segment**
 
-from the corresponding "primary" segment (which of course needs to be up and running).
+If a segment is down, you can recover it using the `gprecoverseg` utility. This tool will read the `gp_segment_configuration` table, identify the downed segment, and try to recover it using its related primary segment. However, for this recovery to work, the primary segment must be active.
 
-Investigating segment failures:
+**Investigate segment failures**
 
-- look at "gp\_segment\_configuration" to identify the failed segments and their mirrors
+1. Check the `gp_segment_configuration` table to find the downed segments and their mirrors.
+2. Read the master log file to determine when the failure occurred. Look for log entries that start with "FTS:".
+3. Read the `gp_configuration_history` table to see a list of logged events.
+4. Check the primary and mirror log files to understand why the segment failed.
+5. Once you know the cause of the failure, use `gprecoverseg` to restore the segments.
+6. To keep an eye on the recovery, use the `gpstate -e` command.
 
-- look at the master log file to find out when did the event happen (FTS log entries are prefixed with "FTS:")
+**Exercise**
 
-- look at the "gp\_configuration\_history" table to see the recorded events
+1. Find the processes related to one of your database instances and stop it.
+2. Watch the `gp_segment_configuration` table for any changes.
+3. Next, read the master log file and again check the `gp_segment_configuration` table.
+4. To fix the failed segment, use the recovery tools.
+5. Confirm in the `gp_segment_configuration` table that the segment has been recovered.
 
-- look at the primary and mirror log files to find out the reason for the segment failure
+## Lesson 9. Set up and manage the standby master instance in CBDB
 
-- once the failure has been understood, run "gprecoverseg" to recover the segments
+**Understand the role of the standby master**
 
-- you can monitor the recovery progress with "gpstate -e"
+In the CBDB architecture, the master instance can be a single point of failure. To avoid this, it is recommended to set up and maintain a "standby master" instance. Typically, this standby instance is set up on a distinct server, referred to as the "standby master server" or "smdw".
 
-Exercise: Identify the processes for one of your database instances and terminate it. Track gp\_segment\_configuration to see the change. Follow up with the master log file and gp\_segment\_configuration.
+**Manage standby master**
 
-Recover the failed segment. Verify in gp\_segment\_configuration that everything is recovered.
+- To create the standby master (from the master server), use `gpinitstandby -s smdw`.
+- If the standby master falls out-of-sync, you can resynchronize it using `gpinitstandby -n`.
+- To remove the standby master, use `gpinitstandby -r`.
 
-# 9. Standby master
+After setting up the standby instance, you can query the `gp_segment_configuration` table. In the table output, the new standby instance will be visible, which is identified by a `content` value of `-1` and a `role` value of `'m'`.
 
-Master instance is a single point of failure. This is why it is recommended to configure and maintain a 'standby master' instance. This instance is usually created on a special server - standby master server ("smdw").
+**Promote the standby master**
 
-The command to create standby master is "gpinitstandby" (executed from the master server).
+If the master server or master instance is unavailable, the standby master can step in to take its place. To promote the standby master to the role of the master, run the `gpactivatestandby` command from the standby server.
 
-- gpinitstandby -s smdw
+Upon running this command, the roles change: the standby master becomes the master, while the original master gets demoted to the role of the standby instance, although it remains offline. You can query the `gp_segment_configuration` table again to notice these changes.
 
-The command to resync standby master that is out-of-sync is:
+**Exercise**
 
-- gpinitstandby -n
+1. Create the standby master.
+2. Remove the standby master.
+3. Create the standby master again.
+4. Activate this standby master to make it the primary master.
+5. Create another standby master on the original master server.
+6. Activate this new standby master.
 
-The command to remove standby master is:
+Throughout these steps, keep an eye on the `gp_segment_configuration` table. This will help you understand the changes in roles and the state of each instance.
 
-- gpinitstandby -r
+## Lesson 10. Expand a cluster
 
-After standby instance creation, you can observe the new instance in "gp\_segment\_configuration" with content=-1 and role='m'.
+If you need to expand a cluster, you can use the `gpexpand` tool. You can add new hosts or more segments to the current hosts.
 
-If master server is down or master instance is down, then the standby master instance can be promoted to master instance with the command:
+**Steps to expand a cluster**
 
-- gpactivatestandby (executed from the standby server)
+1. Run `gpexpand` and answer questions.
 
-At this point the standby master transitions to master and the original master is transitioned to standby instance (but is down). Changes can be observed in "gp\_segment\_configuration".
+    Run "gpexpand". In this step, you will be guided to answer questions about what you want to do. After answering all the questions, it makes a "configuration file" and stops. You should look at this file to check whether it is doing what you want.
 
-Exercise: Initialize standby master. Remove it. Initialize it again. Activate the standby master. Initialize another standby master at the original master. Activate the standby master.
+2. Run `gpexpand -i <config_file>` to create new instances for the cluster.
 
-Track gp\_segment\_configuration to understand the changes.
+    This step creates the new instances of the cluster. These new instances will show up in the `gp_segment_configuration` table. The cluster is now expanded, but the new instances do not have the data from users yet.
 
-# 10. Expansion
+    `gpexpand` also makes a new area called the `gpexpand` schema. This area has a list of tables that need to be spread out in the next step.
 
-If the cluster needs to be expanded, the "gpexpand" tool can be used.
+3. Run `gpexpand` again to redistribute or spread out the data.
 
-The cluster can be expanded both with new hosts and more segments per host.
+    Here, the data, which was only in the old instances, is now spread out to the expanded cluster. You can do this step many times by setting a time limit with the `-d` option. When all data is spread out, `gpexpand` stops.
 
-gpexpand utility workflow
+4. Finish up.
 
-- phasee I: Interview (gpexpand)
+    Now, the cluster is expanded and the data is spread out. The `gpexpand` schema is still there. You can look at it if you need to. It will not cause any problems.
 
-Run "gpexpand" without parameters. It will go through interview and will ask you questions about your intentions. Once all questions have been answered it will create a "configuration file" and exit. The configuraiton file contains information about the new segments that are about to be created. At this point you should review the configuration file to make sure that the actions are what you want intent to do.
+    But if you want to expand the cluster again, `gpexpand` will tell you to remove it using `gpexpand -c` before it can continue.
 
-- phase II: Expand cluster (gpexpand -i \<config\_file\>)
+**Exercise**
 
-During this phase the utility will create the new instances. The new instances will become part of the cluster and will be recorded in "gp\_segment\_configuration". From this point on the cluster has grown with the new instances, but the new instances still do not contain user data. gpexpand will also create the "gpexpand" schema in the requested directory, which contains a list of tables to be redistributed in the next step.
+1. Run `gpexpand` to add more segments to your current servers.
+2. Run `gpexpand` again to add segments on new servers.
+3. Look at the `gp_segment_configuration` table to see how it changes with each action.
 
-- phase III: Redsitribute data (gpexpand)
+## Lesson 11. Check cluster performance
 
-At this phase the user data, stored until now only on original instances, is redistributed across the new larger cluster. Expansion can be done in many runs with setting timeout for the current run (see the -d parameter). Once the redistribution is finished (all the tables are redistributed across all instances), gpexpand will exit.
+You can use the `gpcheckperf` utility to check performance on a set of hosts (cluster). This utility can be used to check the following:
 
-- phase IV: Clean up
+- I/O performance per host (with the `-r -d` options)
 
-At this point cluster is expanded and data is redistributed. Everything is done. The "gpexpand" schema though is still there for you to review if necessary. This schema does not harm anything.
+    > Note: gpcheckperf will use the `dd` command to perform read test and write test on each host.
 
-The only side effect is that if you need to start another expansion, "gpexpand" will ask you to remove it with "gpexpand -c" before it can continue.
+- Network performance (with the `-r -n|N|M` options)
 
-Exercise: Run gpexpand and add segments to the existing servers. Run gpexpand to add segments on new servers to the cluster.
+    > Note: `-n` means sequential. `-N` means parallel with even number of hosts. `-M` means full matrix mode.
 
-Observe gp\_segment\_configuration and connect the changes to the actions.
+- Memory bandwidth test per host (with the `-r -s` options)
 
-# 11. Performance check
+    > Note: The utility uses the STREAM benchmark program to measure sustainable memory bandwidth (in MB/s).
 
-"gpcheckperf" utility checks performance on a set of hosts (cluster):
+**Exercise**
 
-- IO performance per host (-r d) - gpcheckperf will use "dd" to perform
+Run `gpcheckcat` with the various options and interpret the results.
 
-- read test
+## Lesson 12. User data and table distribution
 
-- write test
+In CBDB, the master instance does not store user data. Segments store user data, and the data is not shared between segments.
 
-- network performance (-r n|N|M)
-
-- n = sequential
-
-- N = parallel (must use even number of hosts)
-
-- M = full matrix mode
-
-- memory bandwidth test per host (-r s) - the utility uses the STREAM benchmark program to measure sustainable memory bandwidth (in MB/s).
-
-Exercise: Run gpcheckcat with the various options and interpret the results.
-
-
-# 12. User data and table distribution
 
 All CBDB Database tables are distributed. When you create or alter a table, you optionally specify DISTRIBUTED BY (hash distribution), DISTRIBUTED RANDOMLY (random distribution), or DISTRIBUTED REPLICATED (fully distributed) to determine the table row distribution.
 
@@ -566,6 +639,7 @@ The replicated table distribution policy (DISTRIBUTED REPLICATED) should be used
 
 - remove restrictions on operations that user-defined functions can perform on segments, and
 - improve query performance by making it unnecessary to broadcast frequently used tables to all segments.
+
 
 In the following example, we can see the vaule "1" for c1 column is alwasy located in the same segment (gp_segment_id=1) if the table is distributed by hash.
 
@@ -620,7 +694,7 @@ gpadmin=# select gp_segment_id, * from t2;
 
 Exercise: Reproduce the above with your own table and observe the effects.
 
-# 13. Database catalog
+## Lesson 13. Database catalog
 
 - located on master and segments
 
@@ -638,16 +712,19 @@ Exercise: Reproduce the above with your own table and observe the effects.
 
 - gpcheckcat
 
-Exercise: Run gpcheckcat on your cluster and attempt to make sense of the results.
+Exercise: Run `gpcheckcat` on your cluster and attempt to make sense of the results.
 
-# 14. Data directories
+## Lesson 14. CBDB data directories
 
-Contents of a data directory:
+In the master instance, the data directory is located at `/data0/database/master/gpseg-1`.
 
-Coordinator data directory:
+The following are the contents in the data directory of the master instance and coordinator instance:
 
-```
+```shell
 [gpadmin@mdw gpseg-1]$ ls -tlr
+```
+
+```shell
 total 156
 -rw------- 1 gpadmin gpadmin     3 Aug 23 15:59 PG_VERSION
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 15:59 pg_twophase
@@ -681,11 +758,15 @@ drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:14 global
 drwx------ 4 gpadmin gpadmin  4096 Aug 23 16:39 pg_logical
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:44 pg_stat_tmp
 ```
-Segment data directory:
 
-```
+In the segment instances, the data directory is located at `/data0/database/primary/gpseg0` and `/data0/database/primary/gpseg1`. The following are the contents in the data directory of a segment instance:
+
+```shell
 [gpadmin@mdw gpseg-1]$ cd /data0/database/primary/gpseg0
 [gpadmin@mdw gpseg0]$ ls -ltr
+```
+
+```shell
 total 180
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 15:59 pg_twophase
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 15:59 pg_tblspc
@@ -719,11 +800,11 @@ drwx------ 4 gpadmin gpadmin  4096 Aug 23 16:44 pg_logical
 drwx------ 2 gpadmin gpadmin  4096 Aug 23 16:44 pg_stat_tmp
 ```
 
-Exercise: Explore the data directory and subdirectories. Take a look at the configuration files.
+**Exercise**
 
-# 15. Instance processes
+Explore the data directory and subdirectories. Take a look at the configuration files.
 
-======================
+## Lesson 15. Instance processes
 
 - postmaster process - the process with the data directory in its name (-D ...) - this process is the parent for all other database processes and it handles connections to this instance
 
@@ -797,66 +878,70 @@ gpadmin   4387  0.1  0.1 213788  9740 ?        Ss   16:14   0:04 postgres: 41000
 
 Exercise: Try to identify the processes for the instances in your cluster.
 
-# 16. Database log files
+## Lesson 16. Database log files
 
-Each instance has its own log files, which are located under <data_directory>/log directory.
-```
+Each instance has its own log files which are located in the `<data_directory>/log` directory.
+
+```shell
 [gpadmin@mdw log]$ pwd
+
 /data0/database/primary/gpseg0/log
+
 [gpadmin@mdw log]$ ls -ltr
+
 total 20
 -rw------- 1 gpadmin gpadmin 8842 Aug 23 16:14 gpdb-2023-08-23_155951.csv
 -rw------- 1 gpadmin gpadmin  468 Aug 23 16:14 startup.log
 -rw------- 1 gpadmin gpadmin 3269 Aug 23 16:17 gpdb-2023-08-23_161424.csv
 ```
 
-The standard log file name is gpdb_\<date\>-\<time\>.csv
+The standard log file name is `gpdb_<date>-<time>.csv`.
 
-Exercise: Look at the log file and do different things in the database (create table, run queries, etc.)
+**Exercise**
 
-# 17. AO/AOCO Tables
+Look at the log file and do different things in the database (create table, run queries, etc.)
 
-- Heap Tables
+## Lesson 17. Table types in CBDB: heap, AO, and AOCO
 
-The default table type in CBDB is 'heap'. In heap tables rows are stored in pages and a data file can have many pages. Heap tables support all SQL operations - SELECT, INSERT, UPDATE, DELETE, TRUNCATE.
+**Heap tables**
 
-To support this functionality rows in CBDB have row header. Heap tables do not support compression.
+In CBDB, the standard table type is "heap". These tables store rows on pages, and one data file can contain multiple pages. They support common SQL tasks such as `SELECT`, `INSERT`, `UPDATE`, `DELETE`, and `TRUNCATE`. Each row in a heap table has a header. However, these tables do not support compression.
 
-- AO tables do not have row header and support compression. This makes them appropriate choice for huge fact tables.
+**AO tables**
 
-- AO CO (Column Oriented) tables
+Unlike heap tables, AO tables do not have a row header but they do allow compression. This feature makes AO tables a good fit for big fact tables.
 
-Row oriented storage is not optimal when executing queries on single columns (avg, sum, etc.).
+**AOCO (column-oriented) tables**
 
-Column oriented tables store data by column, so querying one column does not depend on the number and size of other columns.
+For tasks that focus on single columns, like average (`AVG`) or sum, using row-oriented storage is not the ideal option. Instead, column-oriented tables, which store data by its column, are more efficient. This is because when you query one column, it does not get slowed down by the size or count of other columns.
 
-AOCO tables also support compression, which is even better than AO because of the homogenity of the data in single file (single column all data of same type)
+AOCO tables offer compression, and they compress even better than AO tables. This is due to the consistent type of data in one file, which means that all data in a single column is of the same kind.
 
-Exercise: Create heap table, AO table, AOCO table. Use the \d+ psql command to see the result.
+**Exercise**
 
-# 18. External tables
+Make a heap table, an AO table, and an AOCO table. After creating them, use the `\d+ psql` command to view the results.
 
-CBDB supports external tables. These are tables that have the table structure in the database, but point to data outside of the database:
+## Lesson 18. External tables
 
-- data can be in file on the local filesystem
+CBDB supports external tables. These tables are set up in the database, but they link to data outside of the database. Here is where the data for these tables can come from:
 
-- data can be in file on a remote host (gpfdist server used)
+- A file on your local filesystem.
+- A file on a remote host (you need to use the `gpfdist` server for this).
+- HDFS, which stands for the `gphdfs` type.
+- Data generated on the spot with a command.
 
-- data can be in HDFS (gphdfs type)
+One good thing about external tables is that they make it easy to load data into CBDB. When you use a command like `INSERT INTO table SELECT * FROM ext_table`, data gets loaded all at once from different parts, instead of one piece at a time.
 
-- data can be generated on the fly via command
+**Exercise**
 
-External tables are useful when importing data into CBDB (insert into table select \* from ext\_table) because the data ingestion happens in parallel from segments as opposed to serial ingestion from master.
+Try making different types of external tables and play around with them to learn more.
 
-Exercise: Create external tables of different kinds and work with them to get comfortable.
+## Lesson 19. Workload management
 
+In CBDB, we have something called Resource Queues, or RQ for short. Think of an RQ as a group of sessions that need similar things and share resources. You can put any user into an RQ.
 
-# 19. Workload management
+Also, there is a feature called Priority. You can set a priority level for a whole RQ, which means every session in that RQ will have that priority. But if you want, you can set a priority for just one session using the `gp_adjust_priority()` function.
 
-Resource queues - CBDB has a concept of RQ. RQ is a set of sessions that have similar requirements and use common pool of resources. Every user can be assigned to a RQ.
+**Exercise**
 
-Priority - each resource queue can be assigned a priority. Every session which is assigned to this RQ will have the specified priority. Priority can be assigned to a single session also with
-
-gp\_adjust\_priority() function.
-
-Exercise: create user, create RQ, assign the user to the RQ, run query and observe the RQ state.
+Make a user, set up an RQ, put the user in the RQ, then run a query. Watch and see what happens to the RQ.
