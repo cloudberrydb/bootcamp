@@ -1,11 +1,5 @@
----
-layout: default
-title:  "Backup and Recovery Operations"
-permalink: /backup-and-recovery-operations
----
 
-
-<h2 class='inline-header'>Backup and Recovery Operations</h2>
+# Backup and Recovery Operations
 
 <p>The Cloudberry Database parallel dump utility gpbackup backs up the Cloudberry master instance and each active segment instance at the same time.</p>
 
