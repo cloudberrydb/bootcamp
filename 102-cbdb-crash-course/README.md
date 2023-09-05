@@ -696,23 +696,13 @@ Exercise: Reproduce the above with your own table and observe the effects.
 
 ## Lesson 13. Database catalog
 
-- located on master and segments
+System tables prefixed with *gp_* relate to the parallel features of CBDB Database. Tables prefixed with *pg_* are either standard PostgreSQL system catalog tables supported in CBDB Database, or are related to features CBDB that provides to enhance PostgreSQL for data warehousing workloads. Note that the global system catalog for CBDB Database resides on the coordinator instance.
 
-- pg_catalog schema
+Exercise: Run the following query to get a list of catalog table names.
 
-- tables, views, indexes
-
-- object description - pg_class, pg_attribute, pg_type, etc...
-
-- functions - pg_class
-
-- segment data (master only tables) - gp_segment_configuration, gp_configuration_history
-
-- distribution data - gp_distribution_policy
-
-- gpcheckcat
-
-Exercise: Run `gpcheckcat` on your cluster and attempt to make sense of the results.
+```
+select tablename from pg_tables where schemaname='pg_catalog';
+```
 
 ## Lesson 14. CBDB data directories
 
@@ -806,31 +796,30 @@ Explore the data directory and subdirectories. Take a look at the configuration 
 
 ## Lesson 15. Instance processes
 
-- postmaster process - the process with the data directory in its name (-D ...) - this process is the parent for all other database processes and it handles connections to this instance
+- postgres process: the process with the data directory in its name (-D ...) - this process is the parent for all other database processes and it handles connections to this instance
 
-- logger process - writes log entries in the log file
+- logger process: writes log entries in the log file
 
-- stats collector process - statistics collector
+- stats collector process: statistics collector is a subsystem that supports collection and reporting of information about server activity. Presently, the collector can count accesses to tables and indexes in both disk-block and individual-row terms.
 
-- writer process - background database writer
+- background writer process: writes "dirty" (new or modified) buffers to the on-disk datafiles.
 
-- sweeper process - related to workload management and prioritization
+- sweeper process: related to workload management and prioritization
 
-- checkpoint process - performs checkpoints
+- checkpoint process: performs checkpoints
 
-- WAL Send Server - sends data to standby server
+- walwriter process: periodically flushes the WAL buffer to disk
 
-- seqserver - sequence server
+- ftsprobe process: runs in the coordinator node, and periodically polls the segments to maintain the status of each segment.
 
-- ftsprobe - FTS
+- walsender process: runs in primary segment, and sends the WALs to the mirror segment
 
-- conXXX - connection worker process
+- walreceiver process:  runs in mirror segment, and receives WALs from primary segment
 
-- primary ... - primary communication processes
+- conXXX: user connection worker process
 
-- mirror ... - mirror communication processes
 
-- master
+#### master processes:
 
 ```
 [gpadmin@mdw ~]$ ps aux|grep 5432
@@ -849,7 +838,7 @@ gpadmin   4429  0.0  0.0 210124  5316 ?        Ss   16:14   0:00 postgres:  5432
 gpadmin   4846  0.0  0.5 294692 48516 ?        Ssl  16:25   0:00 postgres:  5432, gpadmin gpadmin [local] con46 cmd172 idle
 ```
 
-- primary
+#### primary processes:
 
 ```
 [gpadmin@mdw ~]$ ps aux|grep 40000
@@ -865,7 +854,8 @@ gpadmin   4396  0.0  0.0 212912  4480 ?        Ss   16:14   0:00 postgres: 40000
 gpadmin   4400  0.0  0.1 214868 12432 ?        Ss   16:14   0:00 postgres: 40000, walsender gpadmin 172.17.0.2(37278) streaming 0/100F9088
 ```
 
-- mirror
+#### mirror processes:
+
 ```
 [gpadmin@mdw ~]$ ps aux|grep 41000
 gpadmin   4375  0.0  0.5 212912 41196 ?        Ss   16:14   0:00 /usr/local/cloudberry-db/bin/postgres -D /data0/database/mirror/gpseg0 -p 41000 -c gp_role=execute
