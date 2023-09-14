@@ -12,8 +12,8 @@ This guide introduces how to quickly install and connect to a single-node Cloudb
 This guide introduces single-node installation on the following architectures:
 
 - A standalone machine
-- A pseudo-distributed cluster
-- A fully-distributed cluster
+- A pseudo-distributed cluster （Coming soon）
+- A fully-distributed cluster （Coming soon）
 
 ## Prerequisites
 
