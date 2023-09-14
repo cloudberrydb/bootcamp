@@ -1,4 +1,4 @@
-## Background - Database concepts
+# Background - Database concepts
 
 Before starting this tutorials, spend some time to get familiar with how (single instance) databases work. If you already have some knowledge and experience with Oracle, MySQL or especially Postgres - this is great.
 
@@ -20,9 +20,9 @@ SQL (Structured Query Language) is a descriptive language, not imperative langua
 
 Now it's time to start the tutorial:
 
-- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md)
-- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/create-and-prepare-database.md)
-- [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md)
-- [Lesson 4: Data Loading](../101-cbdb-tutorials/data-loading.md)
-- [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/queries-and-performance-tuning.md)
-- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/backup-and-recovery-operations.md)
+- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/101-1-create-users-and-roles.md)
+- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/101-2-create-and-prepare-database.md)
+- [Lesson 3: Create Tables](../101-cbdb-tutorials/101-3-create-tables.md)
+- [Lesson 4: Data Loading](../101-cbdb-tutorials/101-4-data-loading.md)
+- [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/101-5-queries-and-performance-tuning.md)
+- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/101-6-backup-and-recovery-operations.md)

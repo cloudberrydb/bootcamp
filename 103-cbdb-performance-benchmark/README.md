@@ -1,9 +1,8 @@
-<!-- ![Cloudberry](../images/logo.png) -->
+<!-- ![Cloudberry](../images/cloudberrydb_logo.png) -->
+# CloudberryDB Performance Benchmark
 
-Cloudberry DB Performace Benchmark using the CBDB Sandbox docker image
-=================
+This tutorial will show you how to do the CloudberryDB performance by the CloudberryDB sandbox docker image. 
 
-
-[Part 1: TPCH benchmark](../103-cbdb-performance-benchmark/tpch.md)
-
-[Part 2: TPCDS benchmark](../103-cbdb-performance-benchmark/tpcds.md)
+Including two parts, you can click to see more details:
+- [Part 1: TPCH benchmark](../103-cbdb-performance-benchmark/tpch.md), which is based on the benchmark tool `TPC-H`.
+- [Part 2: TPCDS benchmark](../103-cbdb-performance-benchmark/tpcds.md), which is based on the benchmark tool `Greenplum Database TPC-DS`.

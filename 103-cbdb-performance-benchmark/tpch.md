@@ -1,20 +1,20 @@
-# Decision Support Benchmark for Cloudberry database.
+# Decision Support Benchmark for Cloudberry Database.
 
 This tool is based on the benchmark tool [TPC-H](https://www.tpc.org/tpch/default5.asp).
 This repo contains automation of running the TPC-H benchmark on an existing Cloudberry cluster.
 
 ## Context
 
-
 ### Supported TPC-H Versions
 
 TPC has published the following TPC-H standards over time:
+
 | TPC-H Benchmark Version | Published Date | Standard Specification |
 |-|-|-|
 | 3.0.0 (latest) | 2021/02/18 | https://tpc.org/TPC_Documents_Current_Versions/pdf/tpc-h_v3.0.0.pdf|
 
-
 ## Setup
+
 ### Prerequisites
 
 This is following up tutorial for previous bootcamp steps. Make sure env for Cloudberry Database is up and running.
@@ -46,7 +46,7 @@ TPC-H and TPC-DS packages are already under "mdw:/tmp/" folder.
 
 To run the benchmark, login as `gpadmin` on `mdw`:
 
-```
+```bash
 docker exec -it <container-id>  /bin/bash
 su - gpadmin
 tar xzf TPC-H-CBDB.tar.gz

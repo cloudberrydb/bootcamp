@@ -6,7 +6,8 @@ title: Install a Single-Node Cloudberry Database
 
 This guide introduces how to quickly install and connect to a single-node Cloudberry Database. Following this guide, you can start trying out Cloudberry Database by performing some simple operations or running SQL commands on it.
 
-> Note: This guide is intended for testing or development purposes, not for production deployments.
+> [!NOTE]
+> This guide is intended for testing or development purposes, not for production deployments.
 
 This guide introduces single-node installation on the following architectures:
 
@@ -18,11 +19,9 @@ This guide introduces single-node installation on the following architectures:
 
 Before moving on to the installation steps, make sure that your environment meets the following requirements:
 
-Operating systems: CentOS 7.6, macOS
-
-Required software: Docker Desktop
-
-Other dependencies: Git, SSH, internet connection
+- Operating systems: CentOS 7.6, macOS
+- Required software: Docker Desktop
+- Other dependencies: Git, SSH, and internet connection
 
 ## Install on a standalone machine
 
@@ -43,12 +42,13 @@ Installation steps:
 3. Enter the repository and run the `run.sh` script to start the Docker container. This will start the automatic installation process.
 
     ```shell
-    cd <repo directory on the machine>/000-cbdb-sandbox
+    cd bootcamp/000-cbdb-sandbox
     chmod +x ./run.sh
     ./run.sh
     ```
 
-    > Note: The `run.sh` script will have Cloudberry Database installed on CentOS 7.x. To use CentOS 8, run the `run_centos8.sh` script instead.
+> [!NOTE]
+> The `run.sh` script will have Cloudberry Database installed on CentOS 7.x. To use CentOS 8, run the `run_centos8.sh` script instead.
 
 After the script finishes without error, the Cloudberry Database is installed successfully. You can now connect to the database and get ready to perform some simple operations on it.
 
@@ -96,6 +96,6 @@ ssh gpadmin@localhost # Password: Hashdata@123
 
 Now you have got a Cloudberry Database for testing, enjoy!
 
-## Pseudo-Distributed-Operation
+<!-- ## Pseudo-Distributed-Operation -->
 
-## Fully-Distributed-Operation
+<!-- ## Fully-Distributed-Operation -->
