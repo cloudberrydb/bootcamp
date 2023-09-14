@@ -1,7 +1,6 @@
-
 # Lesson 4: Data Loading
 
-This tutorial briefly introduces 3 methods to load the example data `FAA` into Cloudberry Database tables you have created in the previous tutorial [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md). Before continuing, make sure you have completed the previous tutorial.
+This tutorial briefly introduces 3 methods to load the example data `FAA` into Cloudberry Database tables you have created in the previous tutorial [Lesson 3: Create Tables](../101-cbdb-tutorials/101-3-create-tables.md). Before continuing, make sure you have completed the previous tutorial.
 
 - Method 1: Use the `INSERT` statement. This is the easiest way to load data. You can execute `INSERT` directly in psql, run scripts that have `INSERT` statements, or run a client-side application with database connection. It is not recommended to use `INSERT` to load a large amount of data, because the loading efficiency is low.
 
@@ -17,7 +16,7 @@ This tutorial briefly introduces 3 methods to load the example data `FAA` into C
 
     Figure 1. External Tables Using Cloudberry Parallel File Server (gpfdist) 
 
-    <img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/ext_tables.jpg" width="500" alt="External Tables Using Cloudberry Parallel File Server">
+    <img src="../images/ext_tables.jpg" width="500" alt="External Tables Using Cloudberry Parallel File Server">
 
     Another Cloudberry utility `gpload` is a batch job. When using this utility, you should specify a YAML-formatted control file, describe source data locations, format, transformations required, participating hosts, database destinations and other particulars in the file. `gpload` will parse the control file and use `gpfdsit` to execute the task. This allows you to describe a complex task and execute it in a controlled and repeatable way.
 
@@ -27,7 +26,7 @@ In the following exercise, you will load sample data into the `tutorial` databas
 
 ### Load data using `INSERT`
 
-In [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md), you have created 6 tables in the `tutorial` database, one of which is `d_cancellation_codes` in the `faa` directory.
+In [Lesson 3: Create Tables](../101-cbdb-tutorials/101-3-create-tables.md), you have created 6 tables in the `tutorial` database, one of which is `d_cancellation_codes` in the `faa` directory.
 
 The `faa.d_cancellation_codes` table is a simple 2-column look-up table. You will load data into the table using the `INSERT` statement.
 
@@ -382,11 +381,11 @@ Understanding and using these features and mechanisms effectively can ensure opt
 
 ## What's next
 
-In this tutorial, you learned how to load data into Cloudberry Database. You learned about the different loading mechanisms and how to use them. You also learned how to use the `gpload` utility to load data. Finally, you learned how to create and load fact tables. You can now move on to the next tutorial, [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/queries-and-performance-tuning.md), to learn about query performance tuning in Cloudberry Database.
+In this tutorial, you learned how to load data into Cloudberry Database. You learned about the different loading mechanisms and how to use them. You also learned how to use the `gpload` utility to load data. Finally, you learned how to create and load fact tables. You can now move on to the next tutorial, [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/101-5-queries-and-performance-tuning.md), to learn about query performance tuning in Cloudberry Database.
 
 Other tutorials:
 
-- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md)
-- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/create-and-prepare-database.md)
-- [Lesson 3: Create Tables](../101-cbdb-tutorials/create-tables.md)
-- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/backup-and-recovery-operations.md)
+- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/101-1-create-users-and-roles.md)
+- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/101-2-create-and-prepare-database.md)
+- [Lesson 3: Create Tables](../101-cbdb-tutorials/101-3-create-tables.md)
+- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/101-6-backup-and-recovery-operations.md)

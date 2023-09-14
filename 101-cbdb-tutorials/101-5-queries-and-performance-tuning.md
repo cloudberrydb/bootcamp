@@ -1,4 +1,3 @@
-
 # Lesson 5: Queries and Performance Tuning
 
 This lesson provides an overview of how Cloudberry Database processes queries. Understanding this process can be useful when you write and tune queries.
@@ -13,8 +12,8 @@ The master host receives, parses, and optimizes the query. The resulting query p
 
 Most database operations such as table scan, join, aggregation and sort will be executed across all segments in parallel. Each operation is performed on one segment database independent of the data stored on other segment databases.
 
-Figure 1. Dispatch the parallel query plan<br>
-<img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/dispatch.jpg" width="400" alt="Dispatching the Parallel Query Plan">
+_Figure 1. Dispatch the parallel query plan_<br>
+<img src="../images/dispatch.jpg" alt="Dispatching the Parallel Query Plan">
 
 ### Understand query plans
 
@@ -45,7 +44,7 @@ Some items to consider in performance tuning:
 
 ## Exercises
 
-After doing the following exercises, you are expected to finish the previous tutorial [Lesson 4: Data Loading](../101-cbdb-tutorials/data-loading.md).
+After doing the following exercises, you are expected to finish the previous tutorial [Lesson 4: Data Loading](../101-cbdb-tutorials/101-4-data-loading.md).
 
 ### Analyze the tables
 
@@ -580,7 +579,7 @@ Cloudberry Database supports:
 - List partitioning: division of data based on a list of values, such as sales territory or product line.
 - A combination of both types.
 
-<img src="https://raw.githubusercontent.com/greenplum-db/gpdb-sandbox-tutorials/gh-pages/images/part.jpg" width="400" alt="Cloudberry Database partitioning">  
+<img src="../images/part.jpg" alt="Cloudberry Database partitioning">  
 
 The following exercise compares `SELECT` statements with `WHERE` clauses that do and do not use a partitioned column.
 

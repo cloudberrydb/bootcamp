@@ -1,7 +1,6 @@
-
 # Lesson 3: Create Tables
 
-After creating and preparing a database in [Lesson 2: Create and Prepare a Database](../101-cbdb-tutorials/create-and-prepare-database.md), you can start to create tables in the database.
+After creating and preparing a database in [Lesson 2: Create and Prepare a Database](../101-cbdb-tutorials/101-2-create-and-prepare-database.md), you can start to create tables in the database.
 
 ## Create tables using a SQL file in psql
 
@@ -147,11 +146,11 @@ When different tables that have the same or similar columns as distribution key 
 
 ## What's next
 
-After creating some tables in the database, you can continue to load data into the tables. See [Lesson 4: Data Loading](../101-cbdb-tutorials/data-loading.md).
+After creating some tables in the database, you can continue to load data into the tables. See [Lesson 4: Data Loading](../101-cbdb-tutorials/101-4-data-loading.md).
 
 Other tutorials:
 
-- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/create-users-and-roles.md)
-- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/create-and-prepare-database.md)
-- [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/queries-and-performance-tuning.md)
-- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/backup-and-recovery-operations.md)
+- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/101-1-create-users-and-roles.md)
+- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/101-2-create-and-prepare-database.md)
+- [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/101-5-queries-and-performance-tuning.md)
+- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/101-6-backup-and-recovery-operations.md)

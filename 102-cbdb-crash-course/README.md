@@ -5,26 +5,30 @@ This crash course provides an extensive overview of Cloudberry Database (CBDB), 
 
 Topics include:
 
-- [Lesson 0. Prerequisite](#lesson-0-prerequisite)
-- [Lesson 1. Where to read the official documentation](#lesson-1-where-to-read-the-official-documentation)
-- [Lesson 2. How to install CBDB](#lesson-2-how-to-install-cbdb)
-- [Lesson 3. Cluster architecture](#lesson-3-cluster-architecture)
-- [Lesson 4. Management utilities](#lesson-4-management-utilities)
-- [Lesson 5. Start and stop a cluster](#lesson-5-start-and-stop-a-cluster)
-- [Lesson 6. Check cluster state](#lesson-6-check-cluster-state)
-- [Lesson 7. How CBDB segment mirroring works](#lesson-7-how-cbdb-segment-mirroring-works)
-- [Lesson 8. CBDB's fault tolerance and segment recovery](#lesson-8-cbdbs-fault-tolerance-and-segment-recovery)
-- [Lesson 9. Set up and manage the standby master instance in CBDB](#lesson-9-set-up-and-manage-the-standby-master-instance-in-cbdb)
-- [Lesson 10. Expand a cluster](#lesson-10-expand-a-cluster)
-- [Lesson 11. Check cluster performance](#lesson-11-check-cluster-performance)
-- [Lesson 12. User data and table distribution](#lesson-12-user-data-and-table-distribution)
-- [Lesson 13. Database catalog](#lesson-13-database-catalog)
-- [Lesson 14. CBDB data directories](#lesson-14-cbdb-data-directories)
-- [Lesson 15. Instance processes](#lesson-15-instance-processes)
-- [Lesson 16. Database log files](#lesson-16-database-log-files)
-- [Lesson 17. Table types in CBDB: heap, AO, and AOCO](#lesson-17-table-types-in-cbdb-heap-ao-and-aoco)
-- [Lesson 18. External tables](#lesson-18-external-tables)
-- [Lesson 19. Workload management](#lesson-19-workload-management)
+- [Cloudberry Database Crash Course](#cloudberry-database-crash-course)
+  - [Lesson 0. Prerequisite](#lesson-0-prerequisite)
+  - [Lesson 1. Where to read the official documentation](#lesson-1-where-to-read-the-official-documentation)
+  - [Lesson 2. How to install CBDB](#lesson-2-how-to-install-cbdb)
+  - [Lesson 3. Cluster architecture](#lesson-3-cluster-architecture)
+  - [Lesson 4. Management utilities](#lesson-4-management-utilities)
+  - [Lesson 5. Start and stop a cluster](#lesson-5-start-and-stop-a-cluster)
+  - [Lesson 6. Check cluster state](#lesson-6-check-cluster-state)
+  - [Lesson 7. How CBDB segment mirroring works](#lesson-7-how-cbdb-segment-mirroring-works)
+  - [Lesson 8. CBDB's fault tolerance and segment recovery](#lesson-8-cbdbs-fault-tolerance-and-segment-recovery)
+  - [Lesson 9. Set up and manage the standby master instance in CBDB](#lesson-9-set-up-and-manage-the-standby-master-instance-in-cbdb)
+  - [Lesson 10. Expand a cluster](#lesson-10-expand-a-cluster)
+  - [Lesson 11. Check cluster performance](#lesson-11-check-cluster-performance)
+  - [Lesson 12. User data and table distribution](#lesson-12-user-data-and-table-distribution)
+  - [Lesson 13. Database catalog](#lesson-13-database-catalog)
+  - [Lesson 14. CBDB data directories](#lesson-14-cbdb-data-directories)
+  - [Lesson 15. Instance processes](#lesson-15-instance-processes)
+      - [master processes:](#master-processes)
+      - [primary processes:](#primary-processes)
+      - [mirror processes:](#mirror-processes)
+  - [Lesson 16. Database log files](#lesson-16-database-log-files)
+  - [Lesson 17. Table types in CBDB: heap, AO, and AOCO](#lesson-17-table-types-in-cbdb-heap-ao-and-aoco)
+  - [Lesson 18. External tables](#lesson-18-external-tables)
+  - [Lesson 19. Workload management](#lesson-19-workload-management)
 
 ## Lesson 0. Prerequisite
 
@@ -32,7 +36,7 @@ Before starting this crash course, spend some time going through the [Cloudberry
 
 ## Lesson 1. Where to read the official documentation
 
-Take a quick look at the official [CBDB Documentation](https://cloudberrydb.org/docs/cbdb-overview). No need to worry if you do not understand everything.
+Take a quick look at the official [CBDB Documentation](https://cloudberrydb.org/docs). No need to worry if you do not understand everything.
 
 ## Lesson 2. How to install CBDB
 
@@ -45,7 +49,8 @@ To begin your journey with CBDB, you are expected to install CBDB in your prefer
 
 A CBDB cluster has one master host (usually named `mdw`) and multiple segment hosts (usually named `sdwXX`).
 
-> **Tip**: if someone is referring to `mdw`, he is referring to the "master host". Similarly, when somebody is referring to "sdw10", he is referring to the 10th segment host.
+> [!NOTE]
+> If someone is referring to `mdw`, he is referring to the "master host". Similarly, when somebody is referring to "sdw10", he is referring to the 10th segment host.
 
 A master host usually contains only one instance - the master instance. The segment hosts might contain many worker instances. Every instance has its own set of processes, data directory, and listening port. For example, usually, the listening port of the master instance (where all clients will connect to) is `5432`.
 

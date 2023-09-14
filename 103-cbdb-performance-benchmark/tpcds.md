@@ -1,14 +1,14 @@
-# Decision Support Benchmark for Cloudberry database.
+# Decision Support Benchmark for Cloudberry Database.
 
 This tool is based on the benchmark tool [pivotal TPC-DS](https://github.com/pivotal/TPC-DS).
 This repo contains automation of running the DS benchmark on an existing Cloudberry cluster.
 
 ## Context
 
-
 ### Supported TPC-DS Versions
 
 TPC has published the following TPC-DS standards over time:
+
 | TPC-DS Benchmark Version | Published Date | Standard Specification |
 |-|-|-|
 | 3.2.0 (latest) | 2021/06/15 | http://www.tpc.org/tpc_documents_current_versions/pdf/tpc-ds_v3.2.0.pdf |
@@ -18,6 +18,7 @@ TPC has published the following TPC-DS standards over time:
 As of version 1.2 of this tool TPC-DS 3.2.0 is used.
 
 ## Setup
+
 ### Prerequisites
 
 This is following up tutorial for previous bootcamp steps. Make sure env for Cloudberry Database is up and running.
@@ -49,7 +50,7 @@ TPC-H and TPC-DS packages are already under "mdw:/tmp/" folder.
 
 To run the benchmark, login as `gpadmin` on `mdw`:
 
-```
+```bash
 docker exec -it <container-id>  /bin/bash
 su - gpadmin
 tar xzf TPC-DS-CBDB.tar.gz
