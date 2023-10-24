@@ -1,37 +1,29 @@
 ---
-title: Install a Single-Node Cloudberry Database
+title: Sandbox of Single-Node Cloudberry Database
 ---
 
-# Install a Single-Node Cloudberry Database
+# Get a Container for Single-Node Cloudberry Database
 
-This guide introduces how to quickly install and connect to a single-node Cloudberry Database. Following this guide, you can start trying out Cloudberry Database by performing some simple operations or running SQL commands on it.
+This document guide you through how to quickly start and connect to a single-node Cloudberry Database in a docker envoriment. You can try out Cloudberry Database by performing some basic operations and running SQL commands.
 
 > [!NOTE]
-> This guide is intended for testing or development purposes, not for production deployments.
+> This guide is intended for testing or development, DO NOT use for production purpose.
 
-This guide introduces single-node installation on the following architectures:
-
-- A standalone machine
-- A pseudo-distributed cluster （Coming soon）
-- A fully-distributed cluster （Coming soon）
 
 ## Prerequisites
 
 Before moving on to the installation steps, make sure that your environment meets the following requirements:
 
-- Operating systems: CentOS 7.6, macOS
-- Required software: Docker Desktop
+- Platform requirement: Any platform with Docker runtime. Refer to https://www.docker.com/get-started/ for more.
 - Other dependencies: Git, SSH, and internet connection
 
-## Install on a standalone machine
+## Build the Sandbox
 
-This section introduces how to install a single-node Cloudberry Database on a standalone machine, with one master node and two segments in a Docker container. In the Docker image, the binary source code of Cloudberry Database v1.3 is compiled. This process can run on either x86 or arm (including Mac M1) chips.
+This docker image will complie source code of Cloudberry Database v1.0 which is released in https://github.com/cloudberrydb/cloudberrydb/releases and initialize a single-node cluster with one coordinator and two segments in a Centos 7.9 docker container. Both x86 and arm (including Mac M1) chips are supported.
 
-Following the steps below, Cloudberry Database v1.3 is installed by default. If you want to install a different version, replace the source code package in `./configs/cbdb-<XXX>.zip` with your desired one.
+Build steps:
 
-Installation steps:
-
-1. Start Docker Desktop and make sure it is running properly on the target standalone machine.
+1. Start Docker Desktop and make sure it is running properly on your host platform.
 
 2. Download this repository (which is [cloudberry/bootcamp](https://github.com/cloudberrydb/bootcamp)) to the target machine.
 
@@ -47,10 +39,11 @@ Installation steps:
     ./run.sh
     ```
 
-> [!NOTE]
-> The `run.sh` script will have Cloudberry Database installed on CentOS 7.x. To use CentOS 8, run the `run_centos8.sh` script instead.
+Once the script finishes OK, the sandbox is built successfully. 
 
-After the script finishes without error, the Cloudberry Database is installed successfully. You can now connect to the database and get ready to perform some simple operations on it.
+## Connect to the database
+
+You can now connect to the database and try some basic operations.
 
 1. Connect to the Docker container from the host machine:
 
@@ -69,7 +62,7 @@ After the script finishes without error, the Cloudberry Database is installed su
     ```shell
     [root@mdw /] su - gpadmin  # Switches to the gpadmin user.
 
-    # Last login: Wed Nov 16 17:04:08 CST 2022 on pts/1
+    # Last login: Tue Oct 24 10:26:14 CST 2023 on pts/1
 
     [gpadmin@mdw ~]$ psql  # Connects to the database with the default database name "gpadmin".
 
@@ -83,8 +76,7 @@ After the script finishes without error, the Cloudberry Database is installed su
 
     -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     -----
-    PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Dec  1 2022 11:3
-    8:02
+    PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Oct 24 2023 10:24:28
     (1 row)
     ```
 
@@ -94,7 +86,7 @@ In addition to using the `docker exec` command, you can also use the `ssh` comma
 ssh gpadmin@localhost # Password: Hashdata@123
 ```
 
-Now you have got a Cloudberry Database for testing, enjoy!
+Now you have a Cloudberry Database and can continue with following courses of this bootcamp! Enjoy!
 
 <!-- ## Pseudo-Distributed-Operation -->
 
