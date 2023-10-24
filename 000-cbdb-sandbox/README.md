@@ -19,7 +19,7 @@ Make sure that your environment meets the following requirements:
 
 ## Build the Sandbox
 
-This docker image will complie source code of Cloudberry Database v1.0 which is released in https://github.com/cloudberrydb/cloudberrydb/releases and initialize a single-node cluster with one coordinator and two segments in a Centos 7.9 docker container. Both x86 and arm (including Mac M1) chips are supported.
+This docker image will complie source code of Cloudberry Database v1.0 which is released in https://github.com/cloudberrydb/cloudberrydb/releases and initialize a single-node cluster with one coordinator and two segments in a Centos 7.9 docker container. Both x86 and arm (including Apple chips) are supported.
 
 Build steps:
 
