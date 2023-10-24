@@ -12,7 +12,7 @@ This document guide you through how to quickly start and connect to a single-nod
 
 ## Prerequisites
 
-Before moving on to the installation steps, make sure that your environment meets the following requirements:
+Make sure that your environment meets the following requirements:
 
 - Platform requirement: Any platform with Docker runtime. Refer to https://www.docker.com/get-started/ for more.
 - Other dependencies: Git, SSH, and internet connection
