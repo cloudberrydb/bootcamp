@@ -47,11 +47,11 @@ RUN     cat /tmp/sysctl.conf.add >> /etc/sysctl.conf \
 RUN     yum install -y python3-devel python3-pip; yum clean all
 
 RUN     cd /tmp/ \
-        && unzip -d /tmp /tmp/cbdb-1.3.0.zip \
-        && cd /tmp/cbdb-1.3.0 \
+        && unzip -d /tmp /tmp/cloudberrydb-1.0.0.zip \
+        && cd /tmp/cloudberrydb-1.0.0 \
         && pip3 install -i https://mirrors.aliyun.com/pypi/simple -r python-dependencies.txt
 
-RUN     cd /tmp/cbdb-1.3.0 \
+RUN     cd /tmp/cloudberrydb-1.0.0 \
         && source scl_source enable devtoolset-10 \
         && ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/cloudberry-db \
         && make -j8 \
