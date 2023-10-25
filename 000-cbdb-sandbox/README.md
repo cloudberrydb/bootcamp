@@ -6,7 +6,7 @@ title: Sandbox of Single-Node Cloudberry Database
 
 This document guides you on how to quickly set up and connect to a single-node Cloudberry Database in a Docker environment. You can try out Cloudberry Database by performing some basic operations and running SQL commands.
 
-> [!NOTE]
+> [!WARNING]
 > This guide is intended for testing or development. DO NOT use it for production.
 
 
@@ -25,7 +25,7 @@ Build steps:
 
 1. Start Docker Desktop and make sure it is running properly on your host platform.
 
-2. Download this repository (which is [cloudberry/bootcamp](https://github.com/cloudberrydb/bootcamp)) to the target machine.
+2. Download this repository (which is [cloudberrydb/bootcamp](https://github.com/cloudberrydb/bootcamp)) to the target machine.
 
     ```shell
     git clone https://github.com/cloudberrydb/bootcamp.git
