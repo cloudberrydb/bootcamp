@@ -2,24 +2,24 @@
 title: Sandbox of Single-Node Cloudberry Database
 ---
 
-# Get a Container for Single-Node Cloudberry Database
+# Install Single-Node Cloudberry Database in a Docker Container
 
-This document guide you through how to quickly start and connect to a single-node Cloudberry Database in a docker envoriment. You can try out Cloudberry Database by performing some basic operations and running SQL commands.
+This document guides you on how to quickly set up and connect to a single-node Cloudberry Database in a Docker environment. You can try out Cloudberry Database by performing some basic operations and running SQL commands.
 
 > [!NOTE]
-> This guide is intended for testing or development, DO NOT use for production purpose.
+> This guide is intended for testing or development. DO NOT use it for production.
 
 
 ## Prerequisites
 
 Make sure that your environment meets the following requirements:
 
-- Platform requirement: Any platform with Docker runtime. Refer to https://www.docker.com/get-started/ for more.
+- Platform requirement: Any platform with Docker runtime. For details, refer to [Get Started with Docker](https://www.docker.com/get-started/).
 - Other dependencies: Git, SSH, and internet connection
 
 ## Build the Sandbox
 
-This docker image will complie source code of Cloudberry Database v1.0 which is released in https://github.com/cloudberrydb/cloudberrydb/releases and initialize a single-node cluster with one coordinator and two segments in a Centos 7.9 docker container. Both x86 and arm (including Apple chips) are supported.
+This section introduces how to set up the Docker container in which the source code of Cloudberry Database v1.0 (released in [Cloudberry Database Release Page](https://github.com/cloudberrydb/cloudberrydb/releases)) will be compiled. In this CentOS 7.9 Docker container, a single-node cluster will be initialized with one coordinator and two segments. Both x86 and ARM CPUs (including Apple chips) are supported.
 
 Build steps:
 
@@ -39,7 +39,7 @@ Build steps:
     ./run.sh
     ```
 
-Once the script finishes OK, the sandbox is built successfully. 
+    Once the script finishes without error, the sandbox is built successfully. 
 
 ## Connect to the database
 
@@ -86,7 +86,7 @@ In addition to using the `docker exec` command, you can also use the `ssh` comma
 ssh gpadmin@localhost # Password: Hashdata@123
 ```
 
-Now you have a Cloudberry Database and can continue with following courses of this bootcamp! Enjoy!
+Now you have a Cloudberry Database and can continue with [Cloudberry Database Tutorials Based on Single-Node Installation](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md)! Enjoy!
 
 <!-- ## Pseudo-Distributed-Operation -->
 
