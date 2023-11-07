@@ -1,8 +1,11 @@
+---
+title: "Cloudberry Database Tutorials Based on Single-Node Installation"
+---
 # Cloudberry Database Tutorials Based on Single-Node Installation
 
 This folder contains a series of tutorials for quickly trying out Cloudberry Database based on the single-node installation.
 
-Before starting to read the tutorials, you are expected to finish installing the single-node Cloudberry Database by following [Install a Single-Node Cloudberry Database](../000-cbdb-sandbox/README.md). In addition, it is a good idea to know more about Cloudberry Database. It is recommended to first read [Cloudberry Database Overview](https://cloudberrydb.io/docs/cbdb-overview) and [Cloudberry Database Architecture](https://cloudberrydb.io/docs/cbdb-architecture).
+Before starting to read the tutorials, you are expected to finish installing the single-node Cloudberry Database by following [Install a Single-Node Cloudberry Database](../000-cbdb-sandbox/README.md). In addition, it is a good idea to know more about Cloudberry Database. It is recommended to first read [Cloudberry Database Overview](./introduction-to-cloudberrydb-in-database-analytics.md) and [Cloudberry Database Architecture](./introduction-to-the-cloudberry-database-architecture.md).
 
 The series includes the following tutorials. Follow them in sequence.
 

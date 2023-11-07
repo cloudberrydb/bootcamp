@@ -10,7 +10,7 @@ rm -f /lib/systemd/system/basic.target.wants/*;\
 rm -f /lib/systemd/system/anaconda.target.wants/*;
 COPY ./configs/* /tmp/
 
-RUN     echo root:Hashdata@123 | chpasswd \
+RUN     echo root:cbdb@123 | chpasswd \
         && yum install -y epel-release \
         && yum install -y initscripts unzip which tar less net-tools util-linux-ng passwd openssh-clients openssh-server perl ed m4 sudo rsync git wget \
         && yum install -y apr-devel bison bzip2-devel cmake3 flex gcc gcc-c++ krb5-devel libcurl-devel libevent-devel libkadm5 libxml2-devel libyaml-devel libzstd-devel openssl-devel perl-ExtUtils-Embed readline-devel xerces-c-devel zlib-devel \
@@ -31,7 +31,7 @@ RUN     cat /tmp/sysctl.conf.add >> /etc/sysctl.conf \
         && hostname > ~/orig_hostname \
         && /usr/sbin/groupadd gpadmin \
         && /usr/sbin/useradd gpadmin -g gpadmin -G wheel \
-        && echo "Hashdata@123"|passwd --stdin gpadmin \
+        && echo "cbdb@123"|passwd --stdin gpadmin \
         && echo "gpadmin        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers \
         && echo "root        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers \
         && chown -R gpadmin: /home/gpadmin \

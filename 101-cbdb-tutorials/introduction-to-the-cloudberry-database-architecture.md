@@ -1,6 +1,9 @@
+---
+title: "101 - Introduction to the Cloudberry Database Architecture"
+---
 # Introduction to the Cloudberry Database Architecture
 
-<a href="https://cloudberrydb.org">Cloudberry Database</a> is a massively parallel processing (MPP) database server with an architecture specially designed to manage large-scale analytic data warehouses and business intelligence workloads.
+[https://cloudberrydb.org](Cloudberry Database) is a massively parallel processing (MPP) database server with an architecture specially designed to manage large-scale analytic data warehouses and business intelligence workloads.
 
 MPP (also known as a shared nothing architecture) refers to systems with two or more processors that cooperate to carry out an operation, each processor with its own memory, operating system and disks. Cloudberry uses this high-performance system architecture to distribute the load of multi-terabyte data warehouses and all of a system's resources in parallel to process a query.
 
@@ -10,8 +13,8 @@ In Cloudberry, internals of PostgreSQL have been modified and optimized to suppo
 
 Cloudberry Database also includes features designed to optimize PostgreSQL for business intelligence (BI) workloads. For example, Cloudberry has added parallel data loading (external tables), resource management, query optimizations and storage enhancements,.
 
-_Figure 1. High-Level Cloudberry Database Architecture_<br>
-<img src="../images/highlevel_arch.jpg" alt="High-Level Cloudberry Database Architecture">  
+_Figure 1. High-Level Cloudberry Database Architecture_
+![High-Level Cloudberry Database Architecture](../images/highlevel_arch.jpg)  
 
 The following topics describe the components that make up a Cloudberry Database system and how they work together. 
 

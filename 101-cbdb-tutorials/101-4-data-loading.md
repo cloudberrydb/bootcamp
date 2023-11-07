@@ -1,3 +1,6 @@
+---
+title: "101 - Lesson 4: Data Loading"
+---
 # Lesson 4: Data Loading
 
 This tutorial briefly introduces 3 methods to load the example data `FAA` into Cloudberry Database tables you have created in the previous tutorial [Lesson 3: Create Tables](../101-cbdb-tutorials/101-3-create-tables.md). Before continuing, make sure you have completed the previous tutorial.
@@ -14,9 +17,8 @@ This tutorial briefly introduces 3 methods to load the example data `FAA` into C
 
     For optimal speed, combine the use of external tables with Cloudberry's parallel file server (`gpfdist`). This approach will help you maximize efficiency, making your data loading tasks smoother and more efficient.
 
-    Figure 1. External Tables Using Cloudberry Parallel File Server (gpfdist) 
-
-    <img src="../images/ext_tables.jpg" width="500" alt="External Tables Using Cloudberry Parallel File Server">
+    ![External Tables Using Cloudberry Parallel File Server](../images/ext_tables.jpg)
+    _Figure 1. External Tables Using Cloudberry Parallel File Server (gpfdist)_ 
 
     Another Cloudberry utility `gpload` is a batch job. When using this utility, you should specify a YAML-formatted control file, describe source data locations, format, transformations required, participating hosts, database destinations and other particulars in the file. `gpload` will parse the control file and use `gpfdsit` to execute the task. This allows you to describe a complex task and execute it in a controlled and repeatable way.
 

@@ -83,11 +83,8 @@ You can now connect to the database and try some basic operations.
 In addition to using the `docker exec` command, you can also use the `ssh` command. This command will connect to the database with the default database name `gpadmin`:
 
 ```shell
-ssh gpadmin@localhost # Password: Hashdata@123
+ssh gpadmin@localhost # Password: cbdb@123
 ```
 
 Now you have a Cloudberry Database and can continue with [Cloudberry Database Tutorials Based on Single-Node Installation](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md)! Enjoy!
 
-<!-- ## Pseudo-Distributed-Operation -->
-
-<!-- ## Fully-Distributed-Operation -->

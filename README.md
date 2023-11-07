@@ -1,4 +1,4 @@
-<img src="./images/cloudberrydb_logo.png">
+![CloudberryDB Logo](./images/cloudberrydb_logo.png)
 
 # Cloudberry Database Bootcamp
 

@@ -1,3 +1,6 @@
+---
+title: "101 - Lesson 3: Create Tables"
+---
 # Lesson 3: Create Tables
 
 After creating and preparing a database in [Lesson 2: Create and Prepare a Database](../101-cbdb-tutorials/101-2-create-and-prepare-database.md), you can start to create tables in the database.
