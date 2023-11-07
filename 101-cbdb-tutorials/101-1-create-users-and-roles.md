@@ -1,6 +1,7 @@
 ---
 title: "101 - Lesson 1: Create Users and Roles"
 ---
+
 # Lesson 1: Create Users and Roles
 
 Cloudberry Database manages database access using roles. Initially, there is one superuser role, the role associated with the OS user who initialized the database instance, usually `gpadmin`. This user owns all of the Cloudberry Database files and OS processes, so it is important to reserve the `gpadmin` role for system tasks only.

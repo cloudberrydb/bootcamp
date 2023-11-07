@@ -1,6 +1,7 @@
 ---
 title: "Cloudberry Database Tutorials Based on Single-Node Installation"
 ---
+
 # Cloudberry Database Tutorials Based on Single-Node Installation
 
 This folder contains a series of tutorials for quickly trying out Cloudberry Database based on the single-node installation.

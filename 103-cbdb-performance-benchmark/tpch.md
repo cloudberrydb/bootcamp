@@ -1,10 +1,11 @@
 ---
 title: Cloudberry Database Performance Benchmark - TPCH
 ---
+
 # TPCH - Decision Support Benchmark for Cloudberry Database.
 
 This tool is based on the benchmark tool [TPC-H](https://www.tpc.org/tpch/default5.asp).
-This repo contains automation of running the TPC-H benchmark on an existing CloudberryDB cluster.
+ This repo contains automation of running the TPC-H benchmark on an existing CloudberryDB cluster.
 
 ## Context
 

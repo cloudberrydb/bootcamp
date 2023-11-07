@@ -1,6 +1,7 @@
 ---
 title: "101 - Lesson 6: Backup and Recovery Operations"
 ---
+
 # Backup and Recovery Operations
 
 The Cloudberry Database parallel dump utility gpbackup backs up the Cloudberry master instance and each active segment instance at the same time.
