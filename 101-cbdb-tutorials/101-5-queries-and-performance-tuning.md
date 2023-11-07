@@ -1,3 +1,7 @@
+---
+title: "101 - Lesson 5: Queries and Performance Tuning"
+---
+
 # Lesson 5: Queries and Performance Tuning
 
 This lesson provides an overview of how Cloudberry Database processes queries. Understanding this process can be useful when you write and tune queries.
@@ -12,8 +16,9 @@ The master host receives, parses, and optimizes the query. The resulting query p
 
 Most database operations such as table scan, join, aggregation and sort will be executed across all segments in parallel. Each operation is performed on one segment database independent of the data stored on other segment databases.
 
-_Figure 1. Dispatch the parallel query plan_<br>
-<img src="../images/dispatch.jpg" alt="Dispatching the Parallel Query Plan">
+_Figure 1. Dispatch the parallel query plan_
+
+![Dispatching the Parallel Query Plan](../images/dispatch.jpg)
 
 ### Understand query plans
 

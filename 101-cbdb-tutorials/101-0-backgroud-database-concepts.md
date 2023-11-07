@@ -1,3 +1,7 @@
+---
+title: Database concepts
+---
+
 # Background - Database concepts
 
 Before starting this tutorials, spend some time to get familiar with how (single instance) databases work. If you already have some knowledge and experience with Oracle, MySQL or especially Postgres - this is great.

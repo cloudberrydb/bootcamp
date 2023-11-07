@@ -1,3 +1,6 @@
+---
+title: Cloudberry Database Crash Course
+---
 
 # Cloudberry Database Crash Course
 
@@ -32,7 +35,7 @@ Topics include:
 
 ## Lesson 0. Prerequisite
 
-Before starting this crash course, spend some time going through the [Cloudberry Database Tutorials Based on Single-Node Installation](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md) to get familiar with Cloudberry Database and how it works.
+Before starting this crash course, spend some time going through the [Cloudberry Database Tutorials Based on Single-Node Installation](../101-cbdb-tutorials/README.md) to get familiar with Cloudberry Database and how it works.
 
 ## Lesson 1. Where to read the official documentation
 
@@ -42,7 +45,7 @@ Take a quick look at the official [CBDB Documentation](https://cloudberrydb.org/
 
 To begin your journey with CBDB, you are expected to install CBDB in your preferred environment. The following options are available:
 
-- For testing or trying out CBDB in a sandbox environment, see [Install CBDB in a Sandbox](https://github.com/cloudberrydb/bootcamp/blob/main/000-cbdb-sandbox/README.md).
+- For testing or trying out CBDB in a sandbox environment, see [Install CBDB in a Sandbox](../000-cbdb-sandbox/README.md).
 - For deploying CBDB in other environments (including the production environment) and the prerequisite software/hardware configuration, see [CBDB Deployment Guide](https://cloudberrydb.org/docs/cbdb-op-deploy-guide).
 
 ## Lesson 3. Cluster architecture

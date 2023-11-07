@@ -1,29 +1,33 @@
+---
+title: "101 - Introduction to CloudberryDB In-Database Analytics"
+---
+
 # Introduction to CloudberryDB In-Database Analytics
 
 Running analytics directly in Cloudberry Database, rather than exporting data to a separate analytics engine, allows greater agility when exploring large data sets and much better performance due to parallelizing the analytic processes across all the segments. 
 
 A variety of power analytic tools is available for use with Cloudberry Database:
 
-* MADlib, an open-source, MPP implementation of many analytic algorithms, available at <a href="http://madlib.incubator.apache.org/">http://madlib.incubator.apache.org/</a>
+* MADlib, an open-source, MPP implementation of many analytic algorithms, available at [http://madlib.apache.org/](http://madlib.apache.org/)
 * R statistical language
 * SAS, in many forms, but especially with the SAS Accelerator for Cloudberry
 * PMML, Predictive Modeling Markup Language
 
-The exercises in this chapter introduce using MADlib with Cloudberry Database, using the FAA on-time data example dataset. You will examine scenarios comparing airlines and airports to learn whether there are significant relationships to be found.  In this lesson, you will use <a href="https://zeppelin.apache.org/">Apache Zeppelin</a> to submit SQL statements to the Cloudberry Database.  Apache Zeppelin is a web-based notebook that enables interactive data analytics. A <a href="https://issues.apache.org/jira/browse/ZEPPELIN-250">PostgreSQL interpreter</a> has been added to Zeppelin, so that it can now work directly with products such as Pivotal Cloudberry Database and Pivotal HDB. 
+The exercises in this chapter introduce using MADlib with Cloudberry Database, using the FAA on-time data example dataset. You will examine scenarios comparing airlines and airports to learn whether there are significant relationships to be found.  In this lesson, you will use [Apache Zeppelin](https://zeppelin.apache.org/) to submit SQL statements to the Cloudberry Database.  Apache Zeppelin is a web-based notebook that enables interactive data analytics. A [PostgreSQL interpreter](https://issues.apache.org/jira/browse/ZEPPELIN-250) has been added to Zeppelin, so that it can now work directly with products such as Pivotal Cloudberry Database and Pivotal HDB. 
 
 ## Prepare Apache Zeppelin
 
 1. Open a browser on your desktop and browse to `http://X.X.X.X:8080` using the same IP address that you used for the ssh step. You will see the Apache Zepplin Welcome page.
 
-<img src="../images/zepp.jpg" alt="Apache Zeppelin welcome page">
+![Apache Zeppelin welcome page](../images/zepp.jpg)
 
 2. Click Interpreter at the top of the Screen and scroll down to the psql section and press edit.
 
 3. Edit the _postgresql.url_ entry by adding tutorial to the end, so that it will connect to the <strong>tutorial</strong> database.
 4. Click Save and then Hit OK to restart the Interpreter
 5. Click on Create new note underneath the Notebook heading and type: `tutorial`
-   
-<img src="../images/zep-create.jpg" alt="Apache Zeppelin create page">
+
+![Apache Zeppelin create page](../images/zep-create.jpg)
 
 6. Click "tutorial" to open the newly created notebook.
 
@@ -35,11 +39,11 @@ The exercises in this chapter introduce using MADlib with Cloudberry Database, u
 
 Then press the play button:
 
-<img src="../images/play.jpg" alt="Apache Zeppelin icons">
+![Apache Zeppelin icons](../images/play.jpg)
 
 The result should look like the graphic below:
 
-<img src="../images/count.jpg" width="600" alt="Apache Zeppelin output">
+![Apache Zeppelin output](../images/count.jpg)
 
 ## Run PostgreSQL built-in aggregates
 
@@ -205,4 +209,4 @@ If you scroll over in the results, the condition_no result is a measure of the m
 
 ## Learn more about Apache MADlib
 
-MADlib is an Apache Incubator open source project on GitHub. You can find source code for the latest release and information about participating in the project in the GitHub repository. Access the MADlib user documentation on the MADlib Web site at <a href="http://madlib.incubator.apache.org/">http://madlib.incubator.apache.org/</a>.
+MADlib is an Apache open source project on GitHub. You can find source code for the latest release and information about participating in the project in the GitHub repository. Access the MADlib user documentation on the MADlib Web site at [http://madlib.apache.org](http://madlib.apache.org/).
