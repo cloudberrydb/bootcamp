@@ -8,7 +8,7 @@ This lesson provides an overview of how Cloudberry Database processes queries. U
 
 ## Concepts
 
-Users submit queries to Cloudberry Database as they would to any database management system. They connect to the database instance on the Cloudberry master host using a client application such as psql and submit SQL statements.
+Users submit queries to Cloudberry Database as they would to any database management system. They connect to the database instance on the CloudberryDB master host using a client application such as psql and submit SQL statements.
 
 ### Understand query planning and dispatch
 
@@ -34,7 +34,7 @@ Cloudberry Database creates a number of database processes to handle the work of
 
 There is at least one worker process assigned to each slice of the query plan. A worker process works on its assigned portion of the query plan independently. During query execution, each segment will have a number of processes working on the query in parallel.
 
-Related processes that are working on the same slice of the query plan but on different segments are called "gangs". As a portion of work is completed, tuples flow up the query plan from one gang of processes to the next. This inter-process communication between segments is referred to as the interconnect component of Cloudberry Database.  
+Related processes that are working on the same slice of the query plan but on different segments are called "gangs". As a portion of work is completed, tuples flow up the query plan from one gang of processes to the next. This inter-process communication between segments is referred to as the interconnect component of Cloudberry Database. 
 
 The following section introduces some of the basic principles of query and performance tuning in a Cloudberry database.
 
@@ -150,7 +150,7 @@ In the following exercise, you will generate some small tables that you can quer
 4. The `EXPLAIN ANALYZE` command actually runs the query (without returning the result set). The cost numbers reflect the actual timings. It also produces some memory and I/O statistics.
 
     ```sql
-    tutorial=# EXPLAIN ANALYZE SELECT COUNT(*) FROM sample WHERE id &gt; 100;
+    tutorial=# EXPLAIN ANALYZE SELECT COUNT(*) FROM sample WHERE id > 100;
     ```
 
     ```sql
@@ -275,7 +275,7 @@ View the following `EXPLAIN` plans to compare plans for some other common types 
 
 ```sql
 tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
-tutorial=# EXPLAIN SELECT * FROM sample WHERE big &gt; 12345;
+tutorial=# EXPLAIN SELECT * FROM sample WHERE big > 12345;
 tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345 OR big = 12355;
 tutorial=# DROP INDEX sample_big_index;
 tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345 OR big = 12355;
@@ -312,8 +312,8 @@ In this exercise, you will create a column-oriented version of the fact table an
     tutorial=# \d faa.otp_r
 
                     Table "faa.otp_r"
-            Column        |       Type       | Collation | Nullable | Default
-    ----------------------+------------------+-----------+----------+---------
+           Column        |       Type       | Collation | Nullable | Default
+   ----------------------+------------------+-----------+----------+---------
     flt_year             | smallint         |           |          |
     flt_quarter          | smallint         |           |          |
     flt_month            | smallint         |           |          |
@@ -371,8 +371,8 @@ In this exercise, you will create a column-oriented version of the fact table an
 
     ```sql
                                                     Partitioned table "faa.otp_c"
-            Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Description
-    ----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+-------------
+           Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Description
+   ----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+-------------
     flt_year             | smallint         |           |          |         | plain    |             |              |
     flt_quarter          | smallint         |           |          |         | plain    |             |              |
     flt_month            | smallint         |           |          |         | plain    |             |              |
@@ -446,8 +446,8 @@ In this exercise, you will create a column-oriented version of the fact table an
 
     ```sql
                                                                             Table "faa.otp_c_1_prt_mth_1"
-            Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Compression Type | Compression Level | Block Size | Description
-    ----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+------------------+-------------------+------------+-------------
+           Column        |       Type       | Collation | Nullable | Default | Storage  | Compression | Stats target | Compression Type | Compression Level | Block Size | Description
+   ----------------------+------------------+-----------+----------+---------+----------+-------------+--------------+------------------+-------------------+------------+-------------
     flt_year             | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
     flt_quarter          | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
     flt_month            | smallint         |           |          |         | plain    |             |              | none             | 0                 | 32768      |
@@ -532,7 +532,7 @@ In this exercise, you will create a column-oriented version of the fact table an
     ```sql
     pg_size_pretty
     ----------------
-    202 MB
+    403 MB
     (1 row)
     ```
 
@@ -543,7 +543,7 @@ In this exercise, you will create a column-oriented version of the fact table an
     ```sql
     pg_size_pretty
     ----------------
-    216 MB
+    405 MB
     (1 row)
     ```
 
@@ -584,7 +584,7 @@ Cloudberry Database supports:
 - List partitioning: division of data based on a list of values, such as sales territory or product line.
 - A combination of both types.
 
-<img src="../images/part.jpg" alt="Cloudberry Database partitioning">  
+![Cloudberry Database partitioning](../images/part.jpg)
 
 The following exercise compares `SELECT` statements with `WHERE` clauses that do and do not use a partitioned column.
 

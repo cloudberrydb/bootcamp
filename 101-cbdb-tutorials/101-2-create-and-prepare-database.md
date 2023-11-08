@@ -20,6 +20,8 @@ Before moving on to the operations, make sure that you have completed the previo
     [gpadmin@mdw ~]$ dropdb tutorial
     ```
 
+    Output:
+    
     ```shell
     dropdb: error: database removal failed: ERROR:  database "tutorial" does not exist
     ```
@@ -100,6 +102,9 @@ In the following operations, the database user `lily` will require permissions t
 
     ```shell
     [gpadmin@mdw ~]$ psql -U gpadmin tutorial
+    ```
+    
+    Output:
 
     ```shell
     psql (14.4, server 14.4)

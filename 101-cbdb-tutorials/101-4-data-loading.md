@@ -12,17 +12,16 @@ This tutorial briefly introduces 3 methods to load the example data `FAA` into C
 
     The `COPY` statement requires that external files be accessible to the host where the master process is running. On a multi-node Cloudberry Database system, data files might reside on a file system that is not accessible from master node. In this case, you need to use the psql command `\copy meta-command` that streams data to Cloudberry master node over `psql` connection. Some example scripts in this tutorial use the `\copy meta-command`.
 
-- Method 3: Use Cloudberry Database utilities to load external data into tables. When you are working with a large-scale data warehouse, you might often face the challenge of loading large amounts of data in a short time. Cloudberry's utilities, `gpfdist` and `gpload`, are tailored for this purpose, enabling you to achieve rapid, parallel data transfers.
+- Method 3: Use Cloudberry Database utilities to load external data into tables. When you are working with a large-scale data warehouse, you might often face the challenge of loading large amounts of data in a short time. The utilities, `gpfdist` and `gpload`, are tailored for this purpose, enabling you to achieve rapid, parallel data transfers.
 
     During your data loading process, if any rows run into issues, they will be noted. You can set an error threshold that fits your needs. If the number of problematic rows exceeds this limit, Cloudberry Database will stop the loading process.
 
-    For optimal speed, combine the use of external tables with Cloudberry's parallel file server (`gpfdist`). This approach will help you maximize efficiency, making your data loading tasks smoother and more efficient.
+    For optimal speed, combine the use of external tables with the parallel file server (`gpfdist`). This approach will help you maximize efficiency, making your data loading tasks smoother and more efficient.
 
     ![External Tables Using Cloudberry Parallel File Server](../images/ext_tables.jpg)
-    
-    _Figure 1. External Tables Using Cloudberry Parallel File Server (gpfdist)_ 
+    _Figure 1. External Tables Using Parallel File Server (gpfdist)_
 
-    Another Cloudberry utility `gpload` is a batch job. When using this utility, you should specify a YAML-formatted control file, describe source data locations, format, transformations required, participating hosts, database destinations and other particulars in the file. `gpload` will parse the control file and use `gpfdsit` to execute the task. This allows you to describe a complex task and execute it in a controlled and repeatable way.
+    Another utility `gpload` is a batch job. When using this utility, you should specify a YAML-formatted control file, describe source data locations, format, transformations required, participating hosts, database destinations and other particulars in the file. `gpload` will parse the control file and use `gpfdsit` to execute the task. This allows you to describe a complex task and execute it in a controlled and repeatable way.
 
 ## Quick-start operations
 
@@ -264,7 +263,7 @@ The following operations are performed in this section:
 
 ### Load data using the `gpload` utility
 
-Cloudberry Database provides a wrapper program for `gpfdist` called `gpload` that does much of the work to set up external table and data movement. In this exercise, you will reload the `faa_otp_load` table using the gpload utility.  
+Cloudberry Database provides a wrapper program for `gpfdist` called `gpload` that does much of the work to set up external table and data movement. In this exercise, you will reload the `faa_otp_load` table using the gpload utility. 
 
 In this section, we walk through the process of loading data with `gpload`. The steps are:
 
@@ -323,7 +322,7 @@ In this section, we walk through the process of loading data with `gpload`. The 
     [gpadmin@mdw faa]$ gpload -f gpload.yaml -l gpload.log
     ```
 
-    Summary: At the end of this guide, you would have successfully used gpload to load data into Greenplum. Make sure to check the logs for any warnings or errors to ensure data consistency and integrity.
+    Summary: At the end of this guide, you would have successfully used gpload to load data into CloudberryDB. Make sure to check the logs for any warnings or errors to ensure data consistency and integrity.
 
 
 ### Create and load fact tables
@@ -360,7 +359,7 @@ tutorial=#
 
 - Loading mechanisms
 
-    - `COPY`: Loads data via the master in a single process, but doesn't harness Cloudberry's parallel capabilities.
+    - `COPY`: Loads data via the master in a single process, but doesn't harness CloudberryDB's parallel capabilities.
     - External tables:
         - Advantage: Takes advantage of the parallel processing power of segments.
         - Flexibility: One `SELECT` statement can access multiple data sources.
