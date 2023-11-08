@@ -116,7 +116,7 @@ In the following steps, you will be guided to run a SQL file `create_dim_tables.
     tutorial=> \dt
                         List of relations
     Schema |         Name         | Type  | Owner | Storage
-    --------+----------------------+-------+-------+---------
+   --------+----------------------+-------+-------+---------
     faa    | d_airlines           | table | lily  | heap
     faa    | d_airports           | table | lily  | heap
     faa    | d_cancellation_codes | table | lily  | heap
@@ -127,10 +127,6 @@ In the following steps, you will be guided to run a SQL file `create_dim_tables.
     ```
 
 ## About the distribution policy
-
-<details>
-
-<summary>Distribution Policy</summary>
 
 The definition of a table includes the distribution policy for the data, which is critical for query performance. The goals for the distribution policy are to:
 
@@ -145,8 +141,6 @@ Use the `DISTRIBUTED` clause in `CREATE TABLE` statement to define the distribut
 - `DISTRIBUTED RANDOMLY` distributes rows in round-robin fashion among segments.
 
 When different tables that have the same or similar columns as distribution key are about to be joined, join action might be accomplished on segments, which will be much faster than re-distributing rows across segments and then joining. The random distribution policy cannot make it happen, so it is definitely better to have a distribution key for a table.
-
-</details>
 
 ## What's next
 

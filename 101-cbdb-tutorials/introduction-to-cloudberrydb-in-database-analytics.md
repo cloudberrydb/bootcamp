@@ -13,7 +13,9 @@ A variety of power analytic tools is available for use with Cloudberry Database:
 * SAS, in many forms, but especially with the SAS Accelerator for Cloudberry
 * PMML, Predictive Modeling Markup Language
 
-The exercises in this chapter introduce using MADlib with Cloudberry Database, using the FAA on-time data example dataset. You will examine scenarios comparing airlines and airports to learn whether there are significant relationships to be found.  In this lesson, you will use [Apache Zeppelin](https://zeppelin.apache.org/) to submit SQL statements to the Cloudberry Database.  Apache Zeppelin is a web-based notebook that enables interactive data analytics. A [PostgreSQL interpreter](https://issues.apache.org/jira/browse/ZEPPELIN-250) has been added to Zeppelin, so that it can now work directly with products such as Pivotal Cloudberry Database and Pivotal HDB. 
+The exercises in this chapter introduce using MADlib with Cloudberry Database, using the FAA on-time data example dataset. You will examine scenarios comparing airlines and airports to learn whether there are significant relationships to be found.  
+
+In this lesson, you will use [Apache Zeppelin](https://zeppelin.apache.org/) to submit SQL statements to the Cloudberry Database.  Apache Zeppelin is a web-based notebook that enables interactive data analytics. A [PostgreSQL interpreter](https://issues.apache.org/jira/browse/ZEPPELIN-250) has been added to Zeppelin, so that it can now work directly with products such as Pivotal Cloudberry Database and Pivotal HDB. 
 
 ## Prepare Apache Zeppelin
 
