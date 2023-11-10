@@ -1,5 +1,5 @@
 ---
-title: "101 - Introduction to CloudberryDB In-Database Analytics"
+title: "104-1 - Introduction to CloudberryDB In-Database Analytics"
 ---
 
 # Introduction to CloudberryDB In-Database Analytics
