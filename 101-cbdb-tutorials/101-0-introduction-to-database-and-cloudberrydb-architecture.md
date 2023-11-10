@@ -44,7 +44,7 @@ The following topics describe the components that make up a Cloudberry Database 
 
 ### CloudberryDB Master (Coordinator)
 
-> ![NOTE]
+> [!Note]
 > In the latest build of Cloudberry Database, the name "Master" has been deprecated, and "Coordinator" has been used instead. You are expected to see "coordinator" in the database output.
 
 The Cloudberry Database master is the entry to the Cloudberry Database system. It accepts client connections, handles SQL queries, and then distributes workload to the segment instances.
