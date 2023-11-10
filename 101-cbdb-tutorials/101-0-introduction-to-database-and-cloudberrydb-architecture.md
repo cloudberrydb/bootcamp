@@ -26,11 +26,11 @@ SQL (Structured Query Language) is a descriptive language, not imperative langua
 
 ## Introduction to the Cloudberry Database Architecture
 
-Cloudberry Database is a massively parallel processing (MPP) database server with an architecture specially designed to manage large-scale analytic data warehouses and business intelligence workloads.
+Cloudberry Database (or CloudberryDB) is a massively parallel processing (MPP) database server with an architecture specially designed to manage large-scale analytic data warehouses and business intelligence workloads.
 
-MPP (also known as a shared nothing architecture) refers to systems with two or more processors that cooperate to carry out an operation, each processor with its own memory, operating system and disks. Cloudberry uses this high-performance system architecture to distribute the load of multi-terabyte data warehouses and all of a system's resources in parallel to process a query.
+MPP (also known as a shared-nothing architecture) refers to systems with two or more processors that cooperate to carry out an operation, each processor with its own memory, operating system, and disks. Cloudberry Database uses this high-performance system architecture to distribute the load of multi-terabyte data warehouses and all of a system's resources in parallel to process a query.
 
-Cloudberry Database is based on open-source PostgreSQL open-source. It is essentially several PostgreSQL database instances working together as one cohesive database management system (DBMS). It is based on PostgreSQL 14.4 kernel and in most cases it is very similar to PostgreSQL. Database users interact with Cloudberry Database as a regular PostgreSQL DBMS.
+Cloudberry Database is based on the open-source PostgreSQL. It is essentially several PostgreSQL database instances working together as one cohesive database management system (DBMS). It is based on PostgreSQL 14.4 kernel and in most cases it is very similar to PostgreSQL. Database users interact with Cloudberry Database as a regular PostgreSQL DBMS.
 
 In CloudberryDB, internals of PostgreSQL have been modified and optimized to support parallel structure of Cloudberry Database. For instance, system catalog, optimizer, query executor and transaction manager components have been modified and enhanced to be able to execute queries simultaneously across the parallel PostgreSQL database instances. CloudberryDB interconnect (the networking layer) enables communication between distinct PostgreSQL instances and allows the system to behave as one logical database.
 
@@ -42,9 +42,12 @@ _Figure 1. High-Level Cloudberry Database Architecture_
 
 The following topics describe the components that make up a Cloudberry Database system and how they work together.
 
-### CloudberryDB Master(Coordinator)
+### CloudberryDB Master (Coordinator)
 
-The Cloudberry Database master is the entry to the Cloudberry Database system, it accepts client connections, handle SQL queries and then distributs workload to the segment instances.
+> ![NOTE]
+> In the latest build of Cloudberry Database, the name "Master" has been deprecated, and "Coordinator" has been used instead. You are expected to see "coordinator" in the database output.
+
+The Cloudberry Database master is the entry to the Cloudberry Database system. It accepts client connections, handles SQL queries, and then distributes workload to the segment instances.
 
 Cloudberry Database end-users only interact with Cloudberry Database through master node as a typical PostgreSQL database. They connect to database using client such as psql or drivers like JDBC or ODBC.
 
@@ -52,17 +55,17 @@ The master stores global system catalog. Global system catalog is set of system 
 
 ### CloudberryDB Segments
 
-Cloudberry Database segment instances are independent PostgreSQL databases that each of them store a portion of the data and perform the majority of query execution work.
+Cloudberry Database segment instances are independent PostgreSQL databases that each of them stores a portion of the data and performs the majority of query execution work.
 
-When a user connects to the database via the Cloudberry master and issues queries, accordingly execution plan would be distributed to each segment instance. For more information about query processes, see About Cloudberry Query Processing.
+When a user connects to the database via the Cloudberry master and issues queries, accordingly execution plan would be distributed to each segment instance.
 
-The server that has segments running on it is called segment host. A segment host usually has two to eight Cloudberry segments running on it, the number depends on serveral factors, CPU cores, memory, disk, network interfaces or workloads. To get better performance from Cloudberry Database, it is suggested to distribute data and workloads evenly across segments so that execution plan could be finished across all segments and with no bottleneck.
+The server that has segments running on it is called segment host. A segment host usually has two to eight Cloudberry segments running on it, the number depending on serveral factors: CPU cores, memory, disk, network interfaces or workloads. To get better performance in Cloudberry Database, it is suggested to distribute data and workloads evenly across segments so that execution plan can be finished across all segments and with no bottleneck.
 
 ### CloudberryDB Interconnect
 
 The interconnect is the networking layer of the Cloudberry Database architecture.
 
-The interconnect refers to the inter-process communication mechanism in-between segments. By default, interconnect uses User Datagram Protocol (UDP) to send/receive messages over the network. Interconnect provide datagram verification and retransmission mechanism. Reliability is equivalent to Transmission Control Protocol (TCP), performance and scalability exceeds TCP. If user choose TCP in interconnect, Cloudberry would have limit around 1000 segment instances. With UDP and interconncet the limit does not exit.
+The interconnect refers to the inter-process communication mechanism in-between segments. By default, interconnect uses User Datagram Protocol (UDP) to send/receive messages over the network. Interconnect provide datagram verification and retransmission mechanism. Reliability is equivalent to Transmission Control Protocol (TCP), performance and scalability exceeds TCP. If a user chooses TCP in interconnect, Cloudberry would have limit around 1000 segment instances. With UDP and interconncet, the limit does not exit.
 
 Now you can start the following lessons by clicking on the links:
 

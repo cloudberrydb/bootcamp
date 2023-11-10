@@ -7,7 +7,7 @@ title: "101 - Lesson 3: Create Tables"
 After creating and preparing a database in [Lesson 2: Create and Prepare a Database](../101-cbdb-tutorials/101-2-create-and-prepare-database.md), you can start to create tables in the database.
 
 > [!Note]
-> To introduce CloudberryDB Database, we use a public data set, the Airline On-Time Statistics and Delay Causes data set, published by the United States Department of Transportation at http://www.transtats.bts.gov/. The On-Time Performance dataset records flights by date, airline, originating airport, destination airport, and many other flight details. Data is available for flights since 1987. The exercises in this guide use data for about a million flights in 2009 and 2010. You are encouraged to review the SQL scripts in the `000-cbdb-sandbox/configs/faa.tar.gz` directory as you work through this introduction. You can run most of the exercises by entering the commands yourself or by executing a script in the faa directory.
+> To introduce Cloudberry Database, we use a public data set, the Airline On-Time Statistics and Delay Causes data set, published by the United States Department of Transportation at http://www.transtats.bts.gov/. The On-Time Performance dataset records flights by date, airline, originating airport, destination airport, and many other flight details. The data is available for flights since 1987. The exercises in this guide use data for about a million flights in 2009 and 2010. You are encouraged to review the SQL scripts in the `000-cbdb-sandbox/configs/faa.tar.gz` directory as you work through this introduction. You can run most of the exercises by entering the commands yourself or by executing a script in the `faa` directory.
 
 ## Create tables using a SQL file in psql
 
