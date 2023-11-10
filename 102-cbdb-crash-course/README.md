@@ -4,7 +4,7 @@ title: Cloudberry Database Crash Course
 
 # Cloudberry Database Crash Course
 
-This crash course provides an extensive overview of Cloudberry Database (CBDB), an open-source Massively Parallel Processing (MPP) database. It covers key concepts, features, utilities, and hands-on exercises to become proficient with CBDB.
+This crash course provides an extensive overview of Cloudberry Database, an open-source Massively Parallel Processing (MPP) database. It covers key concepts, features, utilities, and hands-on exercises to become proficient with CBDB.
 
 Topics include:
 
