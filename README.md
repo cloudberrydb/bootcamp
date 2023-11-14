@@ -29,6 +29,12 @@ These tutorials showcase how Cloudberry Database can address day-to-day tasks pe
 
 ## Contribution
 
+Thanks to all the contributors:
+
+<a href="https://github.com/cloudberrydb/bootcamp/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=cloudberrydb/bootcamp" />
+</a>
+
 We welcome your contributions to the Cloudberry Database Bootcamp. Please see our [CONTRIBUTING.md](https://github.com/cloudberrydb/cloudberrydb/blob/main/CONTRIBUTING.md) for more.
 
 ## Acknowledgments
