@@ -35,7 +35,12 @@ Thanks to all the contributors:
   <img src="https://contrib.rocks/image?repo=cloudberrydb/bootcamp" />
 </a>
 
-We welcome your contributions to the Cloudberry Database Bootcamp. Please see our [CONTRIBUTING.md](https://github.com/cloudberrydb/cloudberrydb/blob/main/CONTRIBUTING.md) for more.
+We welcome your contributions to the Cloudberry Database Bootcamp. Please see our [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
+
+## License
+
+Licensed under Apache License Version 2.0. For more details, please refer to
+the [LICENSE](./LICENSE).
 
 ## Acknowledgments
 
