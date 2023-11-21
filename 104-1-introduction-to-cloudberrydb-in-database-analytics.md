@@ -1,8 +1,8 @@
 ---
-title: "104-1 - Introduction to CloudberryDB In-Database Analytics"
+title: "[104-1] Introduction to CloudberryDB In-Database Analytics"
 ---
 
-# Introduction to CloudberryDB In-Database Analytics
+# [104-1] Introduction to CloudberryDB In-Database Analytics
 
 Running analytics directly in Cloudberry Database, rather than exporting data to a separate analytics engine, allows greater agility when exploring large data sets and much better performance due to parallelizing the analytic processes across all the segments. 
 
@@ -21,7 +21,7 @@ In this lesson, you will use [Apache Zeppelin](https://zeppelin.apache.org/) to 
 
 1. Open a browser on your desktop and browse to `http://X.X.X.X:8080` using the same IP address that you used for the ssh step. You will see the Apache Zepplin Welcome page.
 
-![Apache Zeppelin welcome page](../images/zepp.jpg)
+![Apache Zeppelin welcome page](./images/zepp.jpg)
 
 2. Click Interpreter at the top of the Screen and scroll down to the psql section and press edit.
 
@@ -29,7 +29,7 @@ In this lesson, you will use [Apache Zeppelin](https://zeppelin.apache.org/) to 
 4. Click Save and then Hit OK to restart the Interpreter
 5. Click on Create new note underneath the Notebook heading and type: `tutorial`
 
-![Apache Zeppelin create page](../images/zep-create.jpg)
+![Apache Zeppelin create page](./images/zep-create.jpg)
 
 6. Click "tutorial" to open the newly created notebook.
 
@@ -41,11 +41,11 @@ In this lesson, you will use [Apache Zeppelin](https://zeppelin.apache.org/) to 
 
 Then press the play button:
 
-![Apache Zeppelin icons](../images/play.jpg)
+![Apache Zeppelin icons](./images/play.jpg)
 
 The result should look like the graphic below:
 
-![Apache Zeppelin output](../images/count.jpg)
+![Apache Zeppelin output](./images/count.jpg)
 
 ## Run PostgreSQL built-in aggregates
 

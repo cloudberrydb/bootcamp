@@ -1,8 +1,8 @@
 ---
-title: "101 - Lesson 1: Create Users and Roles"
+title: "[101-1] Lesson 1: Create Users and Roles"
 ---
 
-# Lesson 1: Create Users and Roles
+# [101-1] Lesson 1: Create Users and Roles
 
 Cloudberry Database manages database access using roles. Initially, there is one superuser role, the role associated with the OS user who initialized the database instance, usually `gpadmin`. This user owns all of the Cloudberry Database files and OS processes, so it is important to reserve the `gpadmin` role for system tasks only.
 
@@ -14,7 +14,7 @@ Permissions can be granted to users or groups. Initially, only the `gpadmin` rol
 
 You can follow the examples below to create users and roles.
 
-Before moving on to the operations, make sure that you have installed Cloudberry Database by following [Install a Single-Node Cloudberry Database](../cbdb-sandbox).
+Before moving on to the operations, make sure that you have installed Cloudberry Database by following [Install a Single-Node Cloudberry Database](./cbdb-sandbox).
 
 ### Create a user using the CREATE USER command
 
@@ -221,11 +221,11 @@ To make users (`lily` and `lucy`) able to log into the database, you need to adj
 
 ## What's next
 
-After creating users and groups, you can follow [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/101-2-create-and-prepare-database) to create and prepare a database for the users
+After creating users and groups, you can follow [Lesson 2: Create and Prepare Database](./101-2-create-and-prepare-database) to create and prepare a database for the users
 
 Other tutorials:
 
-- [Lesson 3: Create Tables](../101-cbdb-tutorials/101-3-create-tables)
-- [Lesson 4: Data Loading](../101-cbdb-tutorials/101-4-data-loading)
-- [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/101-5-queries-and-performance-tuning)
-- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/101-6-backup-and-recovery-operations)
+- [Lesson 3: Create Tables](./101-3-create-tables)
+- [Lesson 4: Data Loading](./101-4-data-loading)
+- [Lesson 5: Queries and Performance Tuning](./101-5-queries-and-performance-tuning)
+- [Lesson 6: Backup and Recovery Operations](./101-6-backup-and-recovery-operations)

@@ -1,8 +1,8 @@
 ---
-title: "101 - Lesson 2: Create and Prepare Database"
+title: "[101-2] Lesson 2: Create and Prepare Database"
 ---
 
-# Lesson 2: Create and Prepare Database
+# [101-2] Lesson 2: Create and Prepare Database
 
 To create a new database in Cloudberry Database, you can either use the `CREATE DATABASE` SQL command in the `psql` client, or use the `createdb` utility. The `createdb` utility is a wrapper around the `CREATE DATABASE` command.
 
@@ -10,7 +10,7 @@ To create a new database in Cloudberry Database, you can either use the `CREATE 
 
 In the following operations, you will be guided to create a new database using the `createdb` utility, to create a schema, and to set search path for schemas. You will also learn how to create a user and grant privileges to the user.
 
-Before moving on to the operations, make sure that you have completed the previous tutorial [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/101-1-create-users-and-roles). You will connect to the tutorial database as the user `lily` with password set up in the previous tutorial.
+Before moving on to the operations, make sure that you have completed the previous tutorial [Lesson 1: Create Users and Roles](./101-1-create-users-and-roles). You will connect to the tutorial database as the user `lily` with password set up in the previous tutorial.
 
 ### Create database
 
@@ -78,7 +78,7 @@ Before moving on to the operations, make sure that you have completed the previo
     20230818:14:18:45:003733 gpstop:mdw:gpadmin-[INFO]:-Signalling all postmaster processes to reload
     ```
 
-5. Connect to the `tutorial` database as the user `lily`. You need to enter the password set up in the [previous tutorial](../101-cbdb-tutorials/101-1-create-users-and-roles#create-a-user-using-the-create-user-command).
+5. Connect to the `tutorial` database as the user `lily`. You need to enter the password set up in the [previous tutorial](./101-1-create-users-and-roles#create-a-user-using-the-create-user-command).
 
     ```shell
     [gpadmin@mdw ~]$ psql -U lily tutorial
@@ -202,11 +202,11 @@ In this section, you will be guided to create a `faa` schema and set the search 
 
 ## What's next
 
-After creating and preparing the database, you can start to create tables in the database. See [Lesson 3: Create Tables](../101-cbdb-tutorials/101-3-create-tables) for more information.
+After creating and preparing the database, you can start to create tables in the database. See [Lesson 3: Create Tables](./101-3-create-tables) for more information.
 
 Other tutorials:
 
-- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/101-1-create-users-and-roles)
-- [Lesson 4: Data Loading](../101-cbdb-tutorials/101-4-data-loading)
-- [Lesson 5: Queries and Performance Tuning](../101-cbdb-tutorials/101-5-queries-and-performance-tuning)
-- [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/101-6-backup-and-recovery-operations)
+- [Lesson 1: Create Users and Roles](./101-1-create-users-and-roles)
+- [Lesson 4: Data Loading](./101-4-data-loading)
+- [Lesson 5: Queries and Performance Tuning](./101-5-queries-and-performance-tuning)
+- [Lesson 6: Backup and Recovery Operations](./101-6-backup-and-recovery-operations)

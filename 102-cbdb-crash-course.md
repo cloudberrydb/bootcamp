@@ -1,14 +1,14 @@
 ---
-title: Cloudberry Database Crash Course
+title: "[102] Cloudberry Database Crash Course"
 ---
 
-# Cloudberry Database Crash Course
+# [102] Cloudberry Database Crash Course
 
 This crash course provides an extensive overview of Cloudberry Database, an open-source Massively Parallel Processing (MPP) database. It covers key concepts, features, utilities, and hands-on exercises to become proficient with CBDB.
 
 Topics include:
 
-- [Cloudberry Database Crash Course](#cloudberry-database-crash-course)
+- [\[102\] Cloudberry Database Crash Course](#102-cloudberry-database-crash-course)
   - [Lesson 0. Prerequisite](#lesson-0-prerequisite)
   - [Lesson 1. Where to read the official documentation](#lesson-1-where-to-read-the-official-documentation)
   - [Lesson 2. How to install CBDB](#lesson-2-how-to-install-cbdb)
@@ -35,7 +35,7 @@ Topics include:
 
 ## Lesson 0. Prerequisite
 
-Before starting this crash course, spend some time going through the [Cloudberry Database Tutorials Based on Single-Node Installation](./index) to get familiar with Cloudberry Database and how it works.
+Before starting this crash course, spend some time going through the [Cloudberry Database Tutorials Based on Single-Node Installation](./#1-cloudberrydb-sandbox) to get familiar with Cloudberry Database and how it works.
 
 ## Lesson 1. Where to read the official documentation
 
@@ -52,8 +52,11 @@ To begin your journey with CBDB, you are expected to install CBDB in your prefer
 
 A CBDB cluster has one master host (usually named `mdw`) and multiple segment hosts (usually named `sdwXX`).
 
-> [!NOTE]
-> If someone is referring to `mdw`, he is referring to the "master host". Similarly, when somebody is referring to "sdw10", he is referring to the 10th segment host.
+:::note
+
+If someone is referring to `mdw`, he is referring to the "master host". Similarly, when somebody is referring to "sdw10", he is referring to the 10th segment host.
+
+:::
 
 A master host usually contains only one instance - the master instance. The segment hosts might contain many worker instances. Every instance has its own set of processes, data directory, and listening port. For example, usually, the listening port of the master instance (where all clients will connect to) is `5432`.
 

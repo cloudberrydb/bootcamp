@@ -1,13 +1,16 @@
 ---
-title: "TPC-DS: Decision Support Benchmark for Cloudberry Database"
+title: "[103-2] TPC-DS: Decision Support Benchmark for Cloudberry Database"
 ---
 
-# TPC-DS: Decision Support Benchmark for Cloudberry Database
+# [103-2] TPC-DS: Decision Support Benchmark for Cloudberry Database
 
 This tool is based on the benchmark tool [Pivotal TPC-DS](https://github.com/pivotal/TPC-DS). This repo contains automation of running the DS benchmark on an existing CloudberryDB cluster.
 
-> [!Note]
-> TPC-DS is a decision support benchmark that models several generally applicable aspects of a decision support system, including queries and data maintenance. The benchmark provides a representative evaluation of performance as a general purpose decision support system. A benchmark result measures query response time in single user mode, query throughput in multi user mode and data maintenance performance for a given hardware, operating system, and data processing system configuration under a controlled, complex, multi-user decision support workload. The purpose of TPC benchmarks is to provide relevant, objective performance data to industry users. You can learn more about TPC-DS from the [TPC website](https://www.tpc.org/tpcds/default5.asp). 
+:::note
+
+TPC-DS is a decision support benchmark that models several generally applicable aspects of a decision support system, including queries and data maintenance. The benchmark provides a representative evaluation of performance as a general purpose decision support system. A benchmark result measures query response time in single user mode, query throughput in multi user mode and data maintenance performance for a given hardware, operating system, and data processing system configuration under a controlled, complex, multi-user decision support workload. The purpose of TPC benchmarks is to provide relevant, objective performance data to industry users. You can learn more about TPC-DS from the [TPC website](https://www.tpc.org/tpcds/default5.asp). 
+
+:::
 
 ## Context
 

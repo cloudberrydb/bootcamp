@@ -1,8 +1,8 @@
 ---
-title: "101 - Lesson 5: Queries and Performance Tuning"
+title: "[101-5] Lesson 5: Queries and Performance Tuning"
 ---
 
-# Lesson 5: Queries and Performance Tuning
+# [101-5] Lesson 5: Queries and Performance Tuning
 
 This lesson provides an overview of how Cloudberry Database processes queries. Understanding this process can be useful when you write and tune queries.
 
@@ -18,7 +18,7 @@ Most database operations such as table scan, join, aggregation and sort will be 
 
 _Figure 1. Dispatch the parallel query plan_
 
-![Dispatching the Parallel Query Plan](../images/dispatch.jpg)
+![Dispatching the Parallel Query Plan](./images/dispatch.jpg)
 
 ### Understand query plans
 
@@ -49,7 +49,7 @@ Some items to consider in performance tuning:
 
 ## Exercises
 
-After doing the following exercises, you are expected to finish the previous tutorial [Lesson 4: Data Loading](../101-cbdb-tutorials/101-4-data-loading).
+After doing the following exercises, you are expected to finish the previous tutorial [Lesson 4: Data Loading](./101-4-data-loading).
 
 ### Analyze the tables
 
@@ -584,7 +584,7 @@ Cloudberry Database supports:
 - List partitioning: division of data based on a list of values, such as sales territory or product line.
 - A combination of both types.
 
-![Cloudberry Database partitioning](../images/part.jpg)
+![Cloudberry Database partitioning](./images/part.jpg)
 
 The following exercise compares `SELECT` statements with `WHERE` clauses that do and do not use a partitioned column.
 

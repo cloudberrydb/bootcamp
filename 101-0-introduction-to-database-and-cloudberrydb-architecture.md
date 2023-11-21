@@ -1,8 +1,8 @@
 ---
-title: "Introduction to Database and CloudberryDB Architecture"
+title: "[101-0] Lesson 0: Introduction to Database and CloudberryDB Architecture"
 ---
 
-# Lesson 0: Introduction to Database and CloudberryDB Architecture
+# [101-0] Lesson 0: Introduction to Database and CloudberryDB Architecture
 
 ## Background: Database Concepts
 
@@ -38,14 +38,17 @@ Cloudberry Database also includes features designed to optimize PostgreSQL for b
 
 _Figure 1. High-Level Cloudberry Database Architecture_
 
-![High-Level Cloudberry Database Architecture](../images/highlevel_arch.jpg)  
+![High-Level Cloudberry Database Architecture](./images/highlevel_arch.jpg)  
 
 The following topics describe the components that make up a Cloudberry Database system and how they work together.
 
 ### CloudberryDB Master (Coordinator)
 
-> [!Note]
-> In the latest build of Cloudberry Database, the name "Master" has been deprecated, and "Coordinator" has been used instead. You are expected to see "coordinator" in the database output.
+:::note
+
+In the latest build of Cloudberry Database, the name "Master" has been deprecated, and "Coordinator" has been used instead. You are expected to see "coordinator" in the database output.
+
+:::
 
 The Cloudberry Database master is the entry to the Cloudberry Database system. It accepts client connections, handles SQL queries, and then distributes workload to the segment instances.
 
