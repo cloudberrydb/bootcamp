@@ -4,6 +4,12 @@ title: "[101-6] Lesson 6: Backup and Recovery Operations"
 
 # [101-6] Lesson 6: Backup and Recovery Operations
 
+:::info
+
+The Cloudberry Database does not include the utility `gpbackup` by default. It's maintained separately. Please follow the [README](https://github.com/cloudberrydb/gpbackup) to install `gpbackup` before using it.
+
+:::
+
 The parallel dump utility `gpbackup` backs up the CloudberryDB master instance and each active segment instance at the same time.
 
 By default, gpbackup creates dump files in the backups subdirectory.
