@@ -15,7 +15,7 @@ These tutorials showcase how Cloudberry Database can address day-to-day tasks pe
 ## Bootcamp Outline
 
 1. [000-CloudberryDB Sandbox](./000-cbdb-sandbox/)
-2. [101-CloudberryDB Tourials](./101-cbdb-tutorials)
+2. [101-CloudberryDB Tutorials](./101-cbdb-tutorials)
    - [Lesson 0: Introduction to Database and CloudberryDB Architecture](./101-cbdb-tutorials/101-0-introduction-to-database-and-cloudberrydb-architecture.md)
    - [Lesson 1: Create Users and Roles](./101-cbdb-tutorials/101-1-create-users-and-roles.md)
    - [Lesson 2: Create and Prepare Database](./101-cbdb-tutorials/101-2-create-and-prepare-database.md)
