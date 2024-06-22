@@ -122,8 +122,12 @@ RUN     cd /tmp/cloudberrydb && \
                     --with-perl                       \
                     --with-pgport=5432                \
                     --with-python                     \
-                    --with-pythonsrc-ext &&           \
-        make -j$(nproc) && \
+                    --with-pythonsrc-ext
+
+RUN     cd /tmp/cloudberrydb && \
+        make -j$(nproc)
+
+RUN     cd /tmp/cloudberrydb && \
         make install
 
 EXPOSE 5432 22

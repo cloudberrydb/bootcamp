@@ -18,7 +18,7 @@ COPY ./configs/* /tmp/
 RUN     echo root:cbdb@123 | chpasswd \
         && yum install -y epel-release \
         && yum install -y initscripts unzip which tar less net-tools util-linux-ng passwd openssh-clients openssh-server perl ed m4 sudo rsync git wget \
-        && yum install -y apr-devel bison bzip2-devel cmake3 flex gcc gcc-c++ krb5-devel libcurl-devel libevent-devel libkadm5 libxml2-devel libyaml-devel libzstd-devel openssl-devel perl-ExtUtils-Embed readline-devel xerces-c-devel zlib-devel \
+        && yum install -y apr-devel bison bzip2-devel cmake3 flex gcc gcc-c++ go krb5-devel libcurl-devel libevent-devel libkadm5 libxml2-devel libyaml-devel libzstd-devel openssl-devel perl-ExtUtils-Embed readline-devel xerces-c-devel zlib-devel \
         && yum install -y postgresql postgresql-devel \
         && yum install -y centos-release-scl scl-utils \
         && yum install -y devtoolset-10
@@ -54,12 +54,25 @@ RUN     yum install -y python3-devel python3-pip; yum clean all
 RUN     cd /tmp/ \
         && unzip -d /tmp /tmp/cloudberrydb-${CODEBASE_VERSION_VAR}.zip \
         && cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
-        && pip3 install -i https://mirrors.aliyun.com/pypi/simple -r python-dependencies.txt
+        && if [ -f python-dependencies.txt ]; then \
+              pip3 install -i https://mirrors.aliyun.com/pypi/simple -r python-dependencies.txt; \
+           elif [ -f readmes/python-dependencies.txt ]; then \
+              pip3 install -i https://mirrors.aliyun.com/pypi/simple -r readmes/python-dependencies.txt; \
+           else \
+             echo "File does not exist, skipping additional commands"; \
+             exit 2; \
+           fi
 
 RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
         && source scl_source enable devtoolset-10 \
-        && ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/cloudberry-db \
-        && make -j8 \
+        && ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/cloudberry-db
+
+RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
+        && source scl_source enable devtoolset-10 \
+        && make -j$(nproc)
+
+RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
+        && source scl_source enable devtoolset-10 \
         && make install
 
 EXPOSE 5432 22
