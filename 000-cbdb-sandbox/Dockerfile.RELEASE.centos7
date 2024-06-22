@@ -1,4 +1,9 @@
 FROM centos:7.9.2009
+
+# Define a build argument with a default value
+ARG CODEBASE_VERSION_VAR=${CODEBASE_VERSION_VAR}
+ARG TIMEZONE_VAR="Asia/Shanghai"
+
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 systemd-tmpfiles-setup.service ] || rm -f $i; done); \
 rm -f /lib/systemd/system/multi-user.target.wants/*;\
@@ -18,10 +23,10 @@ RUN     echo root:cbdb@123 | chpasswd \
         && yum install -y centos-release-scl scl-utils \
         && yum install -y devtoolset-10
 
-RUN     cat /tmp/sysctl.conf.add >> /etc/sysctl.conf \
+RUN     cat /tmp/90-cbdb-sysctl.conf >> /etc/sysctl.conf \
         && sed -i "s/#UseDNS YES/UseDNS no/g" /etc/ssh/sshd_config \
-        && cat /tmp/limits.conf.add >> /etc/security/limits.conf \
-        && cat /usr/share/zoneinfo/Asia/Shanghai > /etc/localtime \
+        && cat /tmp/90-cbdb-limits.conf >> /etc/security/limits.conf \
+        && cat /usr/share/zoneinfo/${TIMEZONE_VAR} > /etc/localtime \
         && echo "mdw" > /tmp/gpdb-hosts \
         && echo "/usr/local/lib" >> /etc/ld.so.conf \
         && echo "/usr/local/lib64" >> /etc/ld.so.conf \
@@ -47,11 +52,11 @@ RUN     cat /tmp/sysctl.conf.add >> /etc/sysctl.conf \
 RUN     yum install -y python3-devel python3-pip; yum clean all
 
 RUN     cd /tmp/ \
-        && unzip -d /tmp /tmp/cloudberrydb-1.5.2.zip \
-        && cd /tmp/cloudberrydb-1.5.2 \
+        && unzip -d /tmp /tmp/cloudberrydb-${CODEBASE_VERSION_VAR}.zip \
+        && cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
         && pip3 install -i https://mirrors.aliyun.com/pypi/simple -r python-dependencies.txt
 
-RUN     cd /tmp/cloudberrydb-1.5.2 \
+RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
         && source scl_source enable devtoolset-10 \
         && ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/cloudberry-db \
         && make -j8 \
