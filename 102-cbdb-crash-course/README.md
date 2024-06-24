@@ -112,14 +112,16 @@ In summary, management utilities are command-line programs and scripts used by D
 
 - `gpstop`: stops database cluster.
 - `gpstart`: starts database cluster.
+- `gpstate`: shows the status of a running cluster.
 - `psql`: a command-line client.
 - `gpconfig`: shows or changes configuration parameters.
 - `gpdeletesystem`: deletes a cluster.
 - `pg_dump`, `gpbackup`, `gprestore`: performs backup and restore operations.
-- `gpinitstanby`, `gpactivatestandby`: manages the standby master instance.
+- `gpinitstandby`, `gpactivatestandby`: manages the standby master instance.
 - `gprecoverseg`: recovers segment.
 - `gpfdist`, `gpload`: operates with external tables.
-- `gpssh`, `gpscp`, `gpssh-exkeys`: for cluster navigation.
+- `gpssh`, `gpssh-exkeys`: for cluster navigation.
+- `gpsync`: rsync files to multiple hosts at once.
 - Logging - all utilities write log files under `~/gpAdminLogs/` - one file per day
 
 **Exercise**
