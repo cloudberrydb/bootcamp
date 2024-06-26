@@ -12,8 +12,7 @@
 # A name for the array you are configuring. You can use any name you
 # like. Enclose the name in quotes if the name contains spaces.
 
-ARRAY_NAME="GPDB SANDBOX"
-
+ARRAY_NAME="Sandbox: Cloudberry Database Cluster"
 
 # This specifies the file that contains the list of segment host names
 # that comprise the Greenplum system. For a single-node system, this
@@ -23,7 +22,6 @@ ARRAY_NAME="GPDB SANDBOX"
 # the absolute path to the file.
 
 MACHINE_LIST_FILE=/tmp/gpdb-hosts
-
 
 # This specifies a prefix that will be used to name the data directories
 # of the master and segment instances. The naming convention for data
@@ -35,13 +33,11 @@ MACHINE_LIST_FILE=/tmp/gpdb-hosts
 
 SEG_PREFIX=gpseg
 
-
 # Base port number on which primary segment instances will be
 # started on a segment host. The base port number will be
 # incremented by one for each segment instance started on a host.
 
 PORT_BASE=40000
-
 
 # This specifies the data storage location(s) where the script will
 # create the primary segment data directories. The script creates a
@@ -57,14 +53,13 @@ PORT_BASE=40000
 # may want to create these directories on the segment hosts before running
 # gpinitsystem and chown them to the appropriate user.
 
-declare -a DATA_DIRECTORY=(/data0/database/primary /data0/database/primary)
-
+declare -a DATA_DIRECTORY=(/data0/database/primary \
+                           /data0/database/primary \
+                           /data0/database/primary)
 
 # The OS-configured hostname of the Greenplum Database master instance.
 
 MASTER_HOSTNAME=mdw
-
-
 
 # The location where the data directory will be created on the
 # Greenplum master host.
@@ -75,13 +70,11 @@ MASTER_HOSTNAME=mdw
 
 MASTER_DIRECTORY=/data0/database/master
 
-
 # The port number for the master instance. This is the port number
 # that users and client connections will use when accessing the
 # Greenplum Database system.
 
 MASTER_PORT=5432
-
 
 # The shell the gpinitsystem script uses to execute
 # commands on remote hosts. Allowed value is ssh. You must set up
@@ -89,7 +82,6 @@ MASTER_PORT=5432
 # script. You can use gpssh-exkeys to do this.
 
 TRUSTED_SHELL=ssh
-
 
 # Maximum distance between automatic write ahead log (WAL)
 # checkpoints, in log file segments (each segment is normally 16
@@ -99,7 +91,6 @@ TRUSTED_SHELL=ssh
 
 CHECK_POINT_SEGMENTS=8
 
-
 # The character set encoding to use. Greenplum supports the
 # same character sets as PostgreSQL. See 'Character Set Support'
 # in the PostgreSQL documentation for allowed character sets.
@@ -107,7 +98,6 @@ CHECK_POINT_SEGMENTS=8
 # gpinitsystem -n option.
 
 ENCODING=UNICODE
-
 
 ################################################
 # OPTIONAL PARAMETERS
@@ -119,7 +109,13 @@ ENCODING=UNICODE
 
 DATABASE_NAME=gpadmin
 
-# MIRROR_PORT_BASE=50000
+# Mirror configuration
+
+MIRROR_PORT_BASE=50000
+
+declare -a MIRROR_DATA_DIRECTORY=(/data0/database/mirror \
+                                  /data0/database/mirror \
+                                  /data0/database/mirror)
+
 # REPLICATION_PORT_BASE=41000
 # MIRROR_REPLICATION_PORT_BASE=51000
-# declare -a MIRROR_DATA_DIRECTORY=(/data0/database/mirror /data0/database/mirror)

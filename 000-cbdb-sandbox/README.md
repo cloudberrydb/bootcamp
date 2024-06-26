@@ -19,7 +19,10 @@ Make sure that your environment meets the following requirements:
 
 ## Build the Sandbox
 
-This section introduces how to set up the Docker container in which the source code of the latest Cloudberry Database (released in [Cloudberry Database Release Page](https://github.com/cloudberrydb/cloudberrydb/releases)) will be compiled. In this CentOS 7.9 Docker container, a single-node cluster will be initialized with one coordinator and two segments. Both x86 and ARM CPUs (including Apple chips) are supported.
+This section introduces two methods to set up the Docker container. The container will host a CBDB single-node cluster intialized with one coordinator and three primary and mirror segments. Both x86 and ARM CPUs (including Apple chips) are supported.
+
+- Method 1 - Compile with the source code of the latest Cloudberry Database (released in [Cloudberry Database Release Page](https://github.com/cloudberrydb/cloudberrydb/releases)). The base OS will use CentOS 7.9 Docker container.
+- Method 2 - Compile with the latest Cloudberry Database [main](https://github.com/cloudberrydb/cloudberrydb/tree/main) branch. The base OS will use Rocky Linux 9 Docker container.
 
 Build steps:
 
@@ -31,15 +34,25 @@ Build steps:
     git clone https://github.com/cloudberrydb/bootcamp.git
     ```
 
-3. Enter the repository and run the `run.sh` script to start the Docker container. This will start the automatic installation process.
+3. Enter the repository and run the `run.sh` script to start the Docker container. This will start the automatic installation process. Depending on your environment, you may need to run this with 'sudo' command.
+
+    - For latest Cloudberry DB release
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
-    chmod +x ./run.sh
-    sudo ./run.sh
+    ./run.sh
     ```
 
-    Once the script finishes without error, the sandbox is built successfully. 
+    - For latest main branch
+
+    ```shell
+    cd bootcamp/000-cbdb-sandbox
+    ./run.sh -c main -o rockylinux9
+    ```
+
+    Once the script finishes without error, the sandbox is built and running successfully. The `docker run` command uses --detach option allowing you to ssh or access the running CBDB instance remotely.
+
+    Please review run.sh script for additional options (e.g. setting Timezone in running container, only building container)
 
 ## Connect to the database
 
@@ -61,11 +74,11 @@ You can now connect to the database and try some basic operations.
 
     ```shell
     [root@mdw /] su - gpadmin  # Switches to the gpadmin user.
-
+    
     # Last login: Tue Oct 24 10:26:14 CST 2023 on pts/1
-
+    
     [gpadmin@mdw ~]$ psql  # Connects to the database with the default database name "gpadmin".
-
+    
     # psql (14.4, server 14.4)
     # Type "help" for help.
     ```
@@ -73,7 +86,7 @@ You can now connect to the database and try some basic operations.
     ```sql
     gpadmin=# SELECT VERSION();  -- Checks the database version.
                                                                                             version
-
+    
     -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     -----
     PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Oct 24 2023 10:24:28
