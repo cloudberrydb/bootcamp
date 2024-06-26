@@ -4,6 +4,7 @@ set -eu
 # Default values
 DEFAULT_OS_VERSION="centos7"
 DEFAULT_TIMEZONE_VAR="Asia/Shanghai"
+DEFAULT_PIP_INDEX_URL_VAR="https://pypi.org/simple"
 BUILD_ONLY="false"
 
 # Use environment variables if set, otherwise use default values
@@ -11,6 +12,7 @@ OS_VERSION="${OS_VERSION:-$DEFAULT_OS_VERSION}"
 BUILD_ONLY="${BUILD_ONLY:-false}"
 CODEBASE_VERSION="${CODEBASE_VERSION:-}"
 TIMEZONE_VAR="${TIMEZONE_VAR:-$DEFAULT_TIMEZONE_VAR}"
+PIP_INDEX_URL_VAR="${PIP_INDEX_URL_VAR:-$DEFAULT_PIP_INDEX_URL_VAR}"
 
 # Function to display help message
 function usage() {
@@ -18,12 +20,13 @@ function usage() {
     echo "  -o  OS version (valid values: centos7, rockylinux9; default: $DEFAULT_OS_VERSION, or set via OS_VERSION environment variable)"
     echo "  -c  Codebase version (valid values: main, or determined from release zip file name)"
     echo "  -t  Timezone (default: Asia/Shanghai, or set via TIMEZONE_VAR environment variable)"
+    echo "  -p  Python Package Index (PyPI) (default: https://pypi.org/simple, or set via PIP_INDEX_URL_VAR environment variable)"
     echo "  -b  Build only, do not run the container (default: false, or set via BUILD_ONLY environment variable)"
     exit 1
 }
 
 # Parse command-line options
-while getopts "o:c:t:bh" opt; do
+while getopts "o:c:t:p:bh" opt; do
     case "${opt}" in
         o)
             OS_VERSION=${OPTARG}
@@ -33,6 +36,9 @@ while getopts "o:c:t:bh" opt; do
             ;;
         t)
             TIMEZONE_VAR=${OPTARG}
+            ;;
+        p)
+            PIP_INDEX_URL_VAR=${OPTARG}
             ;;
         b)
             BUILD_ONLY="true"
@@ -103,6 +109,7 @@ else
 
     docker build --file ${DOCKERFILE} \
                  --build-arg TIMEZONE_VAR="${TIMEZONE_VAR}" \
+                 --build-arg PIP_INDEX_URL_VAR="${PIP_INDEX_URL_VAR}" \
                  --build-arg CODEBASE_VERSION_VAR="${CODEBASE_VERSION}" \
                  --tag cbdb-${CODEBASE_VERSION}:${OS_VERSION} .
 fi

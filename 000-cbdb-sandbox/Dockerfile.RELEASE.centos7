@@ -3,6 +3,7 @@ FROM centos:7.9.2009
 # Define a build argument with a default value
 ARG CODEBASE_VERSION_VAR=${CODEBASE_VERSION_VAR}
 ARG TIMEZONE_VAR="Asia/Shanghai"
+ARG PIP_INDEX_URL_VAR="https://pypi.org/simple"
 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
 systemd-tmpfiles-setup.service ] || rm -f $i; done); \
@@ -55,9 +56,9 @@ RUN     cd /tmp/ \
         && unzip -d /tmp /tmp/cloudberrydb-${CODEBASE_VERSION_VAR}.zip \
         && cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
         && if [ -f python-dependencies.txt ]; then \
-              pip3 install -i https://mirrors.aliyun.com/pypi/simple -r python-dependencies.txt; \
+              pip3 install -i ${PIP_INDEX_URL_VAR} -r python-dependencies.txt; \
            elif [ -f readmes/python-dependencies.txt ]; then \
-              pip3 install -i https://mirrors.aliyun.com/pypi/simple -r readmes/python-dependencies.txt; \
+              pip3 install -i ${PIP_INDEX_URL_VAR} -r readmes/python-dependencies.txt; \
            else \
              echo "File does not exist, skipping additional commands"; \
              exit 2; \
