@@ -21,6 +21,9 @@ Make sure that your environment meets the following requirements:
 
 This section introduces two methods to set up the Docker container. The container will host a CBDB single-node cluster intialized with one coordinator and three primary and mirror segments. Both x86 and ARM CPUs (including Apple chips) are supported.
 
+> [!CAUTION]
+> The CentOS Linux 7 the reached end of life (EOL) on June 30, 2024. The software source mirror (vault) only supports x86_64, the `altarch` source (like ARM) has been deprecated. So you cannot run the CentOS 7 sandbox on your macBook with M1/2. 
+
 - Method 1 - Compile with the source code of the latest Cloudberry Database (released in [Cloudberry Database Release Page](https://github.com/cloudberrydb/cloudberrydb/releases)). The base OS will use CentOS 7.9 Docker container.
 - Method 2 - Compile with the latest Cloudberry Database [main](https://github.com/cloudberrydb/cloudberrydb/tree/main) branch. The base OS will use Rocky Linux 9 Docker container.
 
