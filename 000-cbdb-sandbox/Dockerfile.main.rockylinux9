@@ -12,7 +12,7 @@ RUN dnf update -y && \
 # Clean up unnecessary systemd units
 RUN [ -d /lib/systemd/system/sysinit.target.wants ] && find /lib/systemd/system/sysinit.target.wants/ -type l -not -name 'systemd-tmpfiles-setup.service' -delete || echo "Directory /lib/systemd/system/sysinit.target.wants does not exist" && \
     [ -d /lib/systemd/system/multi-user.target.wants ] && find /lib/systemd/system/multi-user.target.wants/ -type l -delete || echo "Directory /lib/systemd/system/multi-user.target.wants does not exist" && \
-    [ -d /etc/systemd/system/*.wants ] && find /etc/systemd/system/*.wants/ -type l -delete || echo "Directory /etc/systemd/system/*.wants does not exist" && \
+    find /etc/systemd/system/*.wants/ -type l -delete || echo "Directory /etc/systemd/system/*.wants does not exist" && \
     [ -d /lib/systemd/system/local-fs.target.wants ] && find /lib/systemd/system/local-fs.target.wants/ -type l -delete || echo "Directory /lib/systemd/system/local-fs.target.wants does not exist" && \
     [ -d /lib/systemd/system/sockets.target.wants ] && find /lib/systemd/system/sockets.target.wants/ -type l -not -name '*udev*' -delete || echo "Directory /lib/systemd/system/sockets.target.wants does not exist" && \
     [ -d /lib/systemd/system/basic.target.wants ] && find /lib/systemd/system/basic.target.wants/ -type l -delete || echo "Directory /lib/systemd/system/basic.target.wants does not exist" && \
@@ -91,6 +91,7 @@ RUN     cp /tmp/90-cbdb-sysctl.conf /etc/sysctl.conf && \
         hostname > ~/orig_hostname && \
         /usr/sbin/groupadd gpadmin && \
         /usr/sbin/useradd  gpadmin -g gpadmin -G wheel && \
+        setcap cap_net_raw+ep /usr/bin/ping && \
         echo "cbdb@123"|passwd --stdin gpadmin && \
         echo "gpadmin        ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers && \
         echo "root           ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers && \
@@ -125,9 +126,11 @@ RUN     cd /tmp/cloudberrydb && \
                     --with-pythonsrc-ext
 
 RUN     cd /tmp/cloudberrydb && \
-        make -j$(nproc)
+        make -j$(nproc) && \
+        make install
 
-RUN     cd /tmp/cloudberrydb && \
+RUN     cd /tmp/cloudberrydb/contrib && \
+        make -j$(nproc) && \
         make install
 
 EXPOSE 5432 22
