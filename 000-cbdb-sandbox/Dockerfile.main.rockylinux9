@@ -2,7 +2,7 @@ FROM rockylinux/rockylinux:9
 
 ARG TIMEZONE_VAR="Asia/Shanghai"
 
-ENV container docker
+ENV container=docker
 
 RUN dnf update -y && \
     dnf install -y systemd \
