@@ -33,7 +33,7 @@ RUN     sed -i \
 
 RUN     echo root:cbdb@123 | chpasswd \
         && yum install -y initscripts unzip which tar less net-tools util-linux-ng passwd openssh-clients openssh-server perl ed m4 sudo rsync git wget \
-	&& yum install -y apr-devel bison bzip2-devel flex go krb5-devel libcurl-devel libevent-devel libkadm5 libxml2-devel libyaml-devel libzstd-devel openssl-devel perl-ExtUtils-Embed readline-devel xerces-c-devel zlib-devel \
+        && yum install -y apr-devel bison bzip2-devel flex go krb5-devel libcurl-devel libevent-devel libkadm5 libxml2-devel libyaml-devel libzstd-devel openssl-devel perl-ExtUtils-Embed readline-devel xerces-c-devel zlib-devel \
         && yum install -y scl-utils \
         && yum install -y devtoolset-10
 
@@ -66,11 +66,11 @@ RUN     cat /tmp/90-cbdb-sysctl.conf >> /etc/sysctl.conf \
 RUN     yum install -y python3-devel python3-pip; yum clean all
 
 RUN     cd /tmp/ \
-	&& unzip -d /tmp /tmp/cloudberrydb-${CODEBASE_VERSION_VAR}.zip
+        && unzip -d /tmp /tmp/cloudberrydb-${CODEBASE_VERSION_VAR}.zip
 
 RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
         && source scl_source enable devtoolset-10 \
-	&& ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/cloudberry-db --with-pythonsrc-ext
+        && ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=/usr/local/cloudberry-db --with-pythonsrc-ext
 
 RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} \
         && source scl_source enable devtoolset-10 \
