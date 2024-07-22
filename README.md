@@ -8,7 +8,7 @@
 
 # Cloudberry Database Bootcamp
 
-These tutorials showcase how Cloudberry Database can address day-to-day tasks performed in typical DW, BI and data science environments. It is designed to be used with the Cloudberry Database Sandbox, which is based on the Docker with the CentOS 7.9 OS.
+These tutorials showcase how Cloudberry Database can address day-to-day tasks performed in typical DW, BI and data science environments. It is designed to be used with the Cloudberry Database Sandbox, which is based on the Docker with the CentOS 7.9 and Rocky Linux 9.4 OS.
 
 ![CloudberryDB Sandbox](./images/cbdb-sandbox.png)
 
