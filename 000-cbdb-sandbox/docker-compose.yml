@@ -1,0 +1,41 @@
+version: "0.1"
+services:
+  cbdb-coordinator:
+    image: cbmn
+    ports:
+    - "15432:5432"
+    hostname: mdw
+    tty: true
+    networks:
+      interconnect:
+        ipv4_address: 10.5.0.10
+    environment:
+      MULTINODE: "true"
+  cbdb-standby-coordinator:
+    image: cbmn
+    hostname: smdw
+    tty: true
+    networks:
+      interconnect:
+        ipv4_address: 10.5.0.11
+  cbdb-segment-host-1:
+    image: cbmn
+    hostname: sdw1
+    tty: true
+    networks:
+      interconnect:
+        ipv4_address: 10.5.0.12
+  cbdb-segment-host-2:
+    image: cbmn
+    hostname: sdw2
+    tty: true
+    networks:
+      interconnect:
+        ipv4_address: 10.5.0.13
+networks:
+  interconnect:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
