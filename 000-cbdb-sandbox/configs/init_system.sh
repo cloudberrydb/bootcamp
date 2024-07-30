@@ -57,20 +57,20 @@ if [ $HOSTNAME == "mdw" ]; then
      cat <<-'EOF'
 
 ======================================================================
-____ _                 _ _                            ____  ____
-/ ___| | ___  _   _  __| | |__   ___ _ __ _ __ _   _  |  _ \| __ )
+  ____ _                 _ _                            ____  ____
+ / ___| | ___  _   _  __| | |__   ___ _ __ _ __ _   _  |  _ \| __ )
 | |   | |/ _ \| | | |/ _` | '_ \ / _ \ '__| '__| | | | | | | |  _ \
 | |___| | (_) | |_| | (_| | |_) |  __/ |  | |  | |_| | | |_| | |_) |
-\____|_|\___/ \__,_|\__,_|_.__/ \___|_|  |_|   \__, | |____/|____/
-                                             |___/
+ \____|_|\___/ \__,_|\__,_|_.__/ \___|_|  |_|   \__, | |____/|____/
+                                                |___/
 ======================================================================
 EOF
 
      cat <<-'EOF'
 
-     ======================================================================
-     Sandbox: Cloudberry Database Cluster details
-     ======================================================================
+======================================================================
+Sandbox: Cloudberry Database Cluster details
+======================================================================
 
 EOF
 
@@ -80,12 +80,12 @@ EOF
 
      ## Set gpadmin password, display version and cluster configuration
      su gpadmin -l \
-               -c "psql -d template1 \
+               -c "psql -P pager=off -d template1 \
                          -c \"SELECT VERSION()\"; \
-                    psql -d template1 \
+                    psql -P pager=off -d template1 \
                          -c \"SELECT * FROM gp_segment_configuration ORDER BY dbid\"; \
-                    psql -d template1 \
+                    psql -P pager=off -d template1 \
                          -c \"SHOW optimizer\""
-     fi
+fi
 
 /bin/bash

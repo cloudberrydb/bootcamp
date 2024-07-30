@@ -6,27 +6,30 @@ DEFAULT_OS_VERSION="centos7"
 DEFAULT_TIMEZONE_VAR="Asia/Shanghai"
 DEFAULT_PIP_INDEX_URL_VAR="https://pypi.org/simple"
 BUILD_ONLY="false"
+MULTINODE="false"
 
 # Use environment variables if set, otherwise use default values
-OS_VERSION="${OS_VERSION:-$DEFAULT_OS_VERSION}"
+# Export set for some variables to be used referenced docker compose file
+export OS_VERSION="${OS_VERSION:-$DEFAULT_OS_VERSION}"
 BUILD_ONLY="${BUILD_ONLY:-false}"
-CODEBASE_VERSION="${CODEBASE_VERSION:-}"
+export CODEBASE_VERSION="${CODEBASE_VERSION:-}"
 TIMEZONE_VAR="${TIMEZONE_VAR:-$DEFAULT_TIMEZONE_VAR}"
 PIP_INDEX_URL_VAR="${PIP_INDEX_URL_VAR:-$DEFAULT_PIP_INDEX_URL_VAR}"
 
 # Function to display help message
 function usage() {
-    echo "Usage: $0 [-o <os_version>] [-c <codebase_version>] [-b]"
+    echo "Usage: $0 [-o <os_version>] [-c <codebase_version>] [-b] [-m]"
     echo "  -o  OS version (valid values: centos7, rockylinux9; default: $DEFAULT_OS_VERSION, or set via OS_VERSION environment variable)"
     echo "  -c  Codebase version (valid values: main, or determined from release zip file name)"
     echo "  -t  Timezone (default: Asia/Shanghai, or set via TIMEZONE_VAR environment variable)"
     echo "  -p  Python Package Index (PyPI) (default: https://pypi.org/simple, or set via PIP_INDEX_URL_VAR environment variable)"
     echo "  -b  Build only, do not run the container (default: false, or set via BUILD_ONLY environment variable)"
+    echo "  -m  Multinode, this creates a multinode (multi-container) Cloudberry cluster using docker compose (requires compose to be installed)" 
     exit 1
 }
 
 # Parse command-line options
-while getopts "o:c:t:p:bh" opt; do
+while getopts "o:c:t:p:bmh" opt; do
     case "${opt}" in
         o)
             OS_VERSION=${OPTARG}
@@ -43,6 +46,9 @@ while getopts "o:c:t:p:bh" opt; do
         b)
             BUILD_ONLY="true"
             ;;
+        m)
+            MULTINODE="true"
+            ;;
         h)
             usage
             ;;
@@ -51,6 +57,11 @@ while getopts "o:c:t:p:bh" opt; do
             ;;
     esac
 done
+
+if [[ "${MULTINODE}" == "true" && "${BUILD_ONLY}" == "true" ]]; then
+    echo "Error: Cannot pass both multinode deployment [m] and build only [b] flags together"
+    exit 1
+fi
 
 # If CODEBASE_VERSION is not specified, determine it from the file name
 if [[ -z "$CODEBASE_VERSION" ]]; then
@@ -120,7 +131,10 @@ if [ "${BUILD_ONLY}" == "true" ]; then
     exit 0
 fi
 
-docker run --interactive \
+if [ "${MULTINODE}" == "true" ]; then
+    docker compose -f docker-compose-$OS_VERSION.yml up
+else
+    docker run --interactive \
            --tty \
            --detach \
            --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
@@ -128,3 +142,4 @@ docker run --interactive \
            --publish 15432:5432 \
            --hostname mdw \
            cbdb-${CODEBASE_VERSION}:${OS_VERSION}
+fi
