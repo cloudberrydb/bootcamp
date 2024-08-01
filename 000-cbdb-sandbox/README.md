@@ -1,10 +1,10 @@
 ---
-title: Sandbox of Single-Node Cloudberry Database
+title: Sandbox of Cloudberry Database
 ---
 
-# Install Single-Node Cloudberry Database in a Docker Container
+# Install Cloudberry Database With Docker
 
-This document guides you on how to quickly set up and connect to a single-node Cloudberry Database in a Docker environment. You can try out Cloudberry Database by performing some basic operations and running SQL commands.
+This document guides you on how to quickly set up and connect to a Cloudberry Database in a Docker environment. You can try out Cloudberry Database by performing some basic operations and running SQL commands. 
 
 > [!WARNING]
 > This guide is intended for testing or development. DO NOT use it for production.
@@ -19,15 +19,22 @@ Make sure that your environment meets the following requirements:
 
 ## Build the Sandbox
 
-This section introduces two methods to set up the Docker container. The container will host a CBDB single-node cluster intialized with one coordinator and three primary and mirror segments. Both x86 and ARM CPUs (including Apple chips) are supported.
+When building and deploying CloudBerry in Docker, you will have 2 different deployment options as well as different build options.
+
+**Deployment Options**
+1. **Single Container** (Default) - With the single container option, you will have the coordinator as well as the Cloudberry segments all running on a single container. This is the default behavior when deploying using the `run.sh` script provided.
+2. **Multi-Container** - Deploying with the multi-container option will give you a more realistic deployment of what actual production Cloudberry clusters look like. With multi-node, you will have the coordinator, the standby coordinator, and 2 segment hosts all on their own respective containers. This is to both highlight the distributed nature of Cloudberry Database as well as highlight how high availability (HA) features work in the event of a server (or in this case a container) failing. This is enabled by passing the -m flag to the `run.sh` script which will be highlighted below.
+![CloudberryDB Sandbox Deployments](../images/sandbox-deployment.jpg)
+
+**Build Options**
 
 > [!CAUTION]
-> The CentOS Linux 7 the reached end of life (EOL) on June 30, 2024. The software source mirror (vault) only supports x86_64, the `altarch` source (like ARM) has been deprecated. So you cannot run the CentOS 7 sandbox on your macBook with M1/2. 
+> CentOS Linux 7 reached it's end of life (EOL) on June 30, 2024. The software source mirror (vault) only supports x86_64, the `altarch` source (like ARM) has been deprecated. So you cannot run the CentOS 7 sandbox on your macBook with M1/2. 
 
-- Method 1 - Compile with the source code of the latest Cloudberry Database (released in [Cloudberry Database Release Page](https://github.com/cloudberrydb/cloudberrydb/releases)). The base OS will use CentOS 7.9 Docker container.
-- Method 2 - Compile with the latest Cloudberry Database [main](https://github.com/cloudberrydb/cloudberrydb/tree/main) branch. The base OS will use Rocky Linux 9 Docker container.
+1. Compile with the source code of the latest Cloudberry Database (released in [Cloudberry Database Release Page](https://github.com/cloudberrydb/cloudberrydb/releases)). The base OS will use a CentOS 7.9 Docker image.
+2. Method 2 - Compile with the latest Cloudberry Database [main](https://github.com/cloudberrydb/cloudberrydb/tree/main) branch. The base OS will use a Rocky Linux 9 Docker image.
 
-Build steps:
+Build and deploy steps:
 
 1. Start Docker Desktop and make sure it is running properly on your host platform.
 
@@ -39,23 +46,35 @@ Build steps:
 
 3. Enter the repository and run the `run.sh` script to start the Docker container. This will start the automatic installation process. Depending on your environment, you may need to run this with 'sudo' command.
 
-    - For latest Cloudberry DB release
+    - For latest Cloudberry DB release running on a single container
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
     ./run.sh
     ```
+    - For latest Cloudberry DB release running across multiple containers
 
-    - For latest main branch
+    ```shell
+    cd bootcamp/000-cbdb-sandbox
+    ./run.sh -m
+    ```
+    - For latest main branch running on a single container
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
     ./run.sh -c main -o rockylinux9
     ```
 
-    Once the script finishes without error, the sandbox is built and running successfully. The `docker run` command uses --detach option allowing you to ssh or access the running CBDB instance remotely.
+    - For latest main branch running across multiple containers
 
-    Please review run.sh script for additional options (e.g. setting Timezone in running container, only building container)
+    ```shell
+    cd bootcamp/000-cbdb-sandbox
+    ./run.sh -c main -o rockylinux9 -m
+    ```
+
+    Once the script finishes without error, the sandbox is built and running successfully. The `docker run` and `docker compose` commands use the --detach option allowing you to ssh or access the running CBDB instance remotely.
+
+    Please review run.sh script for additional options (e.g. setting Timezone in running container, only building container). You can also execute `./run.sh -h` to see the usage.
 
 ## Connect to the database
 
@@ -64,7 +83,7 @@ You can now connect to the database and try some basic operations.
 1. Connect to the Docker container from the host machine:
 
     ```shell
-    docker exec -it $(docker ps -q) /bin/bash
+    docker exec -it cbdb-mdw /bin/bash
     ```
 
     If it is successful, you will see the following prompt:
@@ -102,5 +121,5 @@ In addition to using the `docker exec` command, you can also use the `ssh` comma
 ssh gpadmin@localhost # Password: cbdb@123
 ```
 
-Now you have a Cloudberry Database and can continue with [Cloudberry Database Tutorials Based on Single-Node Installation](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md)! Enjoy!
+Now you have a Cloudberry Database and can continue with [Cloudberry Database Tutorials Based on Docker Installation](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md)! Enjoy!
 
