@@ -108,7 +108,7 @@ if [[ "${OS_VERSION}" == "centos7" && "${CODEBASE_VERSION}" = "main" ]]; then
     usage
 fi
 
-# Build Container
+# Build image
 if [[ "${CODEBASE_VERSION}" = "main"  ]]; then
     DOCKERFILE=Dockerfile.${CODEBASE_VERSION}.${OS_VERSION}
 
@@ -131,11 +131,13 @@ if [ "${BUILD_ONLY}" == "true" ]; then
     exit 0
 fi
 
+# Deploy container(s)
 if [ "${MULTINODE}" == "true" ]; then
-    docker compose -f docker-compose-$OS_VERSION.yml up
+    docker compose -f docker-compose-$OS_VERSION.yml up --detach
 else
     docker run --interactive \
            --tty \
+           --name cbdb-mdw \
            --detach \
            --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
            --publish 122:22 \

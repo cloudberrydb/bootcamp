@@ -1,6 +1,7 @@
 version: "0.1"
 services:
   cbdb-coordinator:
+    container_name: cbdb-mdw
     image: cbdb-${CODEBASE_VERSION}:${OS_VERSION}
     ports:
     - "15432:5432"
@@ -12,6 +13,7 @@ services:
     environment:
       MULTINODE: "true"
   cbdb-standby-coordinator:
+    container_name: cbdb-smdw
     image: cbdb-${CODEBASE_VERSION}:${OS_VERSION}
     hostname: smdw
     tty: true
@@ -19,6 +21,7 @@ services:
       interconnect:
         ipv4_address: 10.5.0.11
   cbdb-segment-host-1:
+    container_name: cbdb-sdw1
     image: cbdb-${CODEBASE_VERSION}:${OS_VERSION}
     hostname: sdw1
     tty: true
@@ -26,6 +29,7 @@ services:
       interconnect:
         ipv4_address: 10.5.0.12
   cbdb-segment-host-2:
+    container_name: cbdb-sdw2
     image: cbdb-${CODEBASE_VERSION}:${OS_VERSION}
     hostname: sdw2
     tty: true
@@ -34,6 +38,7 @@ services:
         ipv4_address: 10.5.0.13
 networks:
   interconnect:
+    name: cbdb-interconnect
     driver: bridge
     ipam:
      config:
