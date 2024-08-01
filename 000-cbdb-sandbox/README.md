@@ -24,6 +24,7 @@ When building and deploying CloudBerry in Docker, you will have 2 different depl
 **Deployment Options**
 1. **Single Container** (Default) - With the single container option, you will have the coordinator as well as the Cloudberry segments all running on a single container. This is the default behavior when deploying using the `run.sh` script provided.
 2. **Multi-Container** - Deploying with the multi-container option will give you a more realistic deployment of what actual production Cloudberry clusters look like. With multi-node, you will have the coordinator, the standby coordinator, and 2 segment hosts all on their own respective containers. This is to both highlight the distributed nature of Cloudberry Database as well as highlight how high availability (HA) features work in the event of a server (or in this case a container) failing. This is enabled by passing the -m flag to the `run.sh` script which will be highlighted below.
+
 ![CloudberryDB Sandbox Deployments](../images/sandbox-deployment.jpg)
 
 **Build Options**
