@@ -14,7 +14,8 @@ chown -R gpadmin.gpadmin /usr/local/cloudberry-db \
                          /tmp/gpinitsystem_singlenode \
                          /tmp/gpinitsystem_multinode \
                          /tmp/gpdb-hosts \
-                         /tmp/multinode-gpinit-hosts
+                         /tmp/multinode-gpinit-hosts \
+                         /tmp/smoke-test.sh
 
 # # Allow passwordless ssh access
 su gpadmin -l \
@@ -41,7 +42,8 @@ su gpadmin -l \
                             -c /tmp/gpinitsystem_multinode \
                             -h /tmp/multinode-gpinit-hosts \
                             --max_connections=100; \
-               gpinitstandby -s smdw -a"
+               gpinitstandby -s smdw -a\
+               printf "sdw1\nsdw2\n" >> /tmp/gpdb-hosts"
 fi
 
 if [ $HOSTNAME == "mdw" ]; then
