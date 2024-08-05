@@ -47,13 +47,13 @@ Build and deploy steps:
 
 3. Enter the repository and run the `run.sh` script to start the Docker container. This will start the automatic installation process. Depending on your environment, you may need to run this with 'sudo' command.
 
-    - For latest Cloudberry DB release running on a single container
+    - For latest Cloudberry DB release running on a single container (currently does not support ARM CPU's such as Apple M1/M2)
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
     ./run.sh
     ```
-    - For latest Cloudberry DB release running across multiple containers
+    - For latest Cloudberry DB release running across multiple containers (currently does not support ARM CPU's such as Apple M1/M2)
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
