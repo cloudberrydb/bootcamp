@@ -124,3 +124,49 @@ ssh gpadmin@localhost # Password: cbdb@123
 
 Now you have a Cloudberry Database and can continue with [Cloudberry Database Tutorials Based on Docker Installation](https://github.com/cloudberrydb/bootcamp/blob/main/101-cbdb-tutorials/README.md)! Enjoy!
 
+## Working with your Cloudberry Docker environment
+
+When working with the Cloudberry Docker environment there are a few commands that will be useful to you.
+
+**Stopping Your Single Container Deployment With Docker**
+
+To stop the **single container** deployment while _keeping the data and state_ within the container, you can run the command below. This means that you can later start the container again and any changes you made to the containers will be persisted between runs.
+
+```shell 
+docker stop cbdb-mdw
+```
+
+To stop the **single container** deployment and also remove the volume that belongs to the container, you can run the following command. Keep in mind this will remove the volume as well as the container associated which means any changes you've made inside of the container or any database state will be wiped and unrecoverable.
+
+```shell 
+docker rm -f cbdb-mdw
+```
+
+To stop the **multi-container** deployment while _keeping the data and state_ within the container, you can run the command below by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS). This means that you can later start the container again and any changes you made to the containers will be persisted between runs.
+
+```shell 
+docker compose -f <docker-compose-OS.yml> stop
+```
+
+To stop the **multi-container** deployment while _keeping the data and state_ within the container, you can run the command below by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS). Running this command means it will delete the containers as well as remove the volumes that the containers are associated with. This means any changes you've made inside of the containers or any database state will be wiped and unrecoverable. 
+
+```shell 
+docker compose -f <docker-compose-OS.yml> down
+```
+
+**Starting A Stopped Cloudberry Docker Deployment**
+
+If you've run any of the commands above that keep the Docker volumes persisted between shutting the containers down, you can use the following commands to bring that same deployment back up with it's previous state.
+
+To start a **single container** deployment after it was shut down, you can simply run the following
+
+```shell 
+docker start cbdb-mdw
+```
+
+To start a **multi-container** deployment after it was shut down, you can run the following command by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS).
+
+```shell 
+docker compose -f <docker-compose-OS.yml> start
+```
+
