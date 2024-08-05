@@ -170,3 +170,11 @@ To start a **multi-container** deployment after it was shut down, you can run th
 docker compose -f <docker-compose-OS.yml> start
 ```
 
+> [!NOTE]
+> When starting a previously stopped Cloudberry Docker environment, you'll need to manually start the database back up. To do this, just run the following commands once the container(s) are back up and running. The `gpstart` command is used for starting the database, and -a is a flag saying to start the database without prompting (non-interactive).
+
+```shell 
+docker exec -it cbdb-mdw /bin/bash
+
+[root@mdw /] su - gpadmin -c "gpstart -a"
+```
