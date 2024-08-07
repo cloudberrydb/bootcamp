@@ -15,6 +15,7 @@ chown -R gpadmin.gpadmin /usr/local/cloudberry-db \
                          /tmp/gpinitsystem_multinode \
                          /tmp/gpdb-hosts \
                          /tmp/multinode-gpinit-hosts \
+                         /tmp/faa.tar.gz \
                          /tmp/smoke-test.sh
 
 # # Allow passwordless ssh access
@@ -89,5 +90,11 @@ EOF
                     psql -P pager=off -d template1 \
                          -c \"SHOW optimizer\""
 fi
+
+echo """
+===========================
+=  DEPLOYMENT SUCCESSFUL  =
+===========================
+"""
 
 /bin/bash
