@@ -79,6 +79,9 @@ Build and deploy steps:
 
 ## Connect to the database
 
+> [!NOTE]
+> When deploying the multi-container Cloudberry environment it may take extra time for the database to initialize, so you may need to wait a few minutes before you can execute the psql prompt successfully. You can run `docker logs cbdb-mdw -f` to see the current state of the database initialization process, you'll know the process is finished when you see the "Deployment Successful" output.
+
 You can now connect to the database and try some basic operations.
 
 1. Connect to the Docker container from the host machine:
@@ -108,10 +111,7 @@ You can now connect to the database and try some basic operations.
 
     ```sql
     gpadmin=# SELECT VERSION();  -- Checks the database version.
-                                                                                            version
-    
-    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    -----
+            
     PostgreSQL 14.4 (Cloudberry Database 1.0.0 build dev) on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 10.2.1 20210130 (Red Hat 10.2.1-11), 64-bit compiled on Oct 24 2023 10:24:28
     (1 row)
     ```
@@ -142,6 +142,8 @@ To stop the **single container** deployment and also remove the volume that belo
 docker rm -f cbdb-mdw
 ```
 
+**Stopping Your Multi-Container Deployment With Docker**
+
 To stop the **multi-container** deployment while _keeping the data and state_ within the container, you can run the command below by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS). This means that you can later start the container again and any changes you made to the containers will be persisted between runs.
 
 ```shell 
@@ -154,7 +156,7 @@ To stop the **multi-container** deployment while _keeping the data and state_ wi
 docker compose -f <docker-compose-OS.yml> down
 ```
 
-**Starting A Stopped Cloudberry Docker Deployment**
+**Starting A Stopped Single Container Cloudberry Docker Deployment**
 
 If you've run any of the commands above that keep the Docker volumes persisted between shutting the containers down, you can use the following commands to bring that same deployment back up with it's previous state.
 
@@ -163,6 +165,8 @@ To start a **single container** deployment after it was shut down, you can simpl
 ```shell 
 docker start cbdb-mdw
 ```
+
+**Starting A Stopped Multi-Container Cloudberry Docker Deployment**
 
 To start a **multi-container** deployment after it was shut down, you can run the following command by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS).
 
