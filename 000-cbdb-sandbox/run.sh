@@ -58,6 +58,11 @@ while getopts "o:c:t:p:bmh" opt; do
     esac
 done
 
+if [[ $MULTINODE == "true" ]] && ! docker compose version; then
+        echo "Error: Multinode -m flag found in run arguments but calling docker compose failed. Please install Docker Compose by following the instructions at https://docs.docker.com/compose/install/. Exiting"
+        exit 1
+fi
+
 if [[ "${MULTINODE}" == "true" && "${BUILD_ONLY}" == "true" ]]; then
     echo "Error: Cannot pass both multinode deployment [m] and build only [b] flags together"
     exit 1
