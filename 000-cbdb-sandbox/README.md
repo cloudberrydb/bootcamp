@@ -19,7 +19,7 @@ Make sure that your environment meets the following requirements:
 
 ## Build the Sandbox
 
-When building and deploying CloudBerry in Docker, you will have 2 different deployment options as well as different build options.
+When building and deploying Cloudberry in Docker, you will have 2 different deployment options as well as different build options.
 
 **Deployment Options**
 1. **Single Container** (Default) - With the single container option, you will have the coordinator as well as the Cloudberry segments all running on a single container. This is the default behavior when deploying using the `run.sh` script provided.
