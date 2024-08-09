@@ -1,4 +1,3 @@
-version: "0.1"
 services:
   cbdb-coordinator:
     container_name: cbdb-mdw
