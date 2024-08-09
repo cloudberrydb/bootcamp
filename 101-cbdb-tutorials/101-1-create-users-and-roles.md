@@ -14,7 +14,7 @@ Permissions can be granted to users or groups. Initially, only the `gpadmin` rol
 
 You can follow the examples below to create users and roles.
 
-Before moving on to the operations, make sure that you have installed Cloudberry Database by following [Install a Single-Node Cloudberry Database](../000-cbdb-sandbox/README.md).
+Before moving on to the operations, make sure that you have installed Cloudberry Database by following [Install a Docker based Cloudberry Database](../000-cbdb-sandbox/README.md).
 
 ### Create a user using the CREATE USER command
 

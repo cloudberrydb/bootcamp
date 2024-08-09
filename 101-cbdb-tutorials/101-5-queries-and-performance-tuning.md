@@ -125,7 +125,7 @@ In the following exercise, you will generate some small tables that you can quer
 3. Request the explain plan for the `COUNT()` aggregate.
 
     ```sql
-    tutorial=# EXPLAIN SELECT COUNT(*) FROM sample WHERE id > 100;
+    tutorial=# EXPLAIN SELECT COUNT(*) FROM faa.sample WHERE id > 100;
     ```
 
     ```sql
@@ -150,7 +150,7 @@ In the following exercise, you will generate some small tables that you can quer
 4. The `EXPLAIN ANALYZE` command actually runs the query (without returning the result set). The cost numbers reflect the actual timings. It also produces some memory and I/O statistics.
 
     ```sql
-    tutorial=# EXPLAIN ANALYZE SELECT COUNT(*) FROM sample WHERE id > 100;
+    tutorial=# EXPLAIN ANALYZE SELECT COUNT(*) FROM faa.sample WHERE id > 100;
     ```
 
     ```sql
@@ -222,7 +222,7 @@ Cloudberry Database does not depend upon indexes to the same degree as tradition
 In this exercise, you work with the legacy optimizer to know how index can improve performance. You first run a single row lookup on the sample table without an index, then rerun the query after creating an index.
 
 ```sql
-tutorial=# SELECT * FROM sample WHERE big = 12345;
+tutorial=# SELECT * FROM faa.sample WHERE big = 12345;
 
   id   |  big  | wee | stuff
 -------+-------+-----+-------
@@ -231,7 +231,7 @@ tutorial=# SELECT * FROM sample WHERE big = 12345;
 
 Time: 251.304 ms
 tutorial=#
-tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
+tutorial=# EXPLAIN SELECT * FROM faa.sample WHERE big = 12345;
 
                                    QUERY PLAN
 --------------------------------------------------------------------------------
@@ -244,20 +244,20 @@ tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
 Time: 0.709 ms
 tutorial=#
 tutorial=#
-tutorial=# CREATE INDEX sample_big_index ON sample(big);
+tutorial=# CREATE INDEX sample_big_index ON faa.sample(big);
 
 CREATE INDEX
 Time: 1574.117 ms (00:01.574)
 tutorial=#
 tutorial=#
-tutorial=# SELECT * FROM sample WHERE big = 12345;
+tutorial=# SELECT * FROM faa.sample WHERE big = 12345;
   id   |  big  | wee | stuff
 -------+-------+-----+-------
  12345 | 12345 |   0 |
 (1 row)
 
 Time: 2.774 ms
-tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
+tutorial=# EXPLAIN SELECT * FROM faa.sample WHERE big = 12345;
                                       QUERY PLAN
 --------------------------------------------------------------------------------------
  Gather Motion 2:1  (slice1; segments: 2)  (cost=0.17..8.21 rows=1 width=15)
@@ -274,11 +274,11 @@ Notice the difference in timing between the single-row `SELECT` with and without
 View the following `EXPLAIN` plans to compare plans for some other common types of queries.
 
 ```sql
-tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345;
-tutorial=# EXPLAIN SELECT * FROM sample WHERE big > 12345;
-tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345 OR big = 12355;
-tutorial=# DROP INDEX sample_big_index;
-tutorial=# EXPLAIN SELECT * FROM sample WHERE big = 12345 OR big = 12355;
+tutorial=# EXPLAIN SELECT * FROM faa.sample WHERE big = 12345;
+tutorial=# EXPLAIN SELECT * FROM faa.sample WHERE big > 12345;
+tutorial=# EXPLAIN SELECT * FROM faa.sample WHERE big = 12345 OR big = 12355;
+tutorial=# DROP INDEX faa.sample_big_index;
+tutorial=# EXPLAIN SELECT * FROM faa.sample WHERE big = 12345 OR big = 12355;
 ```
 
 ### Row vs. column orientation
@@ -292,7 +292,8 @@ In this exercise, you will create a column-oriented version of the fact table an
 1. Create a column-oriented version of the FAA On Time Performance fact table and insert the data from the row-oriented version.
 
     ```sql
-    tutorial=# CREATE TABLE FAA.OTP_C (LIKE faa.otp_r) WITH (appendonly=true,
+    tutorial=# DROP TABLE IF EXISTS faa.otp_c;
+    tutorial=# CREATE TABLE faa.otp_c (LIKE faa.otp_r) WITH (appendonly=true,
     orientation=column)
     DISTRIBUTED BY (UniqueCarrier, FlightNum) PARTITION BY RANGE(FlightDate)
     ( PARTITION mth START('2009-06-01'::date) END ('2010-10-31'::date)
@@ -441,7 +442,7 @@ In this exercise, you will create a column-oriented version of the fact table an
     ```
 
     ```sql
-    tutorial=# \d+ otp_c_1_prt_mth_1
+    tutorial=# \d+ faa.otp_c_1_prt_mth_1
     ```
 
     ```sql
@@ -557,6 +558,8 @@ A primary goal of distribution is to have a balanced amount of data in each segm
 tutorial=# SELECT gp_segment_id, COUNT(*) FROM faa.otp_c GROUP BY
 gp_segment_id ORDER BY gp_segment_id;
 ```
+> [!NOTE]
+> The output you'll see below might not look exactly the same depending on if you have deployed using the single container vs multi-container deployment option. The number of rows in the query output below will reflect the number of primary data segments that are configured.
 
 ```sql
  gp_segment_id | count
@@ -665,3 +668,14 @@ Time: 7.434 ms
 ```
 
 The query on the partitioned column takes much less time to execute. If you compare the explain plans for the queries in this exercise, you will see that the first query scans each of the seventeen child files, while the second scans just one child file. The reduction in I/O and CPU time explains the improved execution time. 
+
+## What's next
+
+In this tutorial, you learned how to understand and read query explain and execution plans. You also learned about physical table options like partitioning, row orientation, and how to check data distribution in a table. You can now move on to the next tutorial, [Lesson 6: Backup and Recovery Operations](../101-cbdb-tutorials/101-6-backup-and-recovery-operations.md), to learn about backup and recovery options in Cloudberry database.
+
+Other tutorials:
+
+- [Lesson 1: Create Users and Roles](../101-cbdb-tutorials/101-1-create-users-and-roles.md)
+- [Lesson 2: Create and Prepare Database](../101-cbdb-tutorials/101-2-create-and-prepare-database.md)
+- [Lesson 3: Create Tables](../101-cbdb-tutorials/101-3-create-tables.md)
+- [Lesson 4: Data Loading](../101-cbdb-tutorials/101-4-data-loading.md)

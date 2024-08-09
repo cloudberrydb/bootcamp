@@ -21,7 +21,7 @@ This tutorial briefly introduces 3 methods to load the example data `FAA` into C
     ![External Tables Using Cloudberry Parallel File Server](../images/ext_tables.jpg)
     _Figure 1. External Tables Using Parallel File Server (gpfdist)_
 
-    Another utility `gpload` is a batch job. When using this utility, you should specify a YAML-formatted control file, describe source data locations, format, transformations required, participating hosts, database destinations and other particulars in the file. `gpload` will parse the control file and use `gpfdsit` to execute the task. This allows you to describe a complex task and execute it in a controlled and repeatable way.
+    Another utility `gpload` is a batch job. When using this utility, you should specify a YAML-formatted control file, describe source data locations, format, transformations required, participating hosts, database destinations and other particulars in the file. `gpload` will parse the control file and use `gpfdist` to execute the task. This allows you to describe a complex task and execute it in a controlled and repeatable way.
 
 ## Quick-start operations
 
@@ -77,11 +77,11 @@ The `faa.d_cancellation_codes` table is a simple 2-column look-up table. You wil
 
     ```sql
     tutorial=> INSERT INTO faa.d_cancellation_codes
-    tutorial-> VALUES ('A', 'Carrier'),
-    tutorial-> ('B', 'Weather'),
-    tutorial-> ('C', 'NAS'),
-    tutorial-> ('D', 'Security'),
-    tutorial-> ('', 'none');
+               VALUES ('A', 'Carrier'),
+               ('B', 'Weather'),
+               ('C', 'NAS'),
+               ('D', 'Security'),
+               ('', 'none');
     ```
 
     Output:
@@ -157,7 +157,7 @@ In production system, `gpfdist` runs on file servers that external data resides.
 
 > **Note:**
 >
-> This exercise loads data using `gpfdsit` to move data from external data files into Cloudberry Database. Moving data between the database and external tables also needs security request. Therefore, only superusers are permitted to use `gpfdsit` and you will complete this exercise as `gpadmin` user.
+> This exercise loads data using `gpfdist` to move data from external data files into Cloudberry Database. Moving data between the database and external tables also needs security request. Therefore, only superusers are permitted to use `gpfdist` and you will complete this exercise as `gpadmin` user.
 
 1. Start `gpfdist`:
 
@@ -238,6 +238,10 @@ The following operations are performed in this section:
     ```shell
     tutorial=# \i create_ext_table.sql
     tutorial=# INSERT INTO faa.faa_otp_load SELECT * FROM faa.ext_load_otp;
+
+    NOTICE:  HEADER means that each one of the data files has a header row
+    NOTICE:  found 26526 data formatting errors (26526 or more input rows), rejected related input data
+    INSERT 0 1024552
     ```
 
     Note: Cloudberry Database facilitates moving data from the gzip files into the database's load table. In a production setting, there might be several `gpfdist` processes running, either on separate hosts or multiple on one host, each using a different port.
@@ -249,6 +253,11 @@ The following operations are performed in this section:
     ```sql
     tutorial=# \x  -- Changes the display of the results to one line per column, which is easier to read for some result sets.
     tutorial=# select DISTINCT relname, errmsg, count(*) from gp_read_error_log('faa.ext_load_otp') GROUP BY 1,2;
+
+    -[ RECORD 1 ]------------------------------------------------------
+    relname | ext_load_otp
+    errmsg  | invalid input syntax for type integer: "", column deptime
+    count   | 26526
     ```
 
     Once you have reviewed the errors, you can end your session:

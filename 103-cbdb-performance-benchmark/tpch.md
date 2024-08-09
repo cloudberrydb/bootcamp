@@ -33,8 +33,8 @@ Make sure that `gcc` and `make` are installed on `mdw` for compiling the `dbgen`
 You can install the dependencies on `mdw`:
 
 ```bash
-docker exec -it $(docker ps -q) /bin/bash
-yum -y install gcc make
+docker exec -it cbdb-mdw /bin/bash
+[root@mdw ~] yum -y install gcc make
 ```
 
 The source code is from http://tpc.org/tpc_documents_current_versions/current_specifications5.asp.
@@ -44,7 +44,7 @@ The source code is from http://tpc.org/tpc_documents_current_versions/current_sp
 TPC-H and TPC-DS packages are already placed under "mdw:/tmp/" folder.
 
 ```bash
-[gpadmin@mdw tmp]$ ls -rlt
+[root@mdw ~] ls -ld /tmp/TPC*
 -rw-rw-r--  1 root    root    24520013 Jul 27 14:18 TPC-H-CBDB.tar.gz
 -rw-rw-r--  1 root    root     7096941 Jul 27 14:18 TPC-DS-CBDB.tar.gz
 ```
@@ -54,10 +54,11 @@ TPC-H and TPC-DS packages are already placed under "mdw:/tmp/" folder.
 To run the benchmark, login as `gpadmin` on `mdw` in the CloudberryDB Sandbox, and execute the following command:
 
 ```bash
-su - gpadmin
-tar xzf TPC-H-CBDB.tar.gz
-cd ~/TPC-H-CBDB
-./run.sh
+[root@mdw ~] su - gpadmin
+[gpadmin@mdw ~] cd /tmp
+[gpadmin@mdw tmp] tar xzf TPC-H-CBDB.tar.gz
+[gpadmin@mdw tmp] cd TPC-H-CBDB
+[gpadmin@mdw TPC-DS-CBDB] ./run.sh
 ```
 
 The TPC-H benchmark needs a few minutes to run before you get the final report, which depends on your machine's hardware. You may check the TPC-H execution log information file under the same directory with a similar name as below.

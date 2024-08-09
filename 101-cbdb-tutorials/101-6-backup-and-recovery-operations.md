@@ -66,17 +66,21 @@ Tables backed up:  11 / 11 [====================================================
 ```
 
 
-This runs a full backup of the database created during the previous exercises. 
+This runs a full backup of the database created during the previous exercises. Be sure to note down the backup timestamp that gets generated in the output of gpbackup as we'll need that later to perform a restore.
 
-2. To view the backups: 
+2. To view the backups we'll use the gpssh command. gpssh is simply a way to run ssh commands in parallel to multiple servers at once which is very useful in a distributed system like Cloudberry Database where we have many servers and alot of them are performing the same role. Keep in mind that the output will look slightly different if you're using the single container vs multi-container deployment option: 
 
 ```bash
-$ ls -al /tmp/
+$ gpssh -f /tmp/gpdb-hosts 'ls -ald /tmp/gpseg*'
 
-drwxrwxr-x 3 gpadmin gpadmin       21 Jul 27 10:28 gpseg-1
-drwxrwxr-x 3 gpadmin gpadmin       21 Jul 27 10:28 gpseg1
-drwxrwxr-x 3 gpadmin gpadmin       21 Jul 27 10:28 gpseg0
+[ mdw] drwxr-xr-x 3 gpadmin gpadmin 4096 Aug  2 06:03 /tmp/gpseg-1
+[sdw1] drwxr-xr-x 3 gpadmin gpadmin 4096 Aug  2 06:03 /tmp/gpseg0
+[sdw1] drwxr-xr-x 3 gpadmin gpadmin 4096 Aug  2 06:03 /tmp/gpseg1
+[sdw2] drwxr-xr-x 3 gpadmin gpadmin 4096 Aug  2 06:03 /tmp/gpseg2
+[sdw2] drwxr-xr-x 3 gpadmin gpadmin 4096 Aug  2 06:03 /tmp/gpseg3
 ```
+
+In this example, gpseg-1 refers to the coordinator backup files which contains database metadata but no actual table data. The table data is stored in each respective segment container and then further within a folder for each segment on that host. This demonstrates the power and speed of running database backups with Cloudberry Database as each segment backs up their own data in parallel.
 
 3. Now, that we have a full backup let's remove data from a table to simulate a failure. 
 
