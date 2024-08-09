@@ -150,10 +150,10 @@ To stop the **multi-container** deployment while _keeping the data and state_ wi
 docker compose -f <docker-compose-OS.yml> stop
 ```
 
-To stop the **multi-container** deployment while _keeping the data and state_ within the container, you can run the command below by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS). Running this command means it will delete the containers as well as remove the volumes that the containers are associated with. This means any changes you've made inside of the containers or any database state will be wiped and unrecoverable. 
+To stop the **multi-container** deployment and also remove the network and volumes that belong to the containers, you can run the command below by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS). Running this command means it will delete the containers as well as remove the volumes that the containers are associated with. This means any changes you've made inside of the containers or any database state will be wiped and unrecoverable.
 
 ```shell 
-docker compose -f <docker-compose-OS.yml> down
+docker compose -f <docker-compose-OS.yml> down -v
 ```
 
 **Starting A Stopped Single Container Cloudberry Docker Deployment**
