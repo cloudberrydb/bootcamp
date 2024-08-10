@@ -3,6 +3,7 @@ FROM rockylinux/rockylinux:9
 ARG TIMEZONE_VAR="Asia/Shanghai"
 
 ENV container=docker
+ENV MULTINODE=false
 
 RUN dnf update -y && \
     dnf install -y systemd \
@@ -55,6 +56,7 @@ RUN     echo root:cbdb@123 | chpasswd && \
                        unzip \
                        util-linux-ng \
                        wget \
+                       sshpass \
                        which && \
         dnf install -y apr-devel \
                        bzip2-devel \

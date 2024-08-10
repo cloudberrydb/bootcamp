@@ -35,7 +35,7 @@ Topics include:
 
 ## Lesson 0. Prerequisite
 
-Before starting this crash course, spend some time going through the [Cloudberry Database Tutorials Based on Single-Node Installation](../101-cbdb-tutorials/README.md) to get familiar with Cloudberry Database and how it works.
+Before starting this crash course, spend some time going through the [Cloudberry Database Tutorials Based on a Docker Installation](../101-cbdb-tutorials/README.md) to get familiar with Cloudberry Database and how it works.
 
 ## Lesson 1. Where to read the official documentation
 
