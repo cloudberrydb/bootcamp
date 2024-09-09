@@ -1,5 +1,6 @@
 FROM rockylinux/rockylinux:9
 
+ARG CODEBASE_VERSION_VAR=${CODEBASE_VERSION_VAR}
 ARG TIMEZONE_VAR="Asia/Shanghai"
 
 ENV container=docker
@@ -104,10 +105,10 @@ RUN     cp /tmp/90-cbdb-sysctl.conf /etc/sysctl.conf && \
         ssh-keygen -A && \
         echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
 
-RUN     cd /tmp/ && \
-        git clone --branch main --single-branch --depth=1 https://github.com/cloudberrydb/cloudberrydb.git
+RUN     cd /tmp/ \
+        && unzip -d /tmp /tmp/cloudberrydb-${CODEBASE_VERSION_VAR}.zip
 
-RUN     cd /tmp/cloudberrydb && \
+RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} && \
         ./configure --prefix=/usr/local/cloudberry-db \
                     --enable-cassert                  \
                     --enable-debug-extensions         \
@@ -127,11 +128,11 @@ RUN     cd /tmp/cloudberrydb && \
                     --with-python                     \
                     --with-pythonsrc-ext
 
-RUN     cd /tmp/cloudberrydb && \
+RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR} && \
         make -j$(nproc) && \
         make install
 
-RUN     cd /tmp/cloudberrydb/contrib && \
+RUN     cd /tmp/cloudberrydb-${CODEBASE_VERSION_VAR}/contrib && \
         make -j$(nproc) && \
         make install
 

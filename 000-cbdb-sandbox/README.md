@@ -29,11 +29,8 @@ When building and deploying Cloudberry in Docker, you will have 2 different depl
 
 **Build Options**
 
-> [!CAUTION]
-> CentOS Linux 7 reached it's end of life (EOL) on June 30, 2024. The software source mirror (vault) only supports x86_64, the `altarch` source (like ARM) has been deprecated. So you cannot run the CentOS 7 sandbox on your macBook with M1/2. 
-
-1. Compile with the source code of the latest Cloudberry Database (released in [Cloudberry Database Release Page](https://github.com/cloudberrydb/cloudberrydb/releases)). The base OS will use a CentOS 7.9 Docker image.
-2. Method 2 - Compile with the latest Cloudberry Database [main](https://github.com/cloudberrydb/cloudberrydb/tree/main) branch. The base OS will use a Rocky Linux 9 Docker image.
+1. Compile with the source code of the latest Cloudberry Database (released in [Cloudberry Database Release Page](https://github.com/cloudberrydb/cloudberrydb/releases)). The base OS will be Rocky Linux 9 Docker image.
+2. Method 2 - Compile with the latest Cloudberry Database [main](https://github.com/cloudberrydb/cloudberrydb/tree/main) branch. The base OS will be Rocky Linux 9 Docker image.
 
 Build and deploy steps:
 
@@ -47,13 +44,13 @@ Build and deploy steps:
 
 3. Enter the repository and run the `run.sh` script to start the Docker container. This will start the automatic installation process. Depending on your environment, you may need to run this with 'sudo' command.
 
-    - For latest Cloudberry DB release running on a single container (currently does not support ARM CPU's such as Apple M1/M2)
+    - For latest Cloudberry DB release running on a single container
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
     ./run.sh
     ```
-    - For latest Cloudberry DB release running across multiple containers (currently does not support ARM CPU's such as Apple M1/M2)
+    - For latest Cloudberry DB release running across multiple containers
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
@@ -63,14 +60,14 @@ Build and deploy steps:
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
-    ./run.sh -c main -o rockylinux9
+    ./run.sh -c main
     ```
 
     - For latest main branch running across multiple containers
 
     ```shell
     cd bootcamp/000-cbdb-sandbox
-    ./run.sh -c main -o rockylinux9 -m
+    ./run.sh -c main -m
     ```
 
     Once the script finishes without error, the sandbox is built and running successfully. The `docker run` and `docker compose` commands use the --detach option allowing you to ssh or access the running CBDB instance remotely.
@@ -93,16 +90,12 @@ You can now connect to the database and try some basic operations.
     If it is successful, you will see the following prompt:
 
     ```shell
-    [root@mdw /]$
+    [gpadmin@mdw /]$
     ```
 
 2. Log into Cloudberry Database in Docker. See the following commands and example outputs:
 
     ```shell
-    [root@mdw /] su - gpadmin  # Switches to the gpadmin user.
-    
-    # Last login: Tue Oct 24 10:26:14 CST 2023 on pts/1
-    
     [gpadmin@mdw ~]$ psql  # Connects to the database with the default database name "gpadmin".
     
     # psql (14.4, server 14.4)
@@ -132,28 +125,28 @@ When working with the Cloudberry Docker environment there are a few commands tha
 
 To stop the **single container** deployment while _keeping the data and state_ within the container, you can run the command below. This means that you can later start the container again and any changes you made to the containers will be persisted between runs.
 
-```shell 
+```shell
 docker stop cbdb-mdw
 ```
 
 To stop the **single container** deployment and also remove the volume that belongs to the container, you can run the following command. Keep in mind this will remove the volume as well as the container associated which means any changes you've made inside of the container or any database state will be wiped and unrecoverable.
 
-```shell 
+```shell
 docker rm -f cbdb-mdw
 ```
 
 **Stopping Your Multi-Container Deployment With Docker**
 
-To stop the **multi-container** deployment while _keeping the data and state_ within the container, you can run the command below by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS). This means that you can later start the container again and any changes you made to the containers will be persisted between runs.
+To stop the **multi-container** deployment while _keeping the data and state_ within the container, you can run the command below. This means that you can later start the container again and any changes you made to the containers will be persisted between runs.
 
-```shell 
-docker compose -f <docker-compose-OS.yml> stop
+```shell
+docker compose -f docker-compose-rockylinux9.yml stop
 ```
 
-To stop the **multi-container** deployment and also remove the network and volumes that belong to the containers, you can run the command below by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS). Running this command means it will delete the containers as well as remove the volumes that the containers are associated with. This means any changes you've made inside of the containers or any database state will be wiped and unrecoverable.
+To stop the **multi-container** deployment and also remove the network and volumes that belong to the containers, you can run the command below. Running this command means it will delete the containers as well as remove the volumes that the containers are associated with. This means any changes you've made inside of the containers or any database state will be wiped and unrecoverable.
 
-```shell 
-docker compose -f <docker-compose-OS.yml> down -v
+```shell
+docker compose -f docker-compose-rockylinux9.yml down -v
 ```
 
 **Starting A Stopped Single Container Cloudberry Docker Deployment**
@@ -162,23 +155,23 @@ If you've run any of the commands above that keep the Docker volumes persisted b
 
 To start a **single container** deployment after it was shut down, you can simply run the following
 
-```shell 
+```shell
 docker start cbdb-mdw
 ```
 
 **Starting A Stopped Multi-Container Cloudberry Docker Deployment**
 
-To start a **multi-container** deployment after it was shut down, you can run the following command by subsituting the <docker-compose-OS.yml> argument with whichever docker-compose file is associated with your deployment (Rocky Linux 9 or CentOS).
+To start a **multi-container** deployment after it was shut down, you can run the following command.
 
-```shell 
-docker compose -f <docker-compose-OS.yml> start
+```shell
+docker compose -f docker-compose-rockylinux9.yml start
 ```
 
 > [!NOTE]
 > When starting a previously stopped Cloudberry Docker environment, you'll need to manually start the database back up. To do this, just run the following commands once the container(s) are back up and running. The `gpstart` command is used for starting the database, and -a is a flag saying to start the database without prompting (non-interactive).
 
-```shell 
+```shell
 docker exec -it cbdb-mdw /bin/bash
 
-[root@mdw /] su - gpadmin -c "gpstart -a"
+[gpadmin@mdw /] gpstart -a
 ```
