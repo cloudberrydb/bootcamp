@@ -1,10 +1,12 @@
+> [!WARNING]
+> This repo has been archived.
+>  - The `000-cbdb-sandbox` has been moved to [apache/cloudberry - devops/sandbox](https://github.com/apache/cloudberry/tree/main/devops/sandbox).
+> - The `101`, `102`, `103`, `104` files have been moved to [apache/cloudberry-site - docs/tutorials](https://github.com/apache/cloudberry-site/tree/main/docs/tutorials)
+>
+>  Please submit feedback or improvements in the new places.
+
+
 # Apache Cloudberry (Incubating) Bootcamp
-
-![Cloudberry Logo](./images/cloudberrydb_logo.png)
-
-[![Slack](https://img.shields.io/badge/Join_Slack-6a32c9)](https://communityinviter.com/apps/cloudberrydb/welcome)
-[![Twitter Follow](https://img.shields.io/twitter/follow/cloudberrydb)](https://twitter.com/cloudberrydb)
-[![Website](https://img.shields.io/badge/Visit%20Website-eebc46)](https://cloudberry.apache.org)
 
 These tutorials showcase how Apache Cloudberry can address day-to-day tasks performed in typical DW, BI and data science environments. It is designed to be used with the Apache Cloudberry Sandbox, which is based on the Docker with the Rocky Linux 9.4 OS.
 
